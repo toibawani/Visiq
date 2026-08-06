@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VISIQ - Interactive physics visualizations by toibawani">
+    <meta name="author" content="toibawani">
+    <meta name="theme-color" content="#0a0a0f">
+    
+    <title>🌀 VISIQ — Physics Visualizations</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&family=Fraunces:opsz@9..144&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="assets/config.js"></script>
+</head>
+<body>
+    <!-- Gallery View -->
+    <div id="gallery-view" class="view active">
+        <header class="gallery-header">
+            <div class="header-content">
+                <div class="logo">🌀</div>
+                <h1 class="gallery-title">VISIQ</h1>
+                <p class="gallery-subtitle">Interactive physics visualizations</p>
+                <p class="gallery-meta">7 simulations • 60 FPS • Production-grade</p>
+            </div>
+        </header>
+        
+        <div class="gallery-container">
+            <div class="gallery-grid" id="gallery-grid"></div>
+        </div>
+        
+        <footer class="gallery-footer">
+            <p>By <strong>toibawani</strong> • Email: toibawani14@gmail.com • <a href="https://github.com/toibawani/visiq" target="_blank">GitHub</a> • MIT License</p>
+        </footer>
+    </div>
+
+    <!-- Simulation View -->
+    <div id="simulation-view" class="view">
+        <button class="back-button" id="back-button">
+            <span class="back-arrow">←</span> Back
+        </button>
+        
+        <div class="simulation-container">
+            <div class="simulation-canvas" id="simulation-canvas"></div>
+            
+            <div class="control-panel">
+                <div class="control-header">
+                    <h2 id="sim-title"></h2>
+                    <p id="sim-description"></p>
+                </div>
+                
+                <div class="controls-section" id="controls-section"></div>
+                
+                <button class="reset-button" id="reset-button">↻ Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cursor Glow -->
+    <div class="cursor-glow" id="cursor-glow"></div>
+
+    <!-- Main Script -->
+    <script src="gallery.js"></script>
+</body>
+</html>
