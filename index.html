@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="VISIQ - Premium interactive physics visualizations">
+    <meta name="description" content="VISIQ - Interactive science visualizations across physics, biology, geography, and more">
     <meta name="theme-color" content="#0a0a0f">
     
-    <title>VISIQ — Physics Visualizations</title>
+    <title>VISIQ — Science Visualized</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,20 +21,75 @@
     <script src="assets/config.js"></script>
 </head>
 <body>
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal active">
+        <div class="modal-content signup-form">
+            <div class="signup-header">
+                <span class="logo-icon">⚛️</span>
+                <h1>Welcome to VISIQ</h1>
+                <p>Interactive Science Visualizations</p>
+            </div>
+
+            <form id="signup-form" class="form-container">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="fullname" placeholder="Your name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Interests</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox" name="interest" value="physics">
+                            <span>Physics</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="interest" value="biology">
+                            <span>Biology</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="interest" value="geography">
+                            <span>Geography</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="interest" value="astronomy">
+                            <span>Astronomy</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary-large">Start Exploring →</button>
+
+                <p class="form-disclaimer">
+                    By joining, you agree to our terms. No spam. Ever.
+                </p>
+            </form>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo-section">
+            <div class="logo-section" onclick="goToHome()">
                 <span class="logo-icon">⚛️</span>
                 <span class="logo-text">VISIQ</span>
             </div>
             <div class="nav-links">
-                <a href="#home" class="nav-link active">Simulations</a>
-                <a href="#about" class="nav-link">About</a>
-                <a href="docs/PHYSICS.md" class="nav-link" target="_blank">Physics</a>
-                <a href="https://github.com/toibawani/visiq" class="nav-link github-link" target="_blank">
-                    GitHub ↗
-                </a>
+                <a href="#physics" class="nav-link category-nav" data-category="physics">Physics</a>
+                <a href="#biology" class="nav-link category-nav" data-category="biology">Biology</a>
+                <a href="#geography" class="nav-link category-nav" data-category="geography">Geography</a>
+                <a href="#astronomy" class="nav-link category-nav" data-category="astronomy">Astronomy</a>
+                <button class="btn-logout" id="logout-btn" onclick="logout()">Logout</button>
             </div>
         </div>
     </nav>
@@ -42,10 +97,10 @@
     <!-- Hero Section -->
     <div id="hero-section" class="hero">
         <div class="hero-content">
-            <div class="hero-badge">Premium Physics Lab</div>
-            <h1 class="hero-title">Experience Physics<br><span class="highlight">Interactively</span></h1>
-            <p class="hero-subtitle">Explore 7 real-time physics simulations with actual science, not animations. Adjust parameters and watch the universe respond instantly.</p>
-            <button class="cta-button" onclick="scrollToGallery()">Explore Simulations ↓</button>
+            <div class="hero-badge">Welcome, <span id="user-display">Explorer</span></div>
+            <h1 class="hero-title">Understand Science<br><span class="highlight">Visually</span></h1>
+            <p class="hero-subtitle">From quantum mechanics to cellular biology, watch complex concepts come alive through interactive simulations. Adjust parameters in real-time and see the universe respond.</p>
+            <button class="cta-button" onclick="scrollToCategory('physics')">Start with Physics ↓</button>
         </div>
         <div class="hero-visual">
             <div class="floating-orbs">
@@ -58,13 +113,50 @@
 
     <!-- Gallery View -->
     <div id="gallery-view" class="view active">
-        <section id="simulations" class="gallery-section">
+        <!-- PHYSICS SECTION -->
+        <section id="physics" class="category-section">
             <div class="section-header">
-                <h2>7 Interactive Simulations</h2>
-                <p>Click any simulation to explore real physics in action</p>
+                <div class="category-badge physics-badge">⚛️ Physics</div>
+                <h2>Classical & Modern Physics</h2>
+                <p>From Newton's laws to black holes—explore the forces that shape our universe</p>
             </div>
-            
-            <div class="gallery-grid" id="gallery-grid">
+            <div class="gallery-grid physics-grid" id="gallery-grid-physics">
+                <!-- Generated by gallery.js -->
+            </div>
+        </section>
+
+        <!-- BIOLOGY SECTION -->
+        <section id="biology" class="category-section">
+            <div class="section-header">
+                <div class="category-badge biology-badge">🧬 Biology</div>
+                <h2>Cellular & Molecular Biology</h2>
+                <p>Watch cells divide, DNA replicate, and life emerge from simple rules</p>
+            </div>
+            <div class="gallery-grid biology-grid" id="gallery-grid-biology">
+                <!-- Generated by gallery.js -->
+            </div>
+        </section>
+
+        <!-- GEOGRAPHY SECTION -->
+        <section id="geography" class="category-section">
+            <div class="section-header">
+                <div class="category-badge geography-badge">🌍 Geography</div>
+                <h2>Earth Science & Geology</h2>
+                <p>Discover how our planet works—from ocean currents to weather systems</p>
+            </div>
+            <div class="gallery-grid geography-grid" id="gallery-grid-geography">
+                <!-- Generated by gallery.js -->
+            </div>
+        </section>
+
+        <!-- ASTRONOMY SECTION -->
+        <section id="astronomy" class="category-section">
+            <div class="section-header">
+                <div class="category-badge astronomy-badge">🌌 Astronomy</div>
+                <h2>Space & Celestial Mechanics</h2>
+                <p>Explore planets, stars, black holes, and the fabric of spacetime</p>
+            </div>
+            <div class="gallery-grid astronomy-grid" id="gallery-grid-astronomy">
                 <!-- Generated by gallery.js -->
             </div>
         </section>
@@ -74,13 +166,14 @@
             <div class="featured-content">
                 <div class="featured-text">
                     <h3>Why VISIQ?</h3>
-                    <p>Most physics visualizations are passive animations. VISIQ is different — real physics engines respond to your input in real-time.</p>
+                    <p>Most science education relies on static diagrams and videos. VISIQ is different — real simulations respond to your input instantly.</p>
                     <ul class="feature-list">
-                        <li>✓ Real physics simulation (not animations)</li>
-                        <li>✓ Live parameter control with sliders</li>
+                        <li>✓ Real physics engines & algorithms (not animations)</li>
+                        <li>✓ 40+ interactive simulations across 4 domains</li>
+                        <li>✓ Live parameter control with instant feedback</li>
                         <li>✓ Smooth 60 FPS performance</li>
-                        <li>✓ Educational & beautiful</li>
-                        <li>✓ Open source & free</li>
+                        <li>✓ Educational & stunningly beautiful</li>
+                        <li>✓ Open source & completely free</li>
                     </ul>
                 </div>
                 <div class="featured-visual">
@@ -94,18 +187,18 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h4>VISIQ</h4>
-                    <p>Interactive physics for everyone</p>
+                    <p>Science education reimagined</p>
                 </div>
                 <div class="footer-section">
-                    <h4>Links</h4>
-                    <a href="https://github.com/toibawani/visiq" target="_blank">GitHub</a>
+                    <h4>Resources</h4>
                     <a href="docs/PHYSICS.md" target="_blank">Physics Guide</a>
                     <a href="docs/CONTRIBUTING.md" target="_blank">Contribute</a>
+                    <a href="https://github.com/toibawani/visiq" target="_blank">GitHub</a>
                 </div>
                 <div class="footer-section">
-                    <h4>Contact</h4>
+                    <h4>Creator</h4>
+                    <p>Built by <strong>toibawani</strong></p>
                     <p>Email: toibawani14@gmail.com</p>
-                    <p>By: <strong>toibawani</strong></p>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -121,7 +214,10 @@
                 <span>←</span> Back to Gallery
             </button>
             <div class="sim-title-section">
-                <h1 id="sim-title" class="sim-title"></h1>
+                <div>
+                    <h1 id="sim-title" class="sim-title"></h1>
+                    <span class="sim-category" id="sim-category"></span>
+                </div>
                 <span class="close-btn" id="close-btn">✕</span>
             </div>
         </div>
@@ -136,7 +232,7 @@
                 
                 <div class="controls-section" id="controls-section"></div>
                 
-                <button class="reset-button" id="reset-button">↻ Reset Simulation</button>
+                <button class="reset-button" id="reset-button">↻ Reset</button>
             </div>
         </div>
     </div>
@@ -145,6 +241,7 @@
     <div class="cursor-glow" id="cursor-glow"></div>
 
     <!-- Scripts -->
+    <script src="assets/auth.js"></script>
     <script src="gallery.js"></script>
 </body>
 </html>
