@@ -920,4 +920,247 @@ body:hover .cursor-glow {
     .card-content {
         padding: 20px 16px;
     }
+    /* ===== CATEGORY SYSTEM ===== */
+.category-badge {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+.physics-badge {
+    background: rgba(232, 160, 76, 0.15);
+    color: #e8a04c;
+    border: 1px solid #e8a04c;
+}
+
+.biology-badge {
+    background: rgba(0, 217, 255, 0.15);
+    color: #00d9ff;
+    border: 1px solid #00d9ff;
+}
+
+.geography-badge {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+    border: 1px solid #4caf50;
+}
+
+.astronomy-badge {
+    background: rgba(156, 78, 221, 0.15);
+    color: #9d4edd;
+    border: 1px solid #9d4edd;
+}
+
+.category-section {
+    padding: 100px 40px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.category-section:nth-child(even) {
+    background: rgba(232, 160, 76, 0.02);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+}
+
+.section-header p {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+}
+
+/* ===== SIGNUP MODAL ===== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 15, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 60px 40px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: var(--shadow-xl);
+}
+
+.signup-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.signup-header .logo-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.signup-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.signup-header p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-bright);
+}
+
+.form-group input {
+    padding: 14px 16px;
+    background: rgba(42, 42, 62, 0.5);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--text-bright);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    transition: all var(--transition);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    background: rgba(42, 42, 62, 0.8);
+    box-shadow: 0 0 12px rgba(232, 160, 76, 0.2);
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.checkbox input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.btn-primary-large {
+    padding: 16px 24px;
+    background: var(--accent-primary);
+    border: none;
+    color: var(--bg-dark);
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 8px;
+}
+
+.btn-primary-large:hover {
+    background: #f0b366;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232, 160, 76, 0.3);
+}
+
+.form-disclaimer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 16px;
+}
+
+/* ===== NAVBAR LOGIN STATE ===== */
+.btn-logout {
+    padding: 8px 16px;
+    background: var(--accent-secondary);
+    border: none;
+    color: white;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all var(--transition);
+    display: none;
+}
+
+.btn-logout:hover {
+    background: #e6005a;
+    transform: scale(1.05);
+}
+
+.sim-category {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--accent-primary);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
 }
