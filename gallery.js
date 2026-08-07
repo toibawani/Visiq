@@ -4,6 +4,15 @@
 // GitHub: https://github.com/toibawani/visiq
 
 let currentSketch = null;
+
+// Scroll to gallery section
+window.scrollToGallery = function() {
+    const gallerySection = document.getElementById('simulations');
+    if (gallerySection) {
+        gallerySection.scrollIntoView({ behavior: 'smooth' });
+    }
+};
+
 let currentSketchInstance = null;
 
 const SIMULATIONS = [
@@ -78,6 +87,7 @@ function initGallery() {
     });
 
     document.getElementById('back-button').addEventListener('click', backToGallery);
+    document.getElementById('close-btn')?.addEventListener('click', backToGallery);
     document.getElementById('reset-button').addEventListener('click', resetSimulation);
     
     setupCursorGlow();
