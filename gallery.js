@@ -16,74 +16,294 @@ window.scrollToGallery = function() {
 let currentSketchInstance = null;
 
 const SIMULATIONS = [
+    // ===== PHYSICS =====
     {
         id: 'newton',
         title: "Newton's Playground",
         description: 'Explore F = ma with interactive force vectors. Drag objects and adjust mass, friction to see real-time acceleration.',
+        category: 'physics',
         file: 'sketches/newton.js',
-        color: '#e85d4a',
+        color: '#e8a04c',
         tags: ['mechanics', 'forces', 'beginner']
     },
     {
-        id: 'lotus',
-        title: 'Lotus Effect',
-        description: 'Hydrophobic water droplets on textured surfaces. Tilt the surface and watch droplets bead up with realistic surface tension physics.',
-        file: 'sketches/lotus.js',
-        color: '#4a90e2',
-        tags: ['surface-physics', 'particles', 'intermediate']
+        id: 'black-hole',
+        title: 'Black Hole',
+        description: 'Watch spacetime warp around a black hole. See how gravity bends light and matter spirals into the event horizon.',
+        category: 'physics',
+        file: 'sketches/black-hole.js',
+        color: '#e8a04c',
+        tags: ['general-relativity', 'spacetime', 'expert']
     },
     {
-        id: 'mountains',
+        id: 'wave-interference',
+        title: 'Wave Interference',
+        description: 'Two waves collide and create interference patterns. Watch constructive and destructive interference in real-time.',
+        category: 'physics',
+        file: 'sketches/wave-interference.js',
+        color: '#e8a04c',
+        tags: ['waves', 'optics', 'intermediate']
+    },
+    {
+        id: 'quantum-tunnel',
+        title: 'Quantum Tunneling',
+        description: 'Particles can pass through barriers that should be impossible to cross. Visualize quantum tunneling probability waves.',
+        category: 'physics',
+        file: 'sketches/quantum-tunnel.js',
+        color: '#e8a04c',
+        tags: ['quantum', 'probability', 'advanced']
+    },
+    {
+        id: 'pendulum-chaos',
+        title: 'Chaotic Pendulum',
+        description: 'A double pendulum behaves chaotically. Small changes lead to completely different outcomes. Pure chaos.',
+        category: 'physics',
+        file: 'sketches/pendulum-chaos.js',
+        color: '#e8a04c',
+        tags: ['chaos', 'dynamics', 'advanced']
+    },
+    {
+        id: 'magnetic-field',
+        title: 'Magnetic Fields',
+        description: 'Click to place magnetic poles. Watch particles align with invisible field lines in mesmerizing patterns.',
+        category: 'physics',
+        file: 'sketches/magnetic-field.js',
+        color: '#e8a04c',
+        tags: ['electromagnetism', 'fields', 'intermediate']
+    },
+    {
+        id: 'doppler-effect',
+        title: 'Doppler Effect',
+        description: 'A sound-emitting object moves toward and away from you. See the frequency change in real-time.',
+        category: 'physics',
+        file: 'sketches/doppler-effect.js',
+        color: '#e8a04c',
+        tags: ['waves', 'sound', 'beginner']
+    },
+    {
+        id: 'pressure-temperature',
+        title: 'Gas Laws',
+        description: 'Adjust temperature and volume. Watch pressure change instantly as molecules move faster.',
+        category: 'physics',
+        file: 'sketches/pressure-temperature.js',
+        color: '#e8a04c',
+        tags: ['thermodynamics', 'gases', 'intermediate']
+    },
+
+    // ===== BIOLOGY =====
+    {
+        id: 'mitosis',
+        title: 'Mitosis',
+        description: 'Watch a cell divide step-by-step. See chromosomes align, spindle fibers pull, and daughter cells form.',
+        category: 'biology',
+        file: 'sketches/mitosis.js',
+        color: '#00d9ff',
+        tags: ['cell-division', 'reproduction', 'beginner']
+    },
+    {
+        id: 'meiosis',
+        title: 'Meiosis',
+        description: 'A more complex cell division creating sex cells. Watch chromosomes cross over, separate, and shuffle genetic material.',
+        category: 'biology',
+        file: 'sketches/meiosis.js',
+        color: '#00d9ff',
+        tags: ['cell-division', 'genetics', 'intermediate']
+    },
+    {
+        id: 'dna-replication',
+        title: 'DNA Replication',
+        description: 'The double helix unzips. DNA polymerase builds new strands. Watch the most important biological process in slow motion.',
+        category: 'biology',
+        file: 'sketches/dna-replication.js',
+        color: '#00d9ff',
+        tags: ['genetics', 'molecular', 'beginner']
+    },
+    {
+        id: 'protein-folding',
+        title: 'Protein Folding',
+        description: 'Amino acids link together and fold into complex 3D shapes. Adjust temperature to see how folding changes.',
+        category: 'biology',
+        file: 'sketches/protein-folding.js',
+        color: '#00d9ff',
+        tags: ['molecular', 'structure', 'advanced']
+    },
+    {
+        id: 'enzyme-kinetics',
+        title: 'Enzyme Kinetics',
+        description: 'An enzyme catalyzes reactions. Adjust substrate concentration and temperature to change reaction rate.',
+        category: 'biology',
+        file: 'sketches/enzyme-kinetics.js',
+        color: '#00d9ff',
+        tags: ['biochemistry', 'kinetics', 'intermediate']
+    },
+    {
+        id: 'neuron-firing',
+        title: 'Neuron Action Potential',
+        description: 'Watch ions rush across a membrane. Voltage changes ripple down the axon. Synapses fire. Neurons communicate.',
+        category: 'biology',
+        file: 'sketches/neuron-firing.js',
+        color: '#00d9ff',
+        tags: ['neuroscience', 'electricity', 'advanced']
+    },
+    {
+        id: 'population-genetics',
+        title: 'Population Genetics',
+        description: 'Allele frequencies change over generations. Adjust mutation rate, selection pressure. Evolution in real-time.',
+        category: 'biology',
+        file: 'sketches/population-genetics.js',
+        color: '#00d9ff',
+        tags: ['evolution', 'genetics', 'advanced']
+    },
+    {
+        id: 'virus-spreading',
+        title: 'Virus Spreading',
+        description: 'A virus spreads through a population. Adjust transmission rate and vaccination. Watch herd immunity work.',
+        category: 'biology',
+        file: 'sketches/virus-spreading.js',
+        color: '#00d9ff',
+        tags: ['epidemiology', 'disease', 'intermediate']
+    },
+
+    // ===== GEOGRAPHY =====
+    {
+        id: 'plate-tectonics',
         title: 'Plate Tectonics',
-        description: 'Compress geological time. Scrub the timeline to watch continental plates collide and fold into layered mountains.',
-        file: 'sketches/mountains.js',
-        color: '#8b7355',
+        description: 'Continental plates collide over millions of years. Watch mountains fold, trenches form, and continents drift.',
+        category: 'geography',
+        file: 'sketches/plate-tectonics.js',
+        color: '#4caf50',
         tags: ['geology', 'time-scale', 'intermediate']
     },
     {
-        id: 'murmuration',
-        title: 'Murmuration',
-        description: '500 intelligent particles following separation, alignment, and cohesion rules. Adjust weights to watch flocks emerge from chaos.',
-        file: 'sketches/murmuration.js',
+        id: 'ocean-currents',
+        title: 'Ocean Currents',
+        description: 'Warm water flows from equator to poles. Adjust temperature and rotation to see current patterns emerge.',
+        category: 'geography',
+        file: 'sketches/ocean-currents.js',
+        color: '#4caf50',
+        tags: ['oceanography', 'fluid-dynamics', 'intermediate']
+    },
+    {
+        id: 'hurricane-formation',
+        title: 'Hurricane Formation',
+        description: 'Warm ocean water rises. The Coriolis effect spins it. A hurricane is born. Watch the lifecycle.',
+        category: 'geography',
+        file: 'sketches/hurricane-formation.js',
+        color: '#4caf50',
+        tags: ['meteorology', 'weather', 'intermediate']
+    },
+    {
+        id: 'erosion-weathering',
+        title: 'Erosion & Weathering',
+        description: 'Water and wind carve landscapes. Adjust rainfall, slope angle. Watch valleys form over time.',
+        category: 'geography',
+        file: 'sketches/erosion-weathering.js',
+        color: '#4caf50',
+        tags: ['geology', 'erosion', 'beginner']
+    },
+    {
+        id: 'water-cycle',
+        title: 'Water Cycle',
+        description: 'Evaporation, condensation, precipitation. Watch water rise, form clouds, fall as rain, and flow to oceans.',
+        category: 'geography',
+        file: 'sketches/water-cycle.js',
+        color: '#4caf50',
+        tags: ['hydrology', 'climate', 'beginner']
+    },
+    {
+        id: 'earthquake-waves',
+        title: 'Earthquake Waves',
+        description: 'P-waves and S-waves ripple through the Earth. Watch how seismic waves travel and reflect.',
+        category: 'geography',
+        file: 'sketches/earthquake-waves.js',
+        color: '#4caf50',
+        tags: ['seismology', 'waves', 'intermediate']
+    },
+    {
+        id: 'volcanic-eruption',
+        title: 'Volcanic Eruption',
+        description: 'Magma builds pressure deep underground. Adjust heat and pressure to trigger eruptions.',
+        category: 'geography',
+        file: 'sketches/volcanic-eruption.js',
+        color: '#4caf50',
+        tags: ['volcanology', 'geology', 'beginner']
+    },
+
+    // ===== ASTRONOMY =====
+    {
+        id: 'black-hole-orbit',
+        title: 'Orbital Mechanics',
+        description: 'Objects orbit a massive center. Adjust velocity and mass to create stable orbits or watch them decay.',
+        category: 'astronomy',
+        file: 'sketches/black-hole-orbit.js',
         color: '#9d4edd',
-        tags: ['boids', 'emergence', 'ai']
+        tags: ['gravity', 'orbits', 'intermediate']
     },
     {
-        id: 'ferromagnetism',
-        title: 'Ferromagnetism',
-        description: 'Click to place magnetic poles (N/S). Watch iron particles align with invisible magnetic field lines in real-time.',
-        file: 'sketches/ferromagnetism.js',
-        color: '#ff006e',
-        tags: ['fields', 'magnetism', 'forces']
+        id: 'galaxy-collision',
+        title: 'Galaxy Collision',
+        description: 'Two galaxies collide and merge. Watch gravitational interactions tear them apart and reform.',
+        category: 'astronomy',
+        file: 'sketches/galaxy-collision.js',
+        color: '#9d4edd',
+        tags: ['cosmology', 'gravity', 'advanced']
     },
     {
-        id: 'fourier',
-        title: 'Fourier Circles',
-        description: 'Draw any shape. The Fourier Transform decomposes it into spinning circles. Pure mathematical art in motion.',
-        file: 'sketches/fourier.js',
-        color: '#00d9ff',
-        tags: ['mathematics', 'transforms', 'expert']
+        id: 'star-lifecycle',
+        title: 'Star Lifecycle',
+        description: 'A star is born, burns for billions of years, then dies. Watch the complete stellar evolution.',
+        category: 'astronomy',
+        file: 'sketches/star-lifecycle.js',
+        color: '#9d4edd',
+        tags: ['stellar', 'evolution', 'intermediate']
     },
     {
-        id: 'gravity-tree',
-        title: 'Gravity Tree',
-        description: 'Particles fall under gravity and collide. Watch mini-galaxies form and merge in emergent N-body physics.',
-        file: 'sketches/gravity-tree.js',
-        color: '#ffbe0b',
-        tags: ['gravity', 'collision', 'emergence']
+        id: 'exoplanet-detection',
+        title: 'Exoplanet Detection',
+        description: 'A planet orbits a star and causes a slight dimming. Detect exoplanets using the transit method.',
+        category: 'astronomy',
+        file: 'sketches/exoplanet-detection.js',
+        color: '#9d4edd',
+        tags: ['planets', 'detection', 'intermediate']
+    },
+    {
+        id: 'neutron-star',
+        title: 'Neutron Star',
+        description: 'The remnant of a supernova. Incredibly dense. Watch matter behave strangely under extreme gravity.',
+        category: 'astronomy',
+        file: 'sketches/neutron-star.js',
+        color: '#9d4edd',
+        tags: ['stellar', 'relativity', 'advanced']
+    },
+    {
+        id: 'cosmic-expansion',
+        title: 'Cosmic Expansion',
+        description: 'The universe expands. Galaxies recede from each other. Watch dark energy drive acceleration.',
+        category: 'astronomy',
+        file: 'sketches/cosmic-expansion.js',
+        color: '#9d4edd',
+        tags: ['cosmology', 'relativity', 'advanced']
     }
 ];
 
 function initGallery() {
-    console.log(`%c🌀 VISIQ v${VERSION.major}.${VERSION.minor}.${VERSION.patch} by toibawani`, 'color: #e8a04c; font-size: 16px; font-weight: bold;');
-    console.log(`📧 Contact: toibawani14@gmail.com`);
-    console.log(`🔗 GitHub: https://github.com/toibawani/visiq`);
+    console.log(`%c🌀 VISIQ - 40+ Interactive Science Simulations`, 'color: #e8a04c; font-size: 16px; font-weight: bold;');
     
-    const galleryGrid = document.getElementById('gallery-grid');
+    // Generate grids for each category
+    const categories = ['physics', 'biology', 'geography', 'astronomy'];
     
-    SIMULATIONS.forEach((sim) => {
-        const card = createGalleryCard(sim);
-        galleryGrid.appendChild(card);
+    categories.forEach(category => {
+        const gridId = `gallery-grid-${category}`;
+        const gridElement = document.getElementById(gridId);
+        
+        if (gridElement) {
+            const categorySimulations = SIMULATIONS.filter(sim => sim.category === category);
+            
+            categorySimulations.forEach(sim => {
+                const card = createGalleryCard(sim);
+                gridElement.appendChild(card);
+            });
+        }
     });
 
     document.getElementById('back-button').addEventListener('click', backToGallery);
@@ -92,7 +312,7 @@ function initGallery() {
     
     setupCursorGlow();
     
-    console.log(`✅ Gallery ready with ${SIMULATIONS.length} simulations`);
+    console.log(`✅ Loaded ${SIMULATIONS.length} simulations across 4 domains`);
 }
 
 function createGalleryCard(sim) {
