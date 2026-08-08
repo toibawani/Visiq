@@ -1,11 +1,10 @@
-// ===== AUTHENTICATION SYSTEM =====
-// Handle signup, login, logout
+// ===== VISIQ AUTHENTICATION SYSTEM =====
 
-class AuthSystem {
+class AuthManager {
     constructor() {
         this.users = this.loadUsers();
-        this.currentUser = this.loadCurrentUser();
-        this.initUI();
+        this.currentUser = this.loadSession();
+        this.init();
     }
 
     loadUsers() {
@@ -17,30 +16,35 @@ class AuthSystem {
         localStorage.setItem('visiq_users', JSON.stringify(this.users));
     }
 
-    loadCurrentUser() {
-        const stored = localStorage.getItem('visiq_current_user');
+    loadSession() {
+        const stored = localStorage.getItem('visiq_session');
         return stored ? JSON.parse(stored) : null;
     }
 
-    saveCurrentUser() {
+    saveSession() {
         if (this.currentUser) {
-            localStorage.setItem('visiq_current_user', JSON.stringify(this.currentUser));
+            localStorage.setItem('visiq_session', JSON.stringify(this.currentUser));
         }
     }
 
-    initUI() {
-        const signupForm = document.getElementById('signup-form');
-        const modal = document.getElementById('signup-modal');
-        const logoutBtn = document.getElementById('logout-btn');
+    clearSession() {
+        localStorage.removeItem('visiq_session');
+    }
 
+    init() {
         if (this.currentUser) {
-            // User logged in
-            if (modal) modal.classList.remove('active');
-            this.updateUIForLoggedIn();
+            this.showApp();
         } else {
-            // Show signup
-            if (modal) modal.classList.add('active');
-            logoutBtn.style.display = 'none';
+            this.setupAuthForms();
+        }
+    }
+
+    setupAuthForms() {
+        const loginForm = document.getElementById('form-login');
+        const signupForm = document.getElementById('form-signup');
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => this.handleLogin(e));
         }
 
         if (signupForm) {
@@ -48,27 +52,63 @@ class AuthSystem {
         }
     }
 
+    handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        if (!this.users[email]) {
+            alert('❌ Email not found. Please sign up first.');
+            return;
+        }
+
+        if (this.users[email].password !== password) {
+            alert('❌ Incorrect password.');
+            return;
+        }
+
+        const user = this.users[email];
+        this.currentUser = {
+            name: user.fullname,
+            email: user.email,
+            interests: user.interests || []
+        };
+
+        this.saveSession();
+        this.showApp();
+        console.log('✅ Welcome back,', user.fullname);
+    }
+
     handleSignup(e) {
         e.preventDefault();
+        const fullname = document.getElementById('signup-name').value;
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        const confirm = document.getElementById('signup-confirm').value;
+        const interests = Array.from(
+            document.querySelectorAll('input[name="interest"]:checked')
+        ).map(el => el.value);
 
-        const fullname = document.getElementById('fullname').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const interests = Array.from(document.querySelectorAll('input[name="interest"]:checked'))
-            .map(el => el.value);
+        if (!fullname || !email || !password || !confirm) {
+            alert('❌ Please fill in all fields.');
+            return;
+        }
 
-        // Validation
-        if (!fullname || !email || !password) {
-            alert('Please fill in all fields');
+        if (password !== confirm) {
+            alert('❌ Passwords do not match.');
+            return;
+        }
+
+        if (password.length < 6) {
+            alert('❌ Password must be at least 6 characters.');
             return;
         }
 
         if (this.users[email]) {
-            alert('Email already registered. Try logging in!');
+            alert('❌ Email already registered.');
             return;
         }
 
-        // Save user
         this.users[email] = {
             fullname,
             email,
@@ -79,66 +119,70 @@ class AuthSystem {
 
         this.saveUsers();
 
-        // Log them in
         this.currentUser = {
-            fullname,
+            name: fullname,
             email,
             interests
         };
 
-        this.saveCurrentUser();
-
-        // Update UI
-        const modal = document.getElementById('signup-modal');
-        if (modal) modal.classList.remove('active');
-        this.updateUIForLoggedIn();
-
+        this.saveSession();
+        this.showApp();
         console.log('✅ Welcome to VISIQ,', fullname);
     }
 
-    updateUIForLoggedIn() {
-        const userDisplay = document.getElementById('user-display');
-        const logoutBtn = document.getElementById('logout-btn');
+    showApp() {
+        const authPage = document.getElementById('auth-page');
+        const mainApp = document.getElementById('main-app');
 
-        if (userDisplay && this.currentUser) {
-            userDisplay.textContent = this.currentUser.fullname.split(' ')[0];
-        }
+        if (authPage) authPage.style.display = 'none';
+        if (mainApp) mainApp.style.display = 'block';
 
-        if (logoutBtn) {
-            logoutBtn.style.display = 'block';
+        this.updateUI();
+    }
+
+    updateUI() {
+        if (this.currentUser) {
+            const firstName = this.currentUser.name.split(' ')[0];
+            const userDisplay = document.getElementById('user-display');
+            const heroUser = document.getElementById('hero-user');
+
+            if (userDisplay) userDisplay.textContent = firstName;
+            if (heroUser) heroUser.textContent = firstName;
         }
     }
 
     logout() {
         if (confirm('Are you sure you want to logout?')) {
             this.currentUser = null;
-            localStorage.removeItem('visiq_current_user');
+            this.clearSession();
             location.reload();
         }
     }
 }
 
-// Initialize auth system
-window.auth = new AuthSystem();
+// Global instance
+window.auth = new AuthManager();
 
-// Logout function (called from HTML)
-window.logout = function() {
-    window.auth.logout();
-};
+// Global functions
+window.toggleForm = function(e) {
+    e.preventDefault();
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
 
-// Helper to scroll to category
-window.scrollToCategory = function(category) {
-    const section = document.getElementById(category);
-    if (section) {
-        setTimeout(() => {
-            section.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+    if (loginForm && signupForm) {
+        loginForm.classList.toggle('active');
+        signupForm.classList.toggle('active');
     }
 };
 
-// Go home
-window.goToHome = function() {
-    document.getElementById('gallery-view').classList.add('active');
-    document.getElementById('simulation-view').classList.remove('active');
+window.handleLogout = function() {
+    window.auth.logout();
+};
+
+window.goHome = function() {
+    const galleryView = document.getElementById('gallery-view');
+    const simView = document.getElementById('simulation-view');
+    if (galleryView) galleryView.classList.add('active');
+    if (simView) simView.classList.remove('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
