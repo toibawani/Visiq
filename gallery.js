@@ -20,13 +20,14 @@ const SIMULATIONS = [
         file: 'sketches/lotus.js',
         tags: ['fluids', 'surface-tension']
     },
+    // ===== BIOLOGY =====
     {
-        id: 'black-hole',
-        title: 'Black Hole',
-        description: 'Watch spacetime warp around a black hole. Particles spiral into the event horizon as gravity bends light itself.',
-        category: 'physics',
-        file: 'sketches/black-hole.js',
-        tags: ['relativity', 'gravity', 'spacetime']
+        id: 'mitosis',
+        title: 'Mitosis',
+        description: 'Watch a cell divide step-by-step. Chromosomes condense, spindle fibers pull them apart, and two daughter cells form.',
+        category: 'biology',
+        file: 'sketches/mitosis.js',
+        tags: ['cell-division', 'chromosomes', 'reproduction']
     },
     {
         id: 'mountains',
