@@ -129,6 +129,15 @@ const SIMULATIONS = [
         file: 'sketches/ocean-currents.js',
         tags: ['oceanography', 'earth']
     },
+    // ===== GEOGRAPHY =====
+    {
+        id: 'ocean-currents',
+        title: 'Ocean Currents',
+        description: 'Heat-driven and wind-driven ocean currents. Watch the Coriolis effect deflect water, creating gyres and circulation patterns.',
+        category: 'geography',
+        file: 'sketches/ocean-currents.js',
+        tags: ['oceanography', 'heat-transport', 'coriolis']
+    },
     {
         id: 'hurricane',
         title: 'Hurricane Formation',
