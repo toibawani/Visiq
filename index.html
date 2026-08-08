@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="VISIQ - Interactive science visualizations across physics, biology, geography, and more">
+    <meta name="description" content="VISIQ - Interactive science visualizations">
     <meta name="theme-color" content="#0a0a0f">
     
     <title>VISIQ — Science Visualized</title>
@@ -11,7 +11,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- p5.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
@@ -21,224 +21,282 @@
     <script src="assets/config.js"></script>
 </head>
 <body>
-    <!-- Signup Modal -->
-    <div id="signup-modal" class="modal active">
-        <div class="modal-content signup-form">
-            <div class="signup-header">
-                <span class="logo-icon">⚛️</span>
-                <h1>Welcome to VISIQ</h1>
-                <p>Interactive Science Visualizations</p>
-            </div>
-
-            <form id="signup-form" class="form-container">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="fullname" placeholder="Your name" required>
+    <!-- Auth Page -->
+    <div id="auth-page" class="auth-page">
+        <div class="auth-container">
+            <!-- Left: Branding & Info -->
+            <div class="auth-left">
+                <div class="auth-logo">
+                    <div class="logo-glow"></div>
+                    <span class="logo-symbol">⚛️</span>
                 </div>
-
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" id="email" placeholder="your@email.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Interests</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox">
-                            <input type="checkbox" name="interest" value="physics">
-                            <span>Physics</span>
-                        </label>
-                        <label class="checkbox">
-                            <input type="checkbox" name="interest" value="biology">
-                            <span>Biology</span>
-                        </label>
-                        <label class="checkbox">
-                            <input type="checkbox" name="interest" value="geography">
-                            <span>Geography</span>
-                        </label>
-                        <label class="checkbox">
-                            <input type="checkbox" name="interest" value="astronomy">
-                            <span>Astronomy</span>
-                        </label>
+                <h1 class="auth-title">VISIQ</h1>
+                <p class="auth-subtitle">Interactive Science Visualizations</p>
+                
+                <div class="auth-features">
+                    <div class="feature">
+                        <span class="feature-icon">🔬</span>
+                        <p>40+ Interactive Simulations</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🎯</span>
+                        <p>Real Physics Engines</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🌌</span>
+                        <p>4 Science Domains</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">✨</span>
+                        <p>Stunning Visuals</p>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary-large">Start Exploring →</button>
-
-                <p class="form-disclaimer">
-                    By joining, you agree to our terms. No spam. Ever.
-                </p>
-            </form>
-        </div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo-section" onclick="goToHome()">
-                <span class="logo-icon">⚛️</span>
-                <span class="logo-text">VISIQ</span>
-            </div>
-            <div class="nav-links">
-                <a href="#physics" class="nav-link category-nav" data-category="physics">Physics</a>
-                <a href="#biology" class="nav-link category-nav" data-category="biology">Biology</a>
-                <a href="#geography" class="nav-link category-nav" data-category="geography">Geography</a>
-                <a href="#astronomy" class="nav-link category-nav" data-category="astronomy">Astronomy</a>
-                <button class="btn-logout" id="logout-btn" onclick="logout()">Logout</button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <div id="hero-section" class="hero">
-        <div class="hero-content">
-            <div class="hero-badge">Welcome, <span id="user-display">Explorer</span></div>
-            <h1 class="hero-title">Understand Science<br><span class="highlight">Visually</span></h1>
-            <p class="hero-subtitle">From quantum mechanics to cellular biology, watch complex concepts come alive through interactive simulations. Adjust parameters in real-time and see the universe respond.</p>
-            <button class="cta-button" onclick="scrollToCategory('physics')">Start with Physics ↓</button>
-        </div>
-        <div class="hero-visual">
-            <div class="floating-orbs">
-                <div class="orb orb-1"></div>
-                <div class="orb orb-2"></div>
-                <div class="orb orb-3"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Gallery View -->
-    <div id="gallery-view" class="view active">
-        <!-- PHYSICS SECTION -->
-        <section id="physics" class="category-section">
-            <div class="section-header">
-                <div class="category-badge physics-badge">⚛️ Physics</div>
-                <h2>Classical & Modern Physics</h2>
-                <p>From Newton's laws to black holes—explore the forces that shape our universe</p>
-            </div>
-            <div class="gallery-grid physics-grid" id="gallery-grid-physics">
-                <!-- Generated by gallery.js -->
-            </div>
-        </section>
-
-        <!-- BIOLOGY SECTION -->
-        <section id="biology" class="category-section">
-            <div class="section-header">
-                <div class="category-badge biology-badge">🧬 Biology</div>
-                <h2>Cellular & Molecular Biology</h2>
-                <p>Watch cells divide, DNA replicate, and life emerge from simple rules</p>
-            </div>
-            <div class="gallery-grid biology-grid" id="gallery-grid-biology">
-                <!-- Generated by gallery.js -->
-            </div>
-        </section>
-
-        <!-- GEOGRAPHY SECTION -->
-        <section id="geography" class="category-section">
-            <div class="section-header">
-                <div class="category-badge geography-badge">🌍 Geography</div>
-                <h2>Earth Science & Geology</h2>
-                <p>Discover how our planet works—from ocean currents to weather systems</p>
-            </div>
-            <div class="gallery-grid geography-grid" id="gallery-grid-geography">
-                <!-- Generated by gallery.js -->
-            </div>
-        </section>
-
-        <!-- ASTRONOMY SECTION -->
-        <section id="astronomy" class="category-section">
-            <div class="section-header">
-                <div class="category-badge astronomy-badge">🌌 Astronomy</div>
-                <h2>Space & Celestial Mechanics</h2>
-                <p>Explore planets, stars, black holes, and the fabric of spacetime</p>
-            </div>
-            <div class="gallery-grid astronomy-grid" id="gallery-grid-astronomy">
-                <!-- Generated by gallery.js -->
-            </div>
-        </section>
-
-        <!-- Featured Section -->
-        <section class="featured-section">
-            <div class="featured-content">
-                <div class="featured-text">
-                    <h3>Why VISIQ?</h3>
-                    <p>Most science education relies on static diagrams and videos. VISIQ is different — real simulations respond to your input instantly.</p>
-                    <ul class="feature-list">
-                        <li>✓ Real physics engines & algorithms (not animations)</li>
-                        <li>✓ 40+ interactive simulations across 4 domains</li>
-                        <li>✓ Live parameter control with instant feedback</li>
-                        <li>✓ Smooth 60 FPS performance</li>
-                        <li>✓ Educational & stunningly beautiful</li>
-                        <li>✓ Open source & completely free</li>
-                    </ul>
-                </div>
-                <div class="featured-visual">
-                    <div class="particle-grid"></div>
+                <div class="auth-background">
+                    <div class="floating-shape shape-1"></div>
+                    <div class="floating-shape shape-2"></div>
+                    <div class="floating-shape shape-3"></div>
                 </div>
             </div>
-        </section>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>VISIQ</h4>
-                    <p>Science education reimagined</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Resources</h4>
-                    <a href="docs/PHYSICS.md" target="_blank">Physics Guide</a>
-                    <a href="docs/CONTRIBUTING.md" target="_blank">Contribute</a>
-                    <a href="https://github.com/toibawani/visiq" target="_blank">GitHub</a>
-                </div>
-                <div class="footer-section">
-                    <h4>Creator</h4>
-                    <p>Built by <strong>toibawani</strong></p>
-                    <p>Email: toibawani14@gmail.com</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 VISIQ. MIT License. Made with 💜</p>
-            </div>
-        </footer>
-    </div>
+            <!-- Right: Form -->
+            <div class="auth-right">
+                <div class="auth-form-container">
+                    <!-- Login Form -->
+                    <div id="login-form" class="auth-form active">
+                        <h2>Welcome Back</h2>
+                        <p>Sign in to explore the universe</p>
 
-    <!-- Simulation View -->
-    <div id="simulation-view" class="view">
-        <div class="sim-header">
-            <button class="back-button" id="back-button">
-                <span>←</span> Back to Gallery
-            </button>
-            <div class="sim-title-section">
-                <div>
-                    <h1 id="sim-title" class="sim-title"></h1>
-                    <span class="sim-category" id="sim-category"></span>
+                        <form id="form-login" class="form-fields">
+                            <div class="form-field">
+                                <label>Email</label>
+                                <input type="email" id="login-email" placeholder="you@example.com" required>
+                                <span class="field-focus"></span>
+                            </div>
+
+                            <div class="form-field">
+                                <label>Password</label>
+                                <input type="password" id="login-password" placeholder="••••••••" required>
+                                <span class="field-focus"></span>
+                            </div>
+
+                            <button type="submit" class="btn-auth">Sign In</button>
+                        </form>
+
+                        <p class="auth-toggle">
+                            Don't have an account? 
+                            <a href="#" onclick="toggleForm(event)">Create one</a>
+                        </p>
+                    </div>
+
+                    <!-- Signup Form -->
+                    <div id="signup-form" class="auth-form">
+                        <h2>Join VISIQ</h2>
+                        <p>Explore science interactively</p>
+
+                        <form id="form-signup" class="form-fields">
+                            <div class="form-field">
+                                <label>Full Name</label>
+                                <input type="text" id="signup-name" placeholder="Your name" required>
+                                <span class="field-focus"></span>
+                            </div>
+
+                            <div class="form-field">
+                                <label>Email</label>
+                                <input type="email" id="signup-email" placeholder="you@example.com" required>
+                                <span class="field-focus"></span>
+                            </div>
+
+                            <div class="form-field">
+                                <label>Password</label>
+                                <input type="password" id="signup-password" placeholder="••••••••" required>
+                                <span class="field-focus"></span>
+                            </div>
+
+                            <div class="form-field">
+                                <label>Confirm Password</label>
+                                <input type="password" id="signup-confirm" placeholder="••••••••" required>
+                                <span class="field-focus"></span>
+                            </div>
+
+                            <div class="interests-group">
+                                <label>Areas of Interest</label>
+                                <div class="interests-grid">
+                                    <label class="interest-option">
+                                        <input type="checkbox" name="interest" value="physics">
+                                        <span>⚛️ Physics</span>
+                                    </label>
+                                    <label class="interest-option">
+                                        <input type="checkbox" name="interest" value="biology">
+                                        <span>🧬 Biology</span>
+                                    </label>
+                                    <label class="interest-option">
+                                        <input type="checkbox" name="interest" value="geography">
+                                        <span>🌍 Geography</span>
+                                    </label>
+                                    <label class="interest-option">
+                                        <input type="checkbox" name="interest" value="astronomy">
+                                        <span>🌌 Astronomy</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-auth">Create Account</button>
+                        </form>
+
+                        <p class="auth-toggle">
+                            Already have an account? 
+                            <a href="#" onclick="toggleForm(event)">Sign in</a>
+                        </p>
+                    </div>
                 </div>
-                <span class="close-btn" id="close-btn">✕</span>
-            </div>
-        </div>
-        
-        <div class="simulation-container">
-            <div class="simulation-canvas" id="simulation-canvas"></div>
-            
-            <div class="control-panel">
-                <div class="control-header">
-                    <p id="sim-description"></p>
-                </div>
-                
-                <div class="controls-section" id="controls-section"></div>
-                
-                <button class="reset-button" id="reset-button">↻ Reset</button>
             </div>
         </div>
     </div>
 
-    <!-- Cursor Glow -->
-    <div class="cursor-glow" id="cursor-glow"></div>
+    <!-- Main App -->
+    <div id="main-app" class="main-app" style="display: none;">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo-section" onclick="goHome()">
+                    <span class="logo-icon">⚛️</span>
+                    <span class="logo-text">VISIQ</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#physics" class="nav-link" data-category="physics">Physics</a>
+                    <a href="#biology" class="nav-link" data-category="biology">Biology</a>
+                    <a href="#geography" class="nav-link" data-category="geography">Geography</a>
+                    <a href="#astronomy" class="nav-link" data-category="astronomy">Astronomy</a>
+                </div>
+                <div class="nav-right">
+                    <span class="user-name" id="user-display">User</span>
+                    <button class="btn-logout" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Welcome, <span id="hero-user">Explorer</span></h1>
+                <p>Explore 40+ interactive simulations across physics, biology, geography, and astronomy</p>
+                <button class="btn-hero" onclick="document.getElementById('physics').scrollIntoView({behavior:'smooth'})">
+                    Explore Simulations ↓
+                </button>
+            </div>
+            <div class="hero-canvas">
+                <canvas id="hero-canvas"></canvas>
+            </div>
+        </section>
+
+        <!-- Gallery View -->
+        <div id="gallery-view" class="view active">
+            <!-- PHYSICS -->
+            <section id="physics" class="category-section physics-section">
+                <div class="category-header">
+                    <div class="category-badge">⚛️</div>
+                    <div class="category-info">
+                        <h2>Physics</h2>
+                        <p>Classical mechanics to modern physics. Explore forces, waves, quantum mechanics, and spacetime.</p>
+                    </div>
+                </div>
+                <div class="simulations-grid" id="physics-grid">
+                    <!-- Generated -->
+                </div>
+            </section>
+
+            <!-- BIOLOGY -->
+            <section id="biology" class="category-section biology-section">
+                <div class="category-header">
+                    <div class="category-badge">🧬</div>
+                    <div class="category-info">
+                        <h2>Biology</h2>
+                        <p>Cell division, DNA, proteins, and evolution. Watch life at the molecular level.</p>
+                    </div>
+                </div>
+                <div class="simulations-grid" id="biology-grid">
+                    <!-- Generated -->
+                </div>
+            </section>
+
+            <!-- GEOGRAPHY -->
+            <section id="geography" class="category-section geography-section">
+                <div class="category-header">
+                    <div class="category-badge">🌍</div>
+                    <div class="category-info">
+                        <h2>Geography</h2>
+                        <p>Plate tectonics, weather, erosion, and water cycles. Understand Earth's systems.</p>
+                    </div>
+                </div>
+                <div class="simulations-grid" id="geography-grid">
+                    <!-- Generated -->
+                </div>
+            </section>
+
+            <!-- ASTRONOMY -->
+            <section id="astronomy" class="category-section astronomy-section">
+                <div class="category-header">
+                    <div class="category-badge">🌌</div>
+                    <div class="category-info">
+                        <h2>Astronomy</h2>
+                        <p>Stars, galaxies, black holes, and cosmic expansion. Explore the universe.</p>
+                    </div>
+                </div>
+                <div class="simulations-grid" id="astronomy-grid">
+                    <!-- Generated -->
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="footer-content">
+                    <div class="footer-column">
+                        <h4>VISIQ</h4>
+                        <p>Interactive Science Education</p>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="docs/PHYSICS.md" target="_blank">Physics Guide</a>
+                        <a href="https://github.com/toibawani/visiq" target="_blank">GitHub</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Creator</h4>
+                        <p><strong>toibawani</strong></p>
+                        <p>toibawani14@gmail.com</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 VISIQ. MIT License. 💜</p>
+                </div>
+            </footer>
+        </div>
+
+        <!-- Simulation View -->
+        <div id="simulation-view" class="view">
+            <div class="sim-header">
+                <button class="btn-back" onclick="backToGallery()">← Back</button>
+                <div class="sim-title">
+                    <h1 id="sim-title"></h1>
+                    <span id="sim-category" class="sim-category"></span>
+                </div>
+            </div>
+
+            <div class="sim-container">
+                <div class="canvas-wrapper">
+                    <div id="simulation-canvas"></div>
+                </div>
+
+                <div class="controls-wrapper">
+                    <div class="control-header">
+                        <p id="sim-description"></p>
+                    </div>
+                    <div id="controls-section" class="controls-section"></div>
+                    <button class="btn-reset" id="reset-button">↻ Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="assets/auth.js"></script>
