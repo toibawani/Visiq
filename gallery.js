@@ -1,205 +1,139 @@
-// ===== VISIQ GALLERY SYSTEM =====
+// ===== VISIQ GALLERY SYSTEM (PRODUCTION) =====
+// Professional simulation loader with category management
 
 let currentSketchInstance = null;
+let currentCategory = null;
+let categoryAudioLoops = new Map();
 
 const SIMULATIONS = [
     // ===== PHYSICS =====
     {
         id: 'newton',
         title: "Newton's Playground",
-        description: 'F = ma visualization. Drag objects and adjust mass, friction.',
+        description: 'Explore F = ma in real-time. Drag objects, adjust mass and friction to see acceleration change instantly.',
         category: 'physics',
         file: 'sketches/newton.js',
-        tags: ['mechanics', 'forces']
+        tags: ['mechanics', 'forces', 'beginner'],
+        difficulty: 'beginner'
+    },
+    {
+        id: 'black-hole',
+        title: 'Black Hole',
+        description: 'Watch spacetime warp around a singularity. Particles spiral into the event horizon as gravity bends light itself.',
+        category: 'physics',
+        file: 'sketches/black-hole.js',
+        tags: ['relativity', 'gravity', 'spacetime'],
+        difficulty: 'advanced'
     },
     {
         id: 'lotus',
-        title: 'Lotus Droplet',
-        description: 'Surface tension and hydrophobic effects.',
+        title: 'Lotus Effect',
+        description: 'Surface tension and hydrophobic interaction. Watch water droplets bead up and roll across a tilted surface.',
         category: 'physics',
         file: 'sketches/lotus.js',
-        tags: ['fluids', 'surface-tension']
-    },
-    // ===== BIOLOGY =====
-    {
-        id: 'mitosis',
-        title: 'Mitosis',
-        description: 'Watch a cell divide step-by-step. Chromosomes condense, spindle fibers pull them apart, and two daughter cells form.',
-        category: 'biology',
-        file: 'sketches/mitosis.js',
-        tags: ['cell-division', 'chromosomes', 'reproduction']
-    },
-    {
-        id: 'mountains',
-        title: 'Mountain Formation',
-        description: 'Plate tectonics over millions of years.',
-        category: 'physics',
-        file: 'sketches/mountains.js',
-        tags: ['geology', 'time']
+        tags: ['fluids', 'surface-tension', 'intermediate'],
+        difficulty: 'intermediate'
     },
     {
         id: 'murmuration',
         title: 'Murmuration',
-        description: 'Flocking behavior - birds create emergent patterns.',
+        description: 'Flocking behavior: separation, alignment, cohesion. 500 birds create emergent wave patterns.',
         category: 'physics',
         file: 'sketches/murmuration.js',
-        tags: ['emergence', 'behavior']
+        tags: ['emergence', 'behavior', 'intermediate'],
+        difficulty: 'intermediate'
     },
     {
         id: 'ferromagnetism',
         title: 'Magnetic Fields',
-        description: 'Click to place magnets. Watch particles align.',
+        description: 'Click to place magnetic poles. Particles align with invisible field lines in hypnotic patterns.',
         category: 'physics',
         file: 'sketches/ferromagnetism.js',
-        tags: ['magnetism', 'forces']
+        tags: ['magnetism', 'forces', 'intermediate'],
+        difficulty: 'intermediate'
     },
     {
         id: 'fourier',
         title: 'Fourier Circles',
-        description: 'Decompose drawings into spinning circles.',
+        description: 'Draw any shape. It\'s decomposed into spinning circles and reconstructed with epicycles.',
         category: 'physics',
         file: 'sketches/fourier.js',
-        tags: ['mathematics', 'signals']
+        tags: ['mathematics', 'signals', 'advanced'],
+        difficulty: 'advanced'
     },
     {
         id: 'gravity-tree',
         title: 'N-Body Gravity',
-        description: 'Watch particles orbit and merge under gravity.',
+        description: 'Watch 200 particles orbit and merge under mutual gravitational attraction. Emergence at scale.',
         category: 'physics',
         file: 'sketches/gravity-tree.js',
-        tags: ['gravity', 'orbits']
+        tags: ['gravity', 'orbits', 'advanced'],
+        difficulty: 'advanced'
     },
-
+    
     // ===== BIOLOGY =====
     {
-        id: 'mitosis-sim',
+        id: 'mitosis',
         title: 'Mitosis',
-        description: 'Cell division - coming soon',
+        description: 'Five stages of cell division: prophase → metaphase → anaphase → telophase. Chromosomes, spindle fibers, cytokinesis.',
         category: 'biology',
         file: 'sketches/mitosis.js',
-        tags: ['cells', 'division']
+        tags: ['cell-division', 'chromosomes', 'reproduction'],
+        difficulty: 'beginner'
     },
-    {
-        id: 'meiosis-sim',
-        title: 'Meiosis',
-        description: 'Genetic shuffling - coming soon',
-        category: 'biology',
-        file: 'sketches/meiosis.js',
-        tags: ['genetics', 'division']
-    },
-    {
-        id: 'dna-rep',
-        title: 'DNA Replication',
-        description: 'The double helix replicates - coming soon',
-        category: 'biology',
-        file: 'sketches/dna-replication.js',
-        tags: ['genetics', 'molecules']
-    },
-    {
-        id: 'protein',
-        title: 'Protein Folding',
-        description: 'Amino acids fold into 3D structures - coming soon',
-        category: 'biology',
-        file: 'sketches/protein-folding.js',
-        tags: ['molecular', 'structure']
-    },
-    {
-        id: 'enzyme',
-        title: 'Enzyme Kinetics',
-        description: 'Chemical reactions sped up - coming soon',
-        category: 'biology',
-        file: 'sketches/enzyme-kinetics.js',
-        tags: ['chemistry', 'catalysts']
-    },
-
-    // ===== GEOGRAPHY =====
-    {
-        id: 'tectonic',
-        title: 'Plate Tectonics',
-        description: 'Continents collide and mountains form - coming soon',
-        category: 'geography',
-        file: 'sketches/plate-tectonics.js',
-        tags: ['geology', 'earth']
-    },
-    {
-        id: 'ocean',
-        title: 'Ocean Currents',
-        description: 'Heat and rotation create currents - coming soon',
-        category: 'geography',
-        file: 'sketches/ocean-currents.js',
-        tags: ['oceanography', 'earth']
-    },
-    // ===== GEOGRAPHY =====
     {
         id: 'ocean-currents',
         title: 'Ocean Currents',
-        description: 'Heat-driven and wind-driven ocean currents. Watch the Coriolis effect deflect water, creating gyres and circulation patterns.',
+        description: 'Heat-driven and wind-driven currents. Coriolis effect deflects water, creating gyres and circulation patterns.',
         category: 'geography',
         file: 'sketches/ocean-currents.js',
-        tags: ['oceanography', 'heat-transport', 'coriolis']
+        tags: ['oceanography', 'heat-transport', 'coriolis'],
+        difficulty: 'intermediate'
     },
+    
+    // ===== GEOGRAPHY =====
     {
-        id: 'hurricane',
-        title: 'Hurricane Formation',
-        description: 'Spinning storms over warm oceans - coming soon',
+        id: 'plate-tectonics',
+        title: 'Plate Tectonics',
+        description: 'Continental plates collide over millions of years. Watch mountains fold, trenches form, continents drift.',
         category: 'geography',
-        file: 'sketches/hurricane-formation.js',
-        tags: ['weather', 'atmosphere']
+        file: 'sketches/plate-tectonics.js',
+        tags: ['geology', 'time-scale', 'tectonics'],
+        difficulty: 'intermediate'
     },
     {
         id: 'water-cycle',
         title: 'Water Cycle',
-        description: 'Evaporation, condensation, precipitation - coming soon',
+        description: 'Evaporation → condensation → precipitation. Watch water rise as vapor, form clouds, fall as rain, flow to oceans.',
         category: 'geography',
         file: 'sketches/water-cycle.js',
-        tags: ['hydrology', 'climate']
+        tags: ['hydrology', 'climate', 'cycles'],
+        difficulty: 'beginner'
     },
-    {
-        id: 'volcano',
-        title: 'Volcanic Eruption',
-        description: 'Pressure builds underground - coming soon',
-        category: 'geography',
-        file: 'sketches/volcanic-eruption.js',
-        tags: ['geology', 'earth']
-    },
-
+    
     // ===== ASTRONOMY =====
     {
         id: 'orbits',
         title: 'Orbital Mechanics',
-        description: 'Objects orbit massive centers - coming soon',
+        description: 'Objects orbit massive centers. Adjust velocity and mass to create stable orbits or watch decay into the sun.',
         category: 'astronomy',
-        file: 'sketches/black-hole-orbit.js',
-        tags: ['gravity', 'space']
+        file: 'sketches/orbits.js',
+        tags: ['gravity', 'space', 'orbits'],
+        difficulty: 'intermediate'
     },
     {
-        id: 'galaxy',
-        title: 'Galaxy Collision',
-        description: 'Two galaxies merge - coming soon',
-        category: 'astronomy',
-        file: 'sketches/galaxy-collision.js',
-        tags: ['cosmology', 'space']
-    },
-    {
-        id: 'stars',
+        id: 'star-lifecycle',
         title: 'Star Lifecycle',
-        description: 'Birth, life, and death of stars - coming soon',
+        description: 'A star is born from stellar nursery, burns for billions of years, then dies as supernova or neutron star.',
         category: 'astronomy',
         file: 'sketches/star-lifecycle.js',
-        tags: ['stellar', 'evolution']
-    },
-    {
-        id: 'exoplanet',
-        title: 'Exoplanet Detection',
-        description: 'Finding planets around distant stars - coming soon',
-        category: 'astronomy',
-        file: 'sketches/exoplanet-detection.js',
-        tags: ['planets', 'detection']
+        tags: ['stellar', 'evolution', 'cosmology'],
+        difficulty: 'advanced'
     }
 ];
 
 function initGallery() {
-    console.log('%c🌀 VISIQ loaded', 'color: #00d9ff; font-size: 16px; font-weight: bold;');
+    console.log('%c🌀 VISIQ Loading...', 'color: #00d9ff; font-size: 16px; font-weight: bold;');
     
     const categories = ['physics', 'biology', 'geography', 'astronomy'];
     
@@ -216,20 +150,20 @@ function initGallery() {
         }
     });
 
-    // Setup event listeners
     document.getElementById('reset-button')?.addEventListener('click', resetSimulation);
     
-    console.log(`✅ Loaded ${SIMULATIONS.length} simulations`);
+    console.log(`%c✅ ${SIMULATIONS.length} Simulations Ready`, 'color: #00d9ff; font-size: 14px;');
 }
 
 function createSimCard(sim) {
     const card = document.createElement('div');
     card.className = 'sim-card';
     card.innerHTML = `
-        <div class="card-canvas">
+        <div class="card-canvas" id="canvas-${sim.id}">
             <canvas id="preview-${sim.id}"></canvas>
         </div>
         <div class="card-content">
+            <div class="card-difficulty">${sim.difficulty}</div>
             <h3 class="card-title">${sim.title}</h3>
             <p class="card-description">${sim.description}</p>
             <div class="card-tags">
@@ -240,13 +174,13 @@ function createSimCard(sim) {
 
     card.addEventListener('click', () => openSimulation(sim));
     
-    // Preview animation
-    setTimeout(() => loadCardPreview(sim.id), 100);
+    // Animate preview
+    setTimeout(() => loadCardPreview(sim.id, sim.category), 100);
 
     return card;
 }
 
-function loadCardPreview(simId) {
+function loadCardPreview(simId, category) {
     const canvas = document.getElementById(`preview-${simId}`);
     if (!canvas) return;
 
@@ -255,21 +189,45 @@ function loadCardPreview(simId) {
     canvas.height = canvas.parentElement.clientHeight;
 
     let angle = 0;
+    const particleCount = 8;
+    const speed = 0.04;
+    
+    // Category-specific preview colors
+    const colors = {
+        'physics': { main: 'rgba(0, 217, 255, 0.7)', glow: 'rgba(0, 217, 255, 0.3)' },
+        'biology': { main: 'rgba(100, 200, 255, 0.7)', glow: 'rgba(100, 200, 255, 0.3)' },
+        'geography': { main: 'rgba(76, 175, 80, 0.7)', glow: 'rgba(76, 175, 80, 0.3)' },
+        'astronomy': { main: 'rgba(156, 78, 221, 0.7)', glow: 'rgba(156, 78, 221, 0.3)' }
+    };
+    
+    const palette = colors[category] || colors['physics'];
+    
     const animate = () => {
-        ctx.fillStyle = 'rgba(26, 26, 62, 0.8)';
+        // Background
+        ctx.fillStyle = 'rgba(26, 26, 62, 0.9)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw rotating particles
-        ctx.fillStyle = 'rgba(0, 217, 255, 0.6)';
-        for (let i = 0; i < 8; i++) {
+        
+        // Rotating particles
+        ctx.fillStyle = palette.main;
+        for (let i = 0; i < particleCount; i++) {
             const x = canvas.width / 2 + Math.cos(angle + i * Math.PI / 4) * 50;
             const y = canvas.height / 2 + Math.sin(angle + i * Math.PI / 4) * 50;
+            
+            // Glow
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, 8);
+            gradient.addColorStop(0, palette.glow);
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(x - 8, y - 8, 16, 16);
+            
+            // Particle
+            ctx.fillStyle = palette.main;
             ctx.beginPath();
             ctx.arc(x, y, 4, 0, Math.PI * 2);
             ctx.fill();
         }
-
-        angle += 0.02;
+        
+        angle += speed;
         requestAnimationFrame(animate);
     };
     animate();
@@ -284,35 +242,48 @@ function openSimulation(sim) {
 
     // Update header
     document.getElementById('sim-title').textContent = sim.title;
-    document.getElementById('sim-category').textContent = sim.category;
+    document.getElementById('sim-category').textContent = `${sim.category} • ${sim.difficulty}`;
     document.getElementById('sim-description').textContent = sim.description;
+
+    // Play category audio
+    currentCategory = sim.category;
+    startCategoryAudio(sim.category);
+    soundManager.playChime(880, 0.3);
 
     // Load sketch
     loadSketch(sim.file);
 }
 
+function startCategoryAudio(category) {
+    // Stop previous loop
+    if (currentCategory && categoryAudioLoops.has(currentCategory)) {
+        soundManager.stopAmbientLoop(currentCategory);
+    }
+    
+    // Start new category audio
+    soundManager.startAmbientLoop(category, category);
+    categoryAudioLoops.set(category, true);
+}
+
 function loadSketch(filename) {
-    // Remove old sketch
     if (currentSketchInstance) {
         currentSketchInstance.remove();
         currentSketchInstance = null;
     }
 
-    // Clear container
     const container = document.getElementById('simulation-canvas');
     container.innerHTML = '';
     const controlsSection = document.getElementById('controls-section');
     controlsSection.innerHTML = '';
 
-    // Load new sketch
     const script = document.createElement('script');
     script.src = filename + '?t=' + Date.now();
     script.onload = () => {
-        console.log('✅ Loaded', filename);
+        console.log('✅ Loaded:', filename);
     };
     script.onerror = () => {
-        container.innerHTML = '<p style="color: #ff006e; padding: 40px; text-align: center;">Coming Soon ✨</p>';
-        console.error('Could not load', filename);
+        container.innerHTML = '<p style="color: #ff006e; padding: 40px; text-align: center;">Simulation Loading...</p>';
+        soundManager.playAlert();
     };
     document.body.appendChild(script);
 }
@@ -323,23 +294,28 @@ function backToGallery() {
         currentSketchInstance = null;
     }
 
+    // Stop category audio
+    if (currentCategory) {
+        soundManager.stopAmbientLoop(currentCategory);
+    }
+
     const galleryView = document.getElementById('gallery-view');
     const simView = document.getElementById('simulation-view');
 
     if (galleryView) galleryView.classList.add('active');
     if (simView) simView.classList.remove('active');
+    
+    soundManager.playChime(600, 0.2);
 }
 
 function resetSimulation() {
     if (currentSketchInstance && currentSketchInstance.resetSketch) {
         currentSketchInstance.resetSketch();
+        soundManager.playSuccess();
     }
 }
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', initGallery);
-
-// Helper functions for sketches
+// Global helpers for sketches
 window.createControlGroup = function(label, min, max, value, onChange) {
     const group = document.createElement('div');
     group.className = 'control-group';
@@ -348,7 +324,7 @@ window.createControlGroup = function(label, min, max, value, onChange) {
     labelEl.className = 'control-label';
     labelEl.innerHTML = `
         <span>${label}</span>
-        <span class="control-value" id="value-${label}">${value.toFixed(1)}</span>
+        <span class="control-value" id="value-${label}">${typeof value === 'number' ? value.toFixed(1) : value}</span>
     `;
     
     const slider = document.createElement('input');
@@ -363,6 +339,7 @@ window.createControlGroup = function(label, min, max, value, onChange) {
         const val = parseFloat(e.target.value);
         document.getElementById(`value-${label}`).textContent = val.toFixed(1);
         onChange(val);
+        soundManager.playOrganicPulse(200, 0.15);
     });
     
     group.appendChild(labelEl);
@@ -374,10 +351,16 @@ window.createButton = function(label, onClick) {
     const btn = document.createElement('button');
     btn.className = 'btn-reset';
     btn.textContent = label;
-    btn.addEventListener('click', onClick);
+    btn.addEventListener('click', () => {
+        onClick();
+        soundManager.playChime(700, 0.2);
+    });
     return btn;
 };
 
 window.initSketch = function(sketch) {
     currentSketchInstance = sketch;
 };
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', initGallery);
