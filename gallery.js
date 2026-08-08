@@ -21,6 +21,14 @@ const SIMULATIONS = [
         tags: ['fluids', 'surface-tension']
     },
     {
+        id: 'black-hole',
+        title: 'Black Hole',
+        description: 'Watch spacetime warp around a black hole. Particles spiral into the event horizon as gravity bends light itself.',
+        category: 'physics',
+        file: 'sketches/black-hole.js',
+        tags: ['relativity', 'gravity', 'spacetime']
+    },
+    {
         id: 'mountains',
         title: 'Mountain Formation',
         description: 'Plate tectonics over millions of years.',
