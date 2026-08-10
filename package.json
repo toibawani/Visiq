@@ -1,0 +1,22 @@
+{
+  "name": "visiq",
+  "version": "1.0.0",
+  "description": "Premium interactive science visualization platform",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server",
+    "dev": "live-server --port=8000"
+  },
+  "keywords": [
+    "science",
+    "visualization",
+    "physics",
+    "biology",
+    "simulation"
+  ],
+  "author": "toibawani",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
