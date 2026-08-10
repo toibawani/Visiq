@@ -1,18 +1,21 @@
-// ===== VISIQ ADVANCED AUDIO SYSTEM =====
-// Binaural, ambient, non-intrusive sound design
-// Inspired by: Apple, Headspace, scientific visualizations
+// ===== VISIQ ADVANCED AUDIO SYSTEM v2.0 =====
+// Immersive 3D spatial audio with category-specific soundscapes
 
 class AdvancedSoundManager {
     constructor() {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.masterGain = this.audioContext.createGain();
         this.masterGain.connect(this.audioContext.destination);
-        this.masterGain.gain.value = 0.15; // Subtle baseline
+        this.masterGain.gain.value = 0.15;
         
         this.isMuted = false;
         this.volume = 0.15;
         
-        // Convolver for spatial audio
+        // 3D Spatial Audio
+        this.panner = this.audioContext.createStereoPanner();
+        this.panner.connect(this.masterGain);
+        
+        // Convolver for spatial reverb
         this.convolver = this.audioContext.createConvolver();
         this.dryGain = this.audioContext.createGain();
         this.wetGain = this.audioContext.createGain();
@@ -24,19 +27,25 @@ class AdvancedSoundManager {
         this.dryGain.gain.value = 0.7;
         this.wetGain.gain.value = 0.3;
         
-        // Create impulse response (room tone)
+        // Create impulse response for reverb
         this.createReverbImpulse();
         
+        // Sound pools
         this.soundsPlaying = new Map();
         this.ambientLoops = new Map();
+        this.categoryAmbience = new Map();
+        
+        // Audio visualizer nodes
+        this.analyser = this.audioContext.createAnalyser();
+        this.masterGain.connect(this.analyser);
         
         this.initUI();
+        this.initCategoryAmbienceTracks();
     }
     
     createReverbImpulse() {
-        // Simple reverb impulse response (room ambience)
         const rate = this.audioContext.sampleRate;
-        const length = rate * 2; // 2 second tail
+        const length = rate * 3;
         const impulse = this.audioContext.createBuffer(2, length, rate);
         const left = impulse.getChannelData(0);
         const right = impulse.getChannelData(1);
@@ -49,13 +58,42 @@ class AdvancedSoundManager {
         this.convolver.buffer = impulse;
     }
     
+    initCategoryAmbienceTracks() {
+        this.categoryProfiles = {
+            'physics': {
+                baseFreq: 55,
+                name: 'Quantum Hum',
+                color: 'rgba(0, 217, 255, 0.3)'
+            },
+            'biology': {
+                baseFreq: 63,
+                name: 'Cellular Pulse',
+                color: 'rgba(100, 200, 255, 0.3)'
+            },
+            'geography': {
+                baseFreq: 48,
+                name: 'Earth Resonance',
+                color: 'rgba(76, 175, 80, 0.3)'
+            },
+            'astronomy': {
+                baseFreq: 44,
+                name: 'Cosmic Whisper',
+                color: 'rgba(156, 78, 221, 0.3)'
+            }
+        };
+    }
+    
     initUI() {
-        // Create audio control in DOM
         const audioControl = document.createElement('div');
         audioControl.id = 'audio-control';
         audioControl.innerHTML = `
+            <div class="audio-visualizer" id="audio-visualizer"></div>
             <button id="audio-toggle" title="Toggle sound">🔊</button>
-            <input type="range" id="volume-slider" min="0" max="100" value="15" title="Volume">
+            <div class="volume-container">
+                <input type="range" id="volume-slider" min="0" max="100" value="15" title="Volume">
+                <span id="volume-percent">15%</span>
+            </div>
+            <div id="audio-label" class="audio-label">Initializing...</div>
         `;
         audioControl.style.cssText = `
             position: fixed;
@@ -63,13 +101,16 @@ class AdvancedSoundManager {
             right: 20px;
             z-index: 1000;
             display: flex;
-            gap: 10px;
-            align-items: center;
-            background: rgba(26, 26, 62, 0.9);
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 217, 255, 0.2);
-            backdrop-filter: blur(10px);
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-end;
+            background: rgba(26, 26, 62, 0.95);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            font-family: 'Space Grotesk', sans-serif;
         `;
         
         document.body.appendChild(audioControl);
@@ -77,7 +118,53 @@ class AdvancedSoundManager {
         document.getElementById('audio-toggle').addEventListener('click', () => this.toggleMute());
         document.getElementById('volume-slider').addEventListener('input', (e) => {
             this.setVolume(e.target.value / 100);
+            document.getElementById('volume-percent').textContent = e.target.value + '%';
         });
+        
+        // Start audio visualizer
+        this.startVisualizer();
+    }
+    
+    startVisualizer() {
+        const canvas = document.getElementById('audio-visualizer');
+        if (!canvas) return;
+        
+        canvas.width = 120;
+        canvas.height = 40;
+        canvas.style.cssText = `
+            width: 120px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        `;
+        
+        const ctx = canvas.getContext('2d');
+        
+        const draw = () => {
+            const dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+            this.analyser.getByteFrequencyData(dataArray);
+            
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const barWidth = (canvas.width / dataArray.length) * 2.5;
+            let x = 0;
+            
+            for (let i = 0; i < dataArray.length; i++) {
+                const barHeight = (dataArray[i] / 255) * canvas.height;
+                
+                const hue = (i / dataArray.length) * 360;
+                ctx.fillStyle = 'hsl(' + hue + ', 100%, 50%)';
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                
+                x += barWidth + 1;
+            }
+            
+            requestAnimationFrame(draw);
+        };
+        
+        draw();
     }
     
     toggleMute() {
@@ -93,9 +180,8 @@ class AdvancedSoundManager {
         }
     }
     
-    // ===== ORCHESTRAL TONES =====
+    // ===== CATEGORY AMBIENT SOUNDSCAPES =====
     
-    // Deep cosmic hum (for black holes, space)
     playCosmicHum(frequency = 30, duration = 2) {
         if (this.isMuted) return;
         
@@ -118,7 +204,6 @@ class AdvancedSoundManager {
         osc.stop(this.audioContext.currentTime + duration);
     }
     
-    // Organic pulse (for cells, biology)
     playOrganicPulse(frequency = 120, duration = 0.4) {
         if (this.isMuted) return;
         
@@ -139,7 +224,6 @@ class AdvancedSoundManager {
         osc.stop(this.audioContext.currentTime + duration);
     }
     
-    // Crystalline chime (for physics, precision)
     playChime(frequency = 880, duration = 0.6) {
         if (this.isMuted) return;
         
@@ -159,7 +243,6 @@ class AdvancedSoundManager {
         osc.stop(this.audioContext.currentTime + duration);
     }
     
-    // Flowing water (for geography, fluid dynamics)
     playFluidWhoosh(startFreq = 300, endFreq = 100, duration = 0.3) {
         if (this.isMuted) return;
         
@@ -180,17 +263,48 @@ class AdvancedSoundManager {
         osc.stop(this.audioContext.currentTime + duration);
     }
     
-    // Ambient loop (background atmosphere)
+    playResonance(frequency = 100, duration = 1.5) {
+        if (this.isMuted) return;
+        
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        const filter = this.audioContext.createBiquadFilter();
+        
+        osc.type = 'sine';
+        osc.frequency.value = frequency;
+        
+        filter.type = 'lowpass';
+        filter.frequency.value = 200;
+        filter.Q.value = 5;
+        
+        gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
+        
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.dryGain);
+        
+        osc.start();
+        osc.stop(this.audioContext.currentTime + duration);
+    }
+    
     startAmbientLoop(category = 'physics', loopId = 'main') {
-        if (this.ambientLoops.has(loopId)) return; // Already playing
+        if (this.ambientLoops.has(loopId)) return;
+        
+        const profile = this.categoryProfiles[category] || this.categoryProfiles['physics'];
         
         const loop = {
             active: true,
-            frequency: category === 'physics' ? 50 : category === 'biology' ? 60 : category === 'geography' ? 55 : 45,
-            phase: 0
+            frequency: profile.baseFreq,
+            phase: 0,
+            category: category
         };
         
         this.ambientLoops.set(loopId, loop);
+        
+        // Update label
+        const label = document.getElementById('audio-label');
+        if (label) label.textContent = profile.name;
         
         const playAmbient = () => {
             if (!loop.active) return;
@@ -209,24 +323,46 @@ class AdvancedSoundManager {
         }
     }
     
-    // Success/transition tone
     playSuccess() {
         if (this.isMuted) return;
         
         const now = this.audioContext.currentTime;
-        const frequencies = [440, 550, 660]; // A-major triad
+        const frequencies = [440, 550, 660];
         
         frequencies.forEach((freq, i) => {
             setTimeout(() => this.playChime(freq, 0.4), i * 100);
         });
     }
     
-    // Alert/attention
     playAlert() {
         if (this.isMuted) return;
         
         this.playChime(1200, 0.2);
         setTimeout(() => this.playChime(1200, 0.2), 200);
+    }
+    
+    // Spatial audio effects
+    playSpatialSound(frequency, duration, panPosition = 0) {
+        if (this.isMuted) return;
+        
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        const localPanner = this.audioContext.createStereoPanner();
+        
+        osc.type = 'sine';
+        osc.frequency.value = frequency;
+        
+        gain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
+        
+        localPanner.pan.value = panPosition;
+        
+        osc.connect(gain);
+        gain.connect(localPanner);
+        localPanner.connect(this.dryGain);
+        
+        osc.start();
+        osc.stop(this.audioContext.currentTime + duration);
     }
 }
 
