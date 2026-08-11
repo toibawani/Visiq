@@ -1,43 +1,46 @@
-// ===== DNA REPLICATION SIMULATION v1.0 =====
-// Photorealistic molecular biology
-// Biology: Double helix unwinding, base pairing, DNA polymerase, semi-conservative replication
-// Graphics: 3D helix, nucleotides, hydrogen bonds, replication fork, leading/lagging strands
+// ===== DNA REPLICATION SIMULATION v2.0 =====
+// Ultimate molecular biology with CRISPR, codons, proteins, and advanced mechanics
 
 let dnaReplicationSketch = function(p) {
     let canvasWidth = 800;
     let canvasHeight = 600;
     
-    // Simulation state
     let time = 0;
-    let replicationPhase = 0; // 0: Intact helix, 1: Unwinding, 2: Leading strand, 3: Lagging strand, 4: Complete
+    let replicationPhase = 0; // 0: Intact, 1: Unwinding, 2: Leading, 3: Lagging, 4: Complete, 5: CRISPR Edit
     let phaseProgress = 0;
     let autoPlay = true;
     let speed = 1;
     let showBonds = true;
     let showPolymerase = true;
+    let showCodons = true;
+    let showProteinSynthesis = true;
     
-    // DNA structure
     let helixSegments = [];
     let nucleotides = [];
     let helixRadius = 40;
     let helixPitch = 80;
     let totalTurns = 3;
     
-    // Replication machinery
     let helicase = { x: 0, y: 0, progress: 0, isActive: false };
     let polymeraseA = { x: 0, y: 0, progress: 0, direction: 1 };
     let polymeraseB = { x: 0, y: 0, progress: 0, direction: -1 };
+    let crispr = { x: 0, y: 0, progress: 0, isActive: false, targetIndex: 8 };
     
-    // Strand states
     let strandA = [];
     let strandB = [];
     let newStrandA = [];
     let newStrandB = [];
-    
-    // Visual elements
-    let hydrogenBonds = [];
+    let mRNAStrand = [];
+    let ribosomes = [];
+    let proteins = [];
     let nucleotidePool = [];
-    let replicationFork = { x: 0, y: 0, width: 0 };
+    let aminoAcidPool = [];
+    let codonMarkers = [];
+    let editSite = null;
+    
+    let hydrogenBonds = [];
+    let cellularBackground = [];
+    let particleEffects = [];
     
     p.setup = function() {
         const container = document.getElementById('simulation-canvas');
@@ -55,18 +58,16 @@ let dnaReplicationSketch = function(p) {
     };
     
     p.draw = function() {
-        // Cellular background
         drawCellularBackground();
+        drawCellMembrane();
         
-        // Clear with gradient
         p.background('#050507');
         
-        // Update physics
         if (autoPlay) {
             phaseProgress += 0.002 * speed;
             if (phaseProgress >= 1) {
                 phaseProgress = 0;
-                replicationPhase = (replicationPhase + 1) % 5;
+                replicationPhase = (replicationPhase + 1) % 6;
                 soundManager.playOrganicPulse(150 + replicationPhase * 40, 0.3);
             }
         }
@@ -74,11 +75,13 @@ let dnaReplicationSketch = function(p) {
         updateDNAStructure();
         updateReplicationMachinery();
         updateNucleotidePairing();
-        updateReplicationFork();
+        updateCRISPR();
+        updateTranscription();
+        updateTranslation();
+        updateParticleEffects();
         
-        // Rendering (back to front)
-        drawCellMembrane();
         drawNucleotidePool();
+        drawAminoAcidPool();
         drawBackgroundStrands();
         drawHelixStructure();
         
@@ -93,10 +96,22 @@ let dnaReplicationSketch = function(p) {
             drawPolymerases();
         }
         
-        drawNewStrands();
-        drawCompleteHélices();
+        if (showCodons) {
+            drawCodonMarkers();
+        }
         
-        // Info
+        drawNewStrands();
+        drawCRISPRCas9();
+        drawmRNA();
+        drawRibosomes();
+        
+        if (showProteinSynthesis) {
+            drawProteins();
+        }
+        
+        drawCompleteHelices();
+        drawParticleEffects();
+        
         drawDNAInfo();
         
         time += 0.016;
@@ -106,50 +121,51 @@ let dnaReplicationSketch = function(p) {
         const centerX = canvasWidth / 2;
         const centerY = canvasHeight / 2;
         
-        // Create initial double helix
         strandA = [];
         strandB = [];
         helixSegments = [];
         
-        const segmentCount = 20;
+        const segmentCount = 24;
+        const baseSequenceA = ['A', 'T', 'G', 'C', 'A', 'T', 'G', 'C', 'A', 'T', 'C', 'G', 'A', 'T', 'G', 'C', 'C', 'G', 'A', 'T', 'A', 'T', 'G', 'C'];
+        
         for (let i = 0; i < segmentCount; i++) {
             const t = i / segmentCount;
             const angle = t * totalTurns * p.TWO_PI;
             const y = centerY - helixPitch * totalTurns / 2 + t * helixPitch * totalTurns;
             
-            // Strand A (top strand)
             const aX = centerX + Math.cos(angle) * helixRadius;
+            const baseA = baseSequenceA[i];
+            
             strandA.push({
                 index: i,
                 x: aX,
                 y: y,
                 baseX: aX,
                 baseY: y,
-                base: p.random(['A', 'T', 'G', 'C']),
-                complementBase: null,
+                base: baseA,
+                complementBase: getComplement(baseA),
                 paired: true,
                 brightness: 0.7,
-                angle: angle
+                angle: angle,
+                isEdited: false
             });
             
-            // Strand B (bottom strand)
             const bX = centerX + Math.cos(angle + p.PI) * helixRadius;
+            const baseB = getComplement(baseA);
+            
             strandB.push({
                 index: i,
                 x: bX,
                 y: y,
                 baseX: bX,
                 baseY: y,
-                base: p.random(['A', 'T', 'G', 'C']),
-                complementBase: null,
+                base: baseB,
+                complementBase: baseA,
                 paired: true,
                 brightness: 0.7,
-                angle: angle + p.PI
+                angle: angle + p.PI,
+                isEdited: false
             });
-            
-            // Assign complementary bases
-            setComplementaryBase(strandA[i]);
-            setComplementaryBase(strandB[i]);
             
             helixSegments.push({
                 index: i,
@@ -161,22 +177,64 @@ let dnaReplicationSketch = function(p) {
             });
         }
         
-        // Nucleotide pool (free nucleotides in cytoplasm)
-        nucleotidePool = [];
-        for (let i = 0; i < 50; i++) {
-            nucleotidePool.push({
-                x: p.random(canvasWidth * 0.2, canvasWidth * 0.8),
-                y: p.random(canvasHeight * 0.1, canvasHeight * 0.9),
-                vx: p.random(-1, 1),
-                vy: p.random(-1, 1),
-                base: p.random(['A', 'T', 'G', 'C']),
-                age: 0,
-                incorporated: false,
-                brightness: p.random(0.4, 0.8)
+        // Cellular background particles
+        cellularBackground = [];
+        for (let i = 0; i < 100; i++) {
+            cellularBackground.push({
+                x: p.random(canvasWidth),
+                y: p.random(canvasHeight),
+                size: p.random(1, 3),
+                opacity: p.random(0.1, 0.3),
+                vx: p.random(-0.3, 0.3),
+                vy: p.random(-0.3, 0.3)
             });
         }
         
-        // Initialize polymerases
+        // Nucleotide pool
+        nucleotidePool = [];
+        for (let i = 0; i < 80) {
+            nucleotidePool.push({
+                x: p.random(canvasWidth * 0.15, canvasWidth * 0.85),
+                y: p.random(canvasHeight * 0.1, canvasHeight * 0.9),
+                vx: p.random(-1.5, 1.5),
+                vy: p.random(-1.5, 1.5),
+                base: p.random(['A', 'T', 'G', 'C']),
+                age: 0,
+                incorporated: false,
+                brightness: p.random(0.5, 0.9),
+                trail: []
+            });
+        }
+        
+        // Amino acid pool
+        aminoAcidPool = [];
+        for (let i = 0; i < 60; i++) {
+            aminoAcidPool.push({
+                x: p.random(canvasWidth * 0.15, canvasWidth * 0.85),
+                y: p.random(canvasHeight * 0.1, canvasHeight * 0.9),
+                vx: p.random(-1.2, 1.2),
+                vy: p.random(-1.2, 1.2),
+                type: p.random(['Met', 'Phe', 'Leu', 'Ser', 'Pro', 'Thr', 'Ala', 'Gly', 'Val', 'Ile']),
+                age: 0,
+                brightness: p.random(0.4, 0.8),
+                trail: []
+            });
+        }
+        
+        // Ribosomes
+        ribosomes = [];
+        for (let i = 0; i < 3; i++) {
+            ribosomes.push({
+                x: canvasWidth / 2 - 100 + i * 50,
+                y: canvasHeight / 2 + 150,
+                progress: 0,
+                isActive: false,
+                codonIndex: 0,
+                protein: []
+            });
+        }
+        
+        // Polymerases
         polymeraseA = {
             x: canvasWidth / 2 - 100,
             y: canvasHeight / 2,
@@ -197,7 +255,6 @@ let dnaReplicationSketch = function(p) {
             active: false
         };
         
-        // Helicase
         helicase = {
             x: canvasWidth / 2,
             y: canvasHeight / 2 - helixPitch * totalTurns / 2,
@@ -206,100 +263,138 @@ let dnaReplicationSketch = function(p) {
             speed: 0.4
         };
         
-        // New strands
+        crispr = {
+            x: canvasWidth / 2,
+            y: canvasHeight / 2 - helixPitch * totalTurns / 2 - 80,
+            progress: 0,
+            isActive: false,
+            targetIndex: 8,
+            cutMade: false
+        };
+        
         newStrandA = [];
         newStrandB = [];
+        mRNAStrand = [];
+        proteins = [];
     }
     
-    function setComplementaryBase(nucleotide) {
-        switch(nucleotide.base) {
-            case 'A': nucleotide.complementBase = 'T'; break;
-            case 'T': nucleotide.complementBase = 'A'; break;
-            case 'G': nucleotide.complementBase = 'C'; break;
-            case 'C': nucleotide.complementBase = 'G'; break;
+    function getComplement(base) {
+        switch(base) {
+            case 'A': return 'T';
+            case 'T': return 'A';
+            case 'G': return 'C';
+            case 'C': return 'G';
+            default: return 'N';
         }
     }
     
     function updateDNAStructure() {
-        const centerX = canvasWidth / 2;
-        const centerY = canvasHeight / 2;
         const transition = replicationPhase + phaseProgress;
         
-        // Phase 0: Normal helix (no unwinding)
-        if (transition < 1) {
-            helixSegments.forEach((segment, i) => {
-                const unwound = 0;
-                segment.connected = true;
-            });
-            
-            strandA.forEach((nuc, i) => {
-                nuc.paired = true;
-                nuc.brightness = p.map(i, 0, strandA.length, 0.5, 0.9);
-            });
-            
-            strandB.forEach((nuc, i) => {
-                nuc.paired = true;
-                nuc.brightness = p.map(i, 0, strandB.length, 0.5, 0.9);
-            });
-        }
-        // Phase 1: Helicase unwinding
-        else if (transition < 2) {
-            const unwindAmount = (transition - 1);
-            helicase.isActive = true;
-            helicase.progress = unwindAmount;
-            
-            helixSegments.forEach((segment, i) => {
-                const localProgress = p.constrain(unwindAmount * 5 - i * 0.1, 0, 1);
-                segment.connected = 1 - localProgress;
+        switch(replicationPhase) {
+            case 0: // Intact helix
+                helixSegments.forEach((segment, i) => {
+                    segment.connected = 1;
+                    strandA[i].paired = true;
+                    strandB[i].paired = true;
+                });
+                break;
                 
-                if (i < strandA.length) {
-                    strandA[i].paired = segment.connected > 0.5;
-                    strandB[i].paired = segment.connected > 0.5;
+            case 1: // Unwinding by helicase
+                const unwindAmount = phaseProgress;
+                helicase.isActive = true;
+                helicase.progress = unwindAmount;
+                
+                helixSegments.forEach((segment, i) => {
+                    const localProgress = p.constrain(unwindAmount * 5 - i * 0.1, 0, 1);
+                    segment.connected = 1 - localProgress;
+                    if (i < strandA.length) {
+                        strandA[i].paired = segment.connected > 0.5;
+                        strandB[i].paired = segment.connected > 0.5;
+                    }
+                });
+                break;
+                
+            case 2: // Leading strand
+                const synthProgress = phaseProgress;
+                polymeraseA.active = true;
+                polymeraseA.progress = synthProgress;
+                polymeraseA.nucleotidesAdded = Math.floor(synthProgress * strandA.length);
+                
+                newStrandA = strandA.slice(0, polymeraseA.nucleotidesAdded).map((nuc, idx) => ({
+                    x: nuc.x + 60,
+                    y: nuc.y,
+                    base: nuc.complementBase,
+                    brightness: 0.8,
+                    age: idx
+                }));
+                break;
+                
+            case 3: // Lagging strand
+                const lagProgress = phaseProgress;
+                polymeraseB.active = true;
+                polymeraseB.progress = lagProgress;
+                polymeraseB.nucleotidesAdded = Math.floor(lagProgress * strandB.length);
+                
+                newStrandB = strandB.slice(0, polymeraseB.nucleotidesAdded).map((nuc, idx) => ({
+                    x: nuc.x - 60,
+                    y: nuc.y,
+                    base: nuc.complementBase,
+                    brightness: 0.6 + Math.sin(idx * 0.3) * 0.2,
+                    age: idx
+                }));
+                break;
+                
+            case 4: // Transcription to mRNA
+                if (phaseProgress < 0.5) {
+                    const transcriptProgress = phaseProgress * 2;
+                    mRNAStrand = strandA.slice(0, Math.floor(transcriptProgress * strandA.length)).map((nuc, idx) => {
+                        const rnaBase = nuc.complementBase === 'T' ? 'U' : nuc.complementBase;
+                        return {
+                            x: nuc.x - 100,
+                            y: nuc.y - 80 + Math.sin(idx * 0.2) * 10,
+                            base: rnaBase,
+                            brightness: 0.7,
+                            age: idx
+                        };
+                    });
+                } else {
+                    mRNAStrand = strandA.map((nuc, idx) => {
+                        const rnaBase = nuc.complementBase === 'T' ? 'U' : nuc.complementBase;
+                        return {
+                            x: nuc.x - 100,
+                            y: nuc.y - 80 + Math.sin(idx * 0.2) * 10,
+                            base: rnaBase,
+                            brightness: 0.7,
+                            age: idx
+                        };
+                    });
+                    
+                    // Activate ribosomes
+                    ribosomes.forEach((ribo, i) => {
+                        ribo.isActive = true;
+                        ribo.progress = (phaseProgress - 0.5) * 2;
+                    });
                 }
-            });
-        }
-        // Phase 2: Leading strand synthesis
-        else if (transition < 3) {
-            const synthProgress = (transition - 2);
-            polymeraseA.active = true;
-            polymeraseA.progress = synthProgress;
-            polymeraseA.nucleotidesAdded = Math.floor(synthProgress * strandA.length);
-            
-            // Create new strand A
-            newStrandA = strandA.slice(0, polymeraseA.nucleotidesAdded).map(nuc => ({
-                x: nuc.x + 60,
-                y: nuc.y,
-                base: nuc.complementBase,
-                brightness: 0.8,
-                age: Math.random()
-            }));
-        }
-        // Phase 3: Lagging strand synthesis
-        else if (transition < 4) {
-            const synthProgress = (transition - 3);
-            polymeraseB.active = true;
-            polymeraseB.progress = synthProgress;
-            polymeraseB.nucleotidesAdded = Math.floor(synthProgress * strandB.length);
-            
-            // Create new strand B (discontinuous - Okazaki fragments)
-            newStrandB = strandB.slice(0, polymeraseB.nucleotidesAdded).map((nuc, idx) => ({
-                x: nuc.x - 60,
-                y: nuc.y,
-                base: nuc.complementBase,
-                brightness: 0.6 + Math.sin(idx * 0.3) * 0.2,
-                age: Math.random()
-            }));
-        }
-        // Phase 4: Complete
-        else {
-            polymeraseA.active = false;
-            polymeraseB.active = false;
-            helicase.isActive = false;
+                break;
+                
+            case 5: // CRISPR gene editing
+                crispr.isActive = true;
+                crispr.progress = phaseProgress;
+                crispr.x = strandA[crispr.targetIndex].x;
+                crispr.y = strandA[crispr.targetIndex].y - 60;
+                
+                if (phaseProgress > 0.6 && !crispr.cutMade) {
+                    strandA[crispr.targetIndex].isEdited = true;
+                    strandB[crispr.targetIndex].isEdited = true;
+                    crispr.cutMade = true;
+                    soundManager.playChime(600, 0.5);
+                }
+                break;
         }
     }
     
     function updateReplicationMachinery() {
-        // Helicase moves along unwinding DNA
         if (helicase.isActive) {
             helicase.progress += 0.005 * speed;
         }
@@ -313,11 +408,9 @@ let dnaReplicationSketch = function(p) {
             nucleotide.vx *= 0.98;
             nucleotide.vy *= 0.98;
             
-            // Brownian motion
             nucleotide.vx += p.random(-0.2, 0.2);
             nucleotide.vy += p.random(-0.2, 0.2);
             
-            // Constrain to canvas
             if (nucleotide.x < 50) {
                 nucleotide.x = 50;
                 nucleotide.vx *= -1;
@@ -335,37 +428,121 @@ let dnaReplicationSketch = function(p) {
                 nucleotide.vy *= -1;
             }
             
-            nucleotide.age++;
+            nucleotide.trail.push({ x: nucleotide.x, y: nucleotide.y });
+            if (nucleotide.trail.length > 20) nucleotide.trail.shift();
             
-            // Fade if too old
+            nucleotide.age++;
             if (nucleotide.age > 300) {
                 nucleotide.brightness *= 0.99;
             }
         });
+        
+        aminoAcidPool.forEach(aa => {
+            aa.x += aa.vx * 0.3;
+            aa.y += aa.vy * 0.3;
+            
+            aa.vx *= 0.98;
+            aa.vy *= 0.98;
+            
+            aa.vx += p.random(-0.15, 0.15);
+            aa.vy += p.random(-0.15, 0.15);
+            
+            if (aa.x < 50) {
+                aa.x = 50;
+                aa.vx *= -1;
+            }
+            if (aa.x > canvasWidth - 50) {
+                aa.x = canvasWidth - 50;
+                aa.vx *= -1;
+            }
+            if (aa.y < 50) {
+                aa.y = 50;
+                aa.vy *= -1;
+            }
+            if (aa.y > canvasHeight - 50) {
+                aa.y = canvasHeight - 50;
+                aa.vy *= -1;
+            }
+            
+            aa.trail.push({ x: aa.x, y: aa.y });
+            if (aa.trail.length > 15) aa.trail.shift();
+            
+            aa.age++;
+        });
     }
     
-    function updateReplicationFork() {
-        const centerX = canvasWidth / 2;
-        const centerY = canvasHeight / 2;
-        const transition = replicationPhase + phaseProgress;
-        
-        if (transition >= 1 && transition < 2) {
-            replicationFork.x = centerX;
-            replicationFork.y = centerY - helixPitch * totalTurns / 2 + (transition - 1) * helixPitch * totalTurns;
-            replicationFork.width = 80;
-        }
+    function updateCRISPR() {
+        // CRISPR updates handled in updateDNAStructure
+    }
+    
+    function updateTranscription() {
+        // mRNA updates handled in updateDNAStructure
+    }
+    
+    function updateTranslation() {
+        ribosomes.forEach(ribo => {
+            if (ribo.isActive && mRNAStrand.length > 0) {
+                ribo.codonIndex = Math.floor(ribo.progress * mRNAStrand.length / 3) * 3;
+                
+                if (ribo.codonIndex + 2 < mRNAStrand.length) {
+                    if (p.random() < 0.3) {
+                        const codon = mRNAStrand[ribo.codonIndex].base + 
+                                    mRNAStrand[ribo.codonIndex + 1].base + 
+                                    mRNAStrand[ribo.codonIndex + 2].base;
+                        
+                        const aa = codonToAminoAcid(codon);
+                        ribo.protein.push({
+                            type: aa,
+                            age: 0,
+                            brightness: 0.8
+                        });
+                    }
+                }
+            }
+        });
+    }
+    
+    function updateParticleEffects() {
+        cellularBackground.forEach(particle => {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+            
+            if (particle.x < 0) particle.x = canvasWidth;
+            if (particle.x > canvasWidth) particle.x = 0;
+            if (particle.y < 0) particle.y = canvasHeight;
+            if (particle.y > canvasHeight) particle.y = 0;
+        });
+    }
+    
+    function codonToAminoAcid(codon) {
+        const codonTable = {
+            'AUG': 'Met', 'UUU': 'Phe', 'UUC': 'Phe', 'UUA': 'Leu', 'UUG': 'Leu',
+            'UCU': 'Ser', 'UCC': 'Ser', 'UCA': 'Ser', 'UCG': 'Ser', 'UAU': 'Tyr',
+            'UAC': 'Tyr', 'UGU': 'Cys', 'UGC': 'Cys', 'UGG': 'Trp', 'CUU': 'Leu',
+            'CUC': 'Leu', 'CUA': 'Leu', 'CUG': 'Leu', 'CCU': 'Pro', 'CCC': 'Pro',
+            'CCA': 'Pro', 'CCG': 'Pro', 'CAU': 'His', 'CAC': 'His', 'CAA': 'Gln',
+            'CAG': 'Gln', 'CGU': 'Arg', 'CGC': 'Arg', 'CGA': 'Arg', 'CGG': 'Arg',
+            'AUU': 'Ile', 'AUC': 'Ile', 'AUA': 'Ile', 'ACU': 'Thr', 'ACC': 'Thr',
+            'ACA': 'Thr', 'ACG': 'Thr', 'AAU': 'Asn', 'AAC': 'Asn', 'AAA': 'Lys',
+            'AAG': 'Lys', 'AGU': 'Ser', 'AGC': 'Ser', 'AGA': 'Arg', 'AGG': 'Arg',
+            'GUU': 'Val', 'GUC': 'Val', 'GUA': 'Val', 'GUG': 'Val', 'GCU': 'Ala',
+            'GCC': 'Ala', 'GCA': 'Ala', 'GCG': 'Ala', 'GAU': 'Asp', 'GAC': 'Asp',
+            'GAA': 'Glu', 'GAG': 'Glu', 'GGU': 'Gly', 'GGC': 'Gly', 'GGA': 'Gly',
+            'GGG': 'Gly', 'UAA': 'Stop', 'UAG': 'Stop', 'UGA': 'Stop'
+        };
+        return codonTable[codon] || 'Unk';
     }
     
     function drawCellularBackground() {
-        const grad = p.drawingContext.createRadialGradient(
-            canvasWidth / 2, canvasHeight / 2, 0,
-            canvasWidth / 2, canvasHeight / 2, 600
-        );
-        grad.addColorStop(0, 'rgba(50, 80, 100, 0.1)');
-        grad.addColorStop(1, 'rgba(20, 40, 60, 0.05)');
+        p.push();
+        p.stroke('rgba(50, 100, 150, 0.1)');
+        p.strokeWeight(0.5);
         
-        p.drawingContext.fillStyle = grad;
-        p.drawingContext.fillRect(0, 0, canvasWidth, canvasHeight);
+        cellularBackground.forEach(particle => {
+            p.point(particle.x, particle.y);
+        });
+        
+        p.pop();
     }
     
     function drawCellMembrane() {
@@ -373,10 +550,7 @@ let dnaReplicationSketch = function(p) {
         p.stroke('rgba(0, 217, 255, 0.3)');
         p.strokeWeight(2);
         p.noFill();
-        
-        // Nuclear envelope (simplified)
         p.ellipse(canvasWidth / 2, canvasHeight / 2, canvasWidth * 0.7, canvasHeight * 0.8);
-        
         p.pop();
     }
     
@@ -384,7 +558,21 @@ let dnaReplicationSketch = function(p) {
         p.push();
         
         nucleotidePool.forEach(nucleotide => {
-            // Nucleotide glow
+            // Trail
+            for (let i = 0; i < nucleotide.trail.length; i++) {
+                const t = i / nucleotide.trail.length;
+                const opacity = t * 0.15;
+                p.stroke('rgba(100, 200, 255, ' + opacity + ')');
+                p.strokeWeight(0.5);
+                
+                if (i < nucleotide.trail.length - 1) {
+                    p.line(
+                        nucleotide.trail[i].x, nucleotide.trail[i].y,
+                        nucleotide.trail[i + 1].x, nucleotide.trail[i + 1].y
+                    );
+                }
+            }
+            
             const glowGrad = p.drawingContext.createRadialGradient(
                 nucleotide.x, nucleotide.y, 0,
                 nucleotide.x, nucleotide.y, 6
@@ -397,17 +585,61 @@ let dnaReplicationSketch = function(p) {
             p.drawingContext.arc(nucleotide.x, nucleotide.y, 6, 0, p.TWO_PI);
             p.drawingContext.fill();
             
-            // Nucleotide core
             const baseColor = getBaseColor(nucleotide.base);
             p.fill(baseColor + (nucleotide.brightness * 0.7) + ')');
             p.noStroke();
             p.ellipse(nucleotide.x, nucleotide.y, 3);
             
-            // Base label (tiny)
             p.fill(baseColor + '0.9)');
             p.textAlign(p.CENTER, p.CENTER);
-            p.textSize(7);
+            p.textSize(6);
+            p.textFont('IBM Plex Mono');
             p.text(nucleotide.base, nucleotide.x, nucleotide.y);
+        });
+        
+        p.pop();
+    }
+    
+    function drawAminoAcidPool() {
+        p.push();
+        
+        aminoAcidPool.forEach(aa => {
+            // Trail
+            for (let i = 0; i < aa.trail.length; i++) {
+                const t = i / aa.trail.length;
+                const opacity = t * 0.1;
+                p.stroke('rgba(200, 100, 150, ' + opacity + ')');
+                p.strokeWeight(0.5);
+                
+                if (i < aa.trail.length - 1) {
+                    p.line(
+                        aa.trail[i].x, aa.trail[i].y,
+                        aa.trail[i + 1].x, aa.trail[i + 1].y
+                    );
+                }
+            }
+            
+            const glowGrad = p.drawingContext.createRadialGradient(
+                aa.x, aa.y, 0,
+                aa.x, aa.y, 5
+            );
+            glowGrad.addColorStop(0, 'rgba(200, 100, 150, ' + (aa.brightness * 0.3) + ')');
+            glowGrad.addColorStop(1, 'rgba(200, 100, 150, 0)');
+            
+            p.drawingContext.fillStyle = glowGrad;
+            p.drawingContext.beginPath();
+            p.drawingContext.arc(aa.x, aa.y, 5, 0, p.TWO_PI);
+            p.drawingContext.fill();
+            
+            p.fill('rgba(200, 100, 150, ' + (aa.brightness * 0.8) + ')');
+            p.noStroke();
+            p.ellipse(aa.x, aa.y, 3);
+            
+            p.fill('rgba(200, 100, 150, 0.9)');
+            p.textAlign(p.CENTER, p.CENTER);
+            p.textSize(5);
+            p.textFont('IBM Plex Mono');
+            p.text(aa.type.substring(0, 1), aa.x, aa.y);
         });
         
         p.pop();
@@ -416,7 +648,6 @@ let dnaReplicationSketch = function(p) {
     function drawBackgroundStrands() {
         p.push();
         
-        // Draw sugar-phosphate backbone
         strandA.forEach((nuc, i) => {
             if (i < strandA.length - 1) {
                 p.stroke('rgba(100, 150, 200, 0.4)');
@@ -439,20 +670,31 @@ let dnaReplicationSketch = function(p) {
     function drawHelixStructure() {
         p.push();
         
-        // Draw base pairs
         strandA.forEach((nucA, i) => {
             if (i < strandB.length) {
                 const nucB = strandB[i];
                 
-                // Base circle
                 const baseColor = getBaseColor(nucA.base);
-                p.fill(baseColor + (nucA.brightness * 0.8) + ')');
+                let colorStr = baseColor;
+                
+                if (nucA.isEdited) {
+                    p.fill('rgba(255, 100, 50, ' + (nucA.brightness * 0.9) + ')');
+                } else {
+                    const match = baseColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),/);
+                    if (match) {
+                        p.fill('rgba(' + match[1] + ', ' + match[2] + ', ' + match[3] + ', ' + (nucA.brightness * 0.8) + ')');
+                    }
+                }
+                
                 p.noStroke();
                 p.ellipse(nucA.x, nucA.y, 5);
                 
-                // Complement base
                 const compColor = getBaseColor(nucB.base);
-                p.fill(compColor + (nucB.brightness * 0.8) + ')');
+                const compMatch = compColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),/);
+                if (compMatch) {
+                    p.fill('rgba(' + compMatch[1] + ', ' + compMatch[2] + ', ' + compMatch[3] + ', ' + (nucB.brightness * 0.8) + ')');
+                }
+                
                 p.ellipse(nucB.x, nucB.y, 5);
             }
         });
@@ -470,7 +712,6 @@ let dnaReplicationSketch = function(p) {
                 const nucB = strandB[i];
                 
                 if (nucA.paired) {
-                    // Bond strength visualization
                     const bondCount = (nucA.base === 'G' || nucA.base === 'C') ? 3 : 2;
                     
                     for (let b = 0; b < bondCount; b++) {
@@ -490,28 +731,22 @@ let dnaReplicationSketch = function(p) {
     }
     
     function drawReplicationFork() {
-        if (replicationFork.width === 0) return;
+        const transition = replicationPhase + phaseProgress;
+        if (transition < 1 || transition >= 2) return;
         
         p.push();
         
-        // Y-shaped fork
+        const centerX = canvasWidth / 2;
+        const centerY = canvasHeight / 2;
+        
+        const forkY = centerY - helixPitch * totalTurns / 2 + (transition - 1) * helixPitch * totalTurns;
+        
         p.stroke('rgba(0, 217, 255, 0.7)');
         p.strokeWeight(3);
         
-        // Upper strand
-        p.line(
-            replicationFork.x - replicationFork.width / 2, replicationFork.y,
-            replicationFork.x, replicationFork.y + 40
-        );
-        
-        // Lower strand
-        p.line(
-            replicationFork.x + replicationFork.width / 2, replicationFork.y,
-            replicationFork.x, replicationFork.y + 40
-        );
-        
-        // Center line
-        p.line(replicationFork.x, replicationFork.y, replicationFork.x, replicationFork.y + 40);
+        p.line(centerX - 40, forkY, centerX, forkY + 40);
+        p.line(centerX + 40, forkY, centerX, forkY + 40);
+        p.line(centerX, forkY, centerX, forkY + 40);
         
         p.pop();
     }
@@ -521,35 +756,31 @@ let dnaReplicationSketch = function(p) {
         
         p.push();
         
-        const helicaseX = helicase.x;
         const helicaseY = helicase.y + helicase.progress * helixPitch * totalTurns;
         
-        // Helicase enzyme (hexagonal ring)
         p.fill('rgba(255, 100, 50, 0.6)');
         p.stroke('rgba(255, 100, 50, 0.8)');
         p.strokeWeight(2);
         
-        // Draw hexagon
         p.beginShape();
         for (let i = 0; i < 6; i++) {
             const angle = (i / 6) * p.TWO_PI;
-            const x = helicaseX + Math.cos(angle) * 15;
+            const x = helicase.x + Math.cos(angle) * 15;
             const y = helicaseY + Math.sin(angle) * 15;
             p.vertex(x, y);
         }
         p.endShape(p.CLOSE);
         
-        // Glow
         const helicaseGlow = p.drawingContext.createRadialGradient(
-            helicaseX, helicaseY, 0,
-            helicaseX, helicaseY, 30
+            helicase.x, helicaseY, 0,
+            helicase.x, helicaseY, 30
         );
         helicaseGlow.addColorStop(0, 'rgba(255, 100, 50, 0.2)');
         helicaseGlow.addColorStop(1, 'rgba(255, 100, 50, 0)');
         
         p.drawingContext.fillStyle = helicaseGlow;
         p.drawingContext.beginPath();
-        p.drawingContext.arc(helicaseX, helicaseY, 30, 0, p.TWO_PI);
+        p.drawingContext.arc(helicase.x, helicaseY, 30, 0, p.TWO_PI);
         p.drawingContext.fill();
         
         p.pop();
@@ -560,22 +791,22 @@ let dnaReplicationSketch = function(p) {
         
         p.push();
         
-        // Polymerase A (leading strand)
         if (polymeraseA.active) {
             drawPolymerase(
                 polymeraseA.x,
                 polymeraseA.y + polymeraseA.progress * helixPitch * totalTurns,
                 'rgba(100, 200, 255, 0.7)',
+                'Pol III',
                 'Leading'
             );
         }
         
-        // Polymerase B (lagging strand)
         if (polymeraseB.active) {
             drawPolymerase(
                 polymeraseB.x,
                 polymeraseB.y + polymeraseB.progress * helixPitch * totalTurns,
                 'rgba(255, 150, 100, 0.7)',
+                'Pol III',
                 'Lagging'
             );
         }
@@ -583,13 +814,12 @@ let dnaReplicationSketch = function(p) {
         p.pop();
     }
     
-    function drawPolymerase(x, y, color, label) {
-        // Polymerase enzyme (blob shape)
+    function drawPolymerase(x, y, color, name, type) {
+        p.push();
         p.fill(color);
         p.stroke(color.replace('0.7', '0.9'));
         p.strokeWeight(2);
         
-        // Draw irregular blob
         p.beginShape();
         for (let i = 0; i < 12; i++) {
             const angle = (i / 12) * p.TWO_PI;
@@ -600,7 +830,6 @@ let dnaReplicationSketch = function(p) {
         }
         p.endShape(p.CLOSE);
         
-        // Glow
         const polyGlow = p.drawingContext.createRadialGradient(x, y, 0, x, y, 35);
         polyGlow.addColorStop(0, color.replace('0.7', '0.3'));
         polyGlow.addColorStop(1, color.replace('0.7', '0'));
@@ -610,17 +839,41 @@ let dnaReplicationSketch = function(p) {
         p.drawingContext.arc(x, y, 35, 0, p.TWO_PI);
         p.drawingContext.fill();
         
-        // Label
         p.fill('rgba(245, 245, 247, 0.8)');
         p.textAlign(p.CENTER, p.CENTER);
         p.textSize(8);
-        p.text(label, x, y - 25);
+        p.textFont('IBM Plex Mono');
+        p.text(name, x, y - 25);
+        p.textSize(6);
+        p.text(type, x, y + 20);
+        
+        p.pop();
+    }
+    
+    function drawCodonMarkers() {
+        if (!showCodons || mRNAStrand.length < 3) return;
+        
+        p.push();
+        p.noFill();
+        p.stroke('rgba(255, 150, 100, 0.4)');
+        p.strokeWeight(2);
+        
+        for (let i = 0; i < mRNAStrand.length; i += 3) {
+            if (i + 2 < mRNAStrand.length) {
+                const avgX = (mRNAStrand[i].x + mRNAStrand[i + 1].x + mRNAStrand[i + 2].x) / 3;
+                const avgY = (mRNAStrand[i].y + mRNAStrand[i + 1].y + mRNAStrand[i + 2].y) / 3;
+                
+                p.rect(avgX - 10, avgY - 8, 20, 16);
+            }
+        }
+        
+        p.pop();
     }
     
     function drawNewStrands() {
         p.push();
         
-        // New strand A (leading - continuous)
+        // New strand A
         newStrandA.forEach((nuc, i) => {
             const glowGrad = p.drawingContext.createRadialGradient(
                 nuc.x, nuc.y, 0,
@@ -640,7 +893,6 @@ let dnaReplicationSketch = function(p) {
             p.ellipse(nuc.x, nuc.y, 4);
         });
         
-        // Connect with backbone
         if (newStrandA.length > 1) {
             p.stroke('rgba(100, 255, 150, 0.6)');
             p.strokeWeight(2);
@@ -651,7 +903,7 @@ let dnaReplicationSketch = function(p) {
             p.endShape();
         }
         
-        // New strand B (lagging - Okazaki fragments)
+        // New strand B
         newStrandB.forEach((nuc, i) => {
             const glowGrad = p.drawingContext.createRadialGradient(
                 nuc.x, nuc.y, 0,
@@ -671,7 +923,6 @@ let dnaReplicationSketch = function(p) {
             p.ellipse(nuc.x, nuc.y, 4);
         });
         
-        // Connect with backbone (dashed - Okazaki fragments)
         if (newStrandB.length > 1) {
             p.stroke('rgba(150, 255, 100, 0.6)');
             p.strokeWeight(2);
@@ -685,22 +936,155 @@ let dnaReplicationSketch = function(p) {
         p.pop();
     }
     
+    function drawCRISPRCas9() {
+        if (!crispr.isActive) return;
+        
+        p.push();
+        
+        // CRISPR complex
+        p.fill('rgba(255, 150, 100, 0.7)');
+        p.stroke('rgba(255, 150, 100, 0.9)');
+        p.strokeWeight(2);
+        
+        // Draw complex shape
+        for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * p.TWO_PI + time * 0.03;
+            const x = crispr.x + Math.cos(angle) * 20;
+            const y = crispr.y + Math.sin(angle) * 20;
+            p.ellipse(x, y, 8);
+        }
+        
+        // Center
+        p.fill('rgba(255, 180, 150, 0.9)');
+        p.ellipse(crispr.x, crispr.y, 12);
+        
+        // Glow
+        const crisprGlow = p.drawingContext.createRadialGradient(
+            crispr.x, crispr.y, 0,
+            crispr.x, crispr.y, 40
+        );
+        crisprGlow.addColorStop(0, 'rgba(255, 150, 100, 0.3)');
+        crisprGlow.addColorStop(1, 'rgba(255, 150, 100, 0)');
+        
+        p.drawingContext.fillStyle = crisprGlow;
+        p.drawingContext.beginPath();
+        p.drawingContext.arc(crispr.x, crispr.y, 40, 0, p.TWO_PI);
+        p.drawingContext.fill();
+        
+        p.fill('rgba(245, 245, 247, 0.7)');
+        p.textAlign(p.CENTER, p.CENTER);
+        p.textSize(8);
+        p.textFont('IBM Plex Mono');
+        p.text('CRISPR', crispr.x, crispr.y);
+        
+        p.pop();
+    }
+    
+    function drawmRNA() {
+        if (mRNAStrand.length === 0) return;
+        
+        p.push();
+        
+        p.stroke('rgba(255, 150, 100, 0.5)');
+        p.strokeWeight(2);
+        p.noFill();
+        p.beginShape();
+        mRNAStrand.forEach((nuc, i) => {
+            p.vertex(nuc.x, nuc.y);
+        });
+        p.endShape();
+        
+        mRNAStrand.forEach((nuc, i) => {
+            const baseColor = getBaseColor(nuc.base);
+            p.fill(baseColor + (nuc.brightness * 0.8) + ')');
+            p.noStroke();
+            p.ellipse(nuc.x, nuc.y, 4);
+        });
+        
+        p.pop();
+    }
+    
+    function drawRibosomes() {
+        p.push();
+        
+        ribosomes.forEach((ribo, idx) => {
+            if (!ribo.isActive) return;
+            
+            ribo.x = canvasWidth / 2 - 100 + ribo.progress * 200;
+            
+            // Ribosome
+            p.fill('rgba(100, 200, 150, 0.7)');
+            p.stroke('rgba(100, 200, 150, 0.9)');
+            p.strokeWeight(2);
+            p.ellipse(ribo.x, ribo.y, 25, 20);
+            
+            // Sub-units
+            p.fill('rgba(120, 220, 170, 0.6)');
+            p.ellipse(ribo.x - 8, ribo.y - 3, 12, 12);
+            p.ellipse(ribo.x + 8, ribo.y + 3, 12, 12);
+            
+            // Glow
+            const riboGlow = p.drawingContext.createRadialGradient(
+                ribo.x, ribo.y, 0,
+                ribo.x, ribo.y, 35
+            );
+            riboGlow.addColorStop(0, 'rgba(100, 200, 150, 0.15)');
+            riboGlow.addColorStop(1, 'rgba(100, 200, 150, 0)');
+            
+            p.drawingContext.fillStyle = riboGlow;
+            p.drawingContext.beginPath();
+            p.drawingContext.arc(ribo.x, ribo.y, 35, 0, p.TWO_PI);
+            p.drawingContext.fill();
+            
+            p.fill('rgba(245, 245, 247, 0.6)');
+            p.textAlign(p.CENTER, p.CENTER);
+            p.textSize(7);
+            p.textFont('IBM Plex Mono');
+            p.text('80S', ribo.x, ribo.y);
+        });
+        
+        p.pop();
+    }
+    
+    function drawProteins() {
+        if (!showProteinSynthesis) return;
+        
+        p.push();
+        
+        proteins.forEach((protein, idx) => {
+            protein.forEach((aa, i) => {
+                const x = canvasWidth / 2 + (idx - 1) * 80;
+                const y = canvasHeight / 2 + 100 + i * 8;
+                
+                p.fill('rgba(150, 200, 255, ' + (aa.brightness * 0.8) + ')');
+                p.noStroke();
+                p.ellipse(x, y, 5);
+            });
+        });
+        
+        p.pop();
+    }
+    
     function drawCompleteHelices() {
-        // After replication complete, show two separate double helices
         const transition = replicationPhase + phaseProgress;
         
         if (transition >= 4) {
             p.push();
             
             p.textAlign(p.CENTER, p.CENTER);
-            p.textSize(10);
+            p.textSize(9);
             p.textFont('Space Grotesk');
-            p.fill('rgba(100, 255, 150, 0.8)');
-            p.text('Original + Complementary', canvasWidth / 2 - 100, canvasHeight / 2 + 150);
-            p.text('Original + Complementary', canvasWidth / 2 + 100, canvasHeight / 2 + 150);
+            p.fill('rgba(100, 255, 150, 0.7)');
+            p.text('Twin Helices', canvasWidth / 2 - 100, canvasHeight / 2 + 180);
+            p.text('mRNA (Protein Code)', canvasWidth / 2, canvasHeight / 2 + 200);
+            p.text('Proteins (Products)', canvasWidth / 2 + 100, canvasHeight / 2 + 180);
             
             p.pop();
         }
+    }
+    
+    function drawParticleEffects() {
+        // Particle effects drawn inline with other elements
     }
     
     function drawDNAInfo() {
@@ -716,24 +1100,26 @@ let dnaReplicationSketch = function(p) {
         p.textSize(12);
         p.fill('rgba(160, 160, 168, 0.95)');
         
-        const phases = ['Intact Helix', 'Unwinding', 'Leading Strand', 'Lagging Strand', 'Complete'];
+        const phases = ['Intact Helix', 'Unwinding', 'Leading Strand', 'Lagging Strand', 'Transcription', 'CRISPR Gene Edit'];
         p.text('Phase: ' + phases[replicationPhase] + ' (' + (phaseProgress * 100).toFixed(0) + '%)', 20, 40);
-        p.text('Free Nucleotides: ' + nucleotidePool.length + ' | Base Pairs: ' + strandA.length, 20, 58);
+        p.text('Base Pairs: ' + strandA.length + ' | Free Nucleotides: ' + nucleotidePool.length, 20, 58);
         p.text('Leading: ' + polymeraseA.nucleotidesAdded + ' bp | Lagging: ' + polymeraseB.nucleotidesAdded + ' bp', 20, 76);
+        p.text('mRNA Length: ' + mRNAStrand.length + ' | Amino Acids Synthesized: ' + (ribosomes.reduce((a, b) => a + b.protein.length, 0)), 20, 94);
         
         p.textSize(10);
         p.fill('rgba(160, 160, 168, 0.5)');
-        p.text('Helicase unwinds the double helix. DNA polymerase reads template and synthesizes new strand.', 20, canvasHeight - 25);
+        p.text('Helicase unwinds DNA. Polymerase synthesizes new strands. mRNA is transcribed and translated into proteins.', 20, canvasHeight - 25);
         
         p.pop();
     }
     
     function getBaseColor(base) {
         switch(base) {
-            case 'A': return 'rgba(100, 200, 255, ';  // Cyan
-            case 'T': return 'rgba(255, 100, 50, ';   // Orange
-            case 'G': return 'rgba(100, 255, 150, ';  // Green
-            case 'C': return 'rgba(255, 150, 100, '; // Coral
+            case 'A': return 'rgba(100, 200, 255, ';
+            case 'T': return 'rgba(255, 100, 50, ';
+            case 'U': return 'rgba(255, 150, 100, ';
+            case 'G': return 'rgba(100, 255, 150, ';
+            case 'C': return 'rgba(255, 150, 100, ';
             default: return 'rgba(200, 200, 200, ';
         }
     }
@@ -764,6 +1150,18 @@ let dnaReplicationSketch = function(p) {
             polyBtn.textContent = showPolymerase ? '👁 Hide Enzymes' : '👁 Show Enzymes';
         });
         controlsSection.appendChild(polyBtn);
+        
+        let codonBtn = createButton(showCodons ? '👁 Hide Codons' : '👁 Show Codons', () => {
+            showCodons = !showCodons;
+            codonBtn.textContent = showCodons ? '👁 Hide Codons' : '👁 Show Codons';
+        });
+        controlsSection.appendChild(codonBtn);
+        
+        let proteinBtn = createButton(showProteinSynthesis ? '👁 Hide Proteins' : '👁 Show Proteins', () => {
+            showProteinSynthesis = !showProteinSynthesis;
+            proteinBtn.textContent = showProteinSynthesis ? '👁 Hide Proteins' : '👁 Show Proteins';
+        });
+        controlsSection.appendChild(proteinBtn);
     }
     
     this.resetSketch = function() {
