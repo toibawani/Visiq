@@ -453,7 +453,7 @@ html, body {
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
 }
 
-/* ===== NAVBAR - Mobile Fix ===== */
+/* ===== NAVBAR ===== */
 .navbar {
     position: fixed;
     top: 0;
@@ -474,51 +474,6 @@ html, body {
 /* Navbar hide animation (when scrolling down on mobile) */
 body.navbar-hidden .navbar {
     transform: translateY(-60px);
-}
-
-/* Mobile navbar adjustments */
-@media (max-width: 768px) {
-    .navbar {
-        height: 50px;
-        padding: 0 15px;
-    }
-    
-    .logo-text {
-        font-size: 18px;
-    }
-    
-    .nav-links {
-        display: none;
-    }
-    
-    body.navbar-hidden .navbar {
-        transform: translateY(-50px);
-    }
-}
-
-/* Ensure simulation view accounts for navbar */
-.view.active {
-    padding-top: 60px;
-}
-
-@media (max-width: 768px) {
-    .view.active {
-        padding-top: 50px;
-    }
-}
-
-/* Canvas spacing */
-#simulation-canvas {
-    position: relative;
-    margin-top: 10px;
-}
-
-/* Controls accessibility on mobile */
-@media (max-width: 768px) {
-    .controls-wrapper {
-        max-height: calc(100vh - 50px - 60px);
-        overflow-y: auto;
-    }
 }
 
 .nav-container {
@@ -900,6 +855,7 @@ body.navbar-hidden .navbar {
 .view.active {
     opacity: 1;
     pointer-events: auto;
+    padding-top: 60px;
 }
 
 #gallery-view {
@@ -986,6 +942,8 @@ body.navbar-hidden .navbar {
 }
 
 #simulation-canvas {
+    position: relative;
+    margin-top: 10px;
     width: 100%;
     min-height: 600px;
 }
@@ -1207,7 +1165,7 @@ body.navbar-hidden .navbar {
     cursor: pointer;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE & MOBILE NAVBAR FIXES ===== */
 @media (max-width: 1024px) {
     .auth-container {
         grid-template-columns: 1fr;
@@ -1237,28 +1195,36 @@ body.navbar-hidden .navbar {
 }
 
 @media (max-width: 768px) {
+    .navbar {
+        height: 50px;
+        padding: 0 15px;
+    }
+    
+    .logo-text {
+        font-size: 18px;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+    
+    body.navbar-hidden .navbar {
+        transform: translateY(-50px);
+    }
+
     .nav-container {
         padding: 0 20px;
         flex-wrap: wrap;
         gap: 20px;
     }
 
-    .nav-links {
-        gap: 16px;
-        order: 3;
-        width: 100%;
-    }
-
     .simulations-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     .category-section {
         padding: 60px 20px;
-    }
-
-    .section-header h2 {
-        font-size: 36px;
     }
 
     .hero-section {
@@ -1271,6 +1237,15 @@ body.navbar-hidden .navbar {
 
     .auth-form {
         padding: 32px 24px;
+    }
+
+    .view.active {
+        padding-top: 50px;
+    }
+
+    .controls-wrapper {
+        max-height: calc(100vh - 50px - 60px);
+        overflow-y: auto;
     }
 }
 
@@ -1297,9 +1272,5 @@ body.navbar-hidden .navbar {
 
     .sim-container {
         padding: 20px;
-    }
-
-    .simulations-grid {
-        gap: 16px;
     }
 }
