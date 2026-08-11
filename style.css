@@ -1274,3 +1274,44 @@ body.navbar-hidden .navbar {
         padding: 20px;
     }
 }
+/* ===== SCREENSHOT BUTTON STYLES ===== */
+.btn-screenshot {
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #ff006e 0%, #ff3385 100%);
+    color: #fff;
+    border: 1px solid rgba(255, 0, 110, 0.4);
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    margin-left: 10px;
+}
+
+.btn-screenshot:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ff3385 0%, #ff5fa3 100%);
+    box-shadow: 0 0 20px rgba(255, 0, 110, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-screenshot:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-screenshot:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .btn-screenshot {
+        padding: 8px 12px;
+        font-size: 11px;
+        margin-left: 5px;
+    }
+}
