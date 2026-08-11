@@ -1,188 +1,249 @@
-// ===== VISIQ AUTHENTICATION SYSTEM =====
+// ===== AUTHENTICATION SYSTEM =====
+// Handles login, signup, and session management
 
-class AuthManager {
+class AuthSystem {
     constructor() {
         this.users = this.loadUsers();
-        this.currentUser = this.loadSession();
-        this.init();
+        this.currentSession = this.loadSession();
+        this.initialize();
     }
-
-    loadUsers() {
-        const stored = localStorage.getItem('visiq_users');
-        return stored ? JSON.parse(stored) : {};
+    
+    initialize() {
+        this.setupEventListeners();
+        this.checkSession();
     }
-
-    saveUsers() {
-        localStorage.setItem('visiq_users', JSON.stringify(this.users));
-    }
-
-    loadSession() {
-        const stored = localStorage.getItem('visiq_session');
-        return stored ? JSON.parse(stored) : null;
-    }
-
-    saveSession() {
-        if (this.currentUser) {
-            localStorage.setItem('visiq_session', JSON.stringify(this.currentUser));
-        }
-    }
-
-    clearSession() {
-        localStorage.removeItem('visiq_session');
-    }
-
-    init() {
-        if (this.currentUser) {
-            this.showApp();
-        } else {
-            this.setupAuthForms();
-        }
-    }
-
-    setupAuthForms() {
-        const loginForm = document.getElementById('form-login');
-        const signupForm = document.getElementById('form-signup');
-
+    
+    setupEventListeners() {
+        // Login form
+        const loginForm = document.getElementById('login-form');
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => this.handleLogin(e));
         }
-
+        
+        // Signup form
+        const signupForm = document.getElementById('signup-form');
         if (signupForm) {
             signupForm.addEventListener('submit', (e) => this.handleSignup(e));
         }
+        
+        // Logout button
+        const logoutBtn = document.getElementById('logout-button');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => this.handleLogout());
+        }
     }
-
+    
     handleLogin(e) {
         e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-
-        if (!this.users[email]) {
-            alert('❌ Email not found. Please sign up first.');
+        
+        const email = document.getElementById('login-email')?.value.trim();
+        const password = document.getElementById('login-password')?.value;
+        
+        console.log('[AUTH] Login attempt:', email);
+        
+        if (!email || !password) {
+            alert('Please enter email and password');
             return;
         }
-
-        if (this.users[email].password !== password) {
-            alert('❌ Incorrect password.');
+        
+        if (!this.validateEmail(email)) {
+            alert('Please enter a valid email');
             return;
         }
-
-        const user = this.users[email];
-        this.currentUser = {
-            name: user.fullname,
-            email: user.email,
-            interests: user.interests || []
-        };
-
-        this.saveSession();
+        
+        // Find user
+        const user = this.users.find(u => u.email === email);
+        
+        if (!user) {
+            alert('User not found. Please sign up first.');
+            return;
+        }
+        
+        if (user.password !== password) {
+            alert('Incorrect password');
+            return;
+        }
+        
+        // Login successful
+        this.createSession(user);
+        console.log('[AUTH] Login successful:', email);
         this.showApp();
-        console.log('✅ Welcome back,', user.fullname);
     }
-
+    
     handleSignup(e) {
         e.preventDefault();
-        const fullname = document.getElementById('signup-name').value;
-        const email = document.getElementById('signup-email').value;
-        const password = document.getElementById('signup-password').value;
-        const confirm = document.getElementById('signup-confirm').value;
-        const interests = Array.from(
-            document.querySelectorAll('input[name="interest"]:checked')
-        ).map(el => el.value);
-
-        if (!fullname || !email || !password || !confirm) {
-            alert('❌ Please fill in all fields.');
+        
+        const email = document.getElementById('signup-email')?.value.trim();
+        const password = document.getElementById('signup-password')?.value;
+        const confirmPassword = document.getElementById('signup-confirm')?.value;
+        
+        console.log('[AUTH] Signup attempt:', email);
+        
+        if (!email || !password || !confirmPassword) {
+            alert('Please fill in all fields');
             return;
         }
-
-        if (password !== confirm) {
-            alert('❌ Passwords do not match.');
+        
+        if (!this.validateEmail(email)) {
+            alert('Please enter a valid email');
             return;
         }
-
+        
         if (password.length < 6) {
-            alert('❌ Password must be at least 6 characters.');
+            alert('Password must be at least 6 characters');
             return;
         }
-
-        if (this.users[email]) {
-            alert('❌ Email already registered.');
+        
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
             return;
         }
-
-        this.users[email] = {
-            fullname,
-            email,
-            password,
-            interests,
+        
+        // Check if user exists
+        if (this.users.find(u => u.email === email)) {
+            alert('User already exists. Please log in.');
+            return;
+        }
+        
+        // Create new user
+        const newUser = {
+            id: Date.now().toString(),
+            email: email,
+            password: password,
             createdAt: new Date().toISOString()
         };
-
+        
+        this.users.push(newUser);
         this.saveUsers();
-
-        this.currentUser = {
-            name: fullname,
-            email,
-            interests
+        
+        console.log('[AUTH] User created:', email);
+        alert('Account created! Please log in.');
+        
+        // Clear form
+        document.getElementById('signup-form').reset();
+        
+        // Switch to login tab
+        this.switchToLogin();
+    }
+    
+    createSession(user) {
+        const session = {
+            userId: user.id,
+            email: user.email,
+            loginTime: new Date().toISOString()
         };
-
-        this.saveSession();
-        this.showApp();
-        console.log('✅ Welcome to VISIQ,', fullname);
+        
+        this.currentSession = session;
+        localStorage.setItem('visiq_session', JSON.stringify(session));
+        localStorage.setItem('visiq_user_email', user.email);
+        
+        console.log('[AUTH] Session created:', user.email);
     }
-
+    
+    handleLogout() {
+        console.log('[AUTH] Logout');
+        localStorage.removeItem('visiq_session');
+        localStorage.removeItem('visiq_user_email');
+        this.currentSession = null;
+        this.showAuthPage();
+    }
+    
+    checkSession() {
+        const session = this.loadSession();
+        
+        if (session) {
+            console.log('[AUTH] Active session found:', session.email);
+            this.currentSession = session;
+            this.showApp();
+        } else {
+            console.log('[AUTH] No active session');
+            this.showAuthPage();
+        }
+    }
+    
     showApp() {
-        const authPage = document.getElementById('auth-page');
-        const mainApp = document.getElementById('main-app');
-
-        if (authPage) authPage.style.display = 'none';
-        if (mainApp) mainApp.style.display = 'block';
-
-        this.updateUI();
+        // Hide auth views
+        const authViews = document.querySelectorAll('[data-view="auth"]');
+        authViews.forEach(view => view.style.display = 'none');
+        
+        // Show app
+        const appView = document.querySelector('[data-view="app"]');
+        if (appView) appView.style.display = 'block';
+        
+        // Show navbar and gallery
+        const navbar = document.querySelector('.navbar');
+        if (navbar) navbar.style.display = 'flex';
+        
+        const galleryView = document.querySelector('[data-view="gallery"]');
+        if (galleryView) galleryView.style.display = 'block';
+        
+        console.log('[AUTH] Showing app');
     }
-
-    updateUI() {
-        if (this.currentUser) {
-            const firstName = this.currentUser.name.split(' ')[0];
-            const userDisplay = document.getElementById('user-display');
-            const heroUser = document.getElementById('hero-user');
-
-            if (userDisplay) userDisplay.textContent = firstName;
-            if (heroUser) heroUser.textContent = firstName;
+    
+    showAuthPage() {
+        // Show auth views
+        const authViews = document.querySelectorAll('[data-view="auth"]');
+        authViews.forEach(view => view.style.display = 'block');
+        
+        // Hide app
+        const appView = document.querySelector('[data-view="app"]');
+        if (appView) appView.style.display = 'none';
+        
+        // Hide navbar and gallery
+        const navbar = document.querySelector('.navbar');
+        if (navbar) navbar.style.display = 'none';
+        
+        const galleryView = document.querySelector('[data-view="gallery"]');
+        if (galleryView) galleryView.style.display = 'none';
+        
+        console.log('[AUTH] Showing auth page');
+    }
+    
+    switchToLogin() {
+        const loginView = document.getElementById('login-view');
+        const signupView = document.getElementById('signup-view');
+        
+        if (loginView && signupView) {
+            loginView.style.display = 'block';
+            signupView.style.display = 'none';
         }
     }
-
-    logout() {
-        if (confirm('Are you sure you want to logout?')) {
-            this.currentUser = null;
-            this.clearSession();
-            location.reload();
+    
+    switchToSignup() {
+        const loginView = document.getElementById('login-view');
+        const signupView = document.getElementById('signup-view');
+        
+        if (loginView && signupView) {
+            loginView.style.display = 'none';
+            signupView.style.display = 'block';
         }
+    }
+    
+    loadUsers() {
+        const usersJSON = localStorage.getItem('visiq_users');
+        return usersJSON ? JSON.parse(usersJSON) : [];
+    }
+    
+    saveUsers() {
+        localStorage.setItem('visiq_users', JSON.stringify(this.users));
+    }
+    
+    loadSession() {
+        const sessionJSON = localStorage.getItem('visiq_session');
+        return sessionJSON ? JSON.parse(sessionJSON) : null;
+    }
+    
+    validateEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
     }
 }
 
-// Global instance
-window.auth = new AuthManager();
-
-// Global functions
-window.toggleForm = function(e) {
-    e.preventDefault();
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
-
-    if (loginForm && signupForm) {
-        loginForm.classList.toggle('active');
-        signupForm.classList.toggle('active');
-    }
-};
-
-window.handleLogout = function() {
-    window.auth.logout();
-};
-
-window.goHome = function() {
-    const galleryView = document.getElementById('gallery-view');
-    const simView = document.getElementById('simulation-view');
-    if (galleryView) galleryView.classList.add('active');
-    if (simView) simView.classList.remove('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+// Initialize auth system
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        window.authSystem = new AuthSystem();
+    });
+} else {
+    window.authSystem = new AuthSystem();
+}

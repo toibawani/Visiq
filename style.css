@@ -1315,3 +1315,18 @@ body.navbar-hidden .navbar {
         margin-left: 5px;
     }
 }
+.btn-logout {
+    padding: 8px 16px;
+    background: rgba(255, 100, 50, 0.8);
+    color: #fff;
+    border: 1px solid rgba(255, 100, 50, 0.5);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Space Grotesk';
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    background: rgba(255, 100, 50, 1);
+}
