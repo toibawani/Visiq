@@ -453,16 +453,72 @@ html, body {
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
 }
 
-/* ===== NAVBAR ===== */
+/* ===== NAVBAR - Mobile Fix ===== */
 .navbar {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 100;
+    left: 0;
+    right: 0;
+    height: 60px;
     background: rgba(15, 15, 35, 0.95);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0, 217, 255, 0.1);
-    padding: 16px 0;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Navbar hide animation (when scrolling down on mobile) */
+body.navbar-hidden .navbar {
+    transform: translateY(-60px);
+}
+
+/* Mobile navbar adjustments */
+@media (max-width: 768px) {
+    .navbar {
+        height: 50px;
+        padding: 0 15px;
+    }
+    
+    .logo-text {
+        font-size: 18px;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+    
+    body.navbar-hidden .navbar {
+        transform: translateY(-50px);
+    }
+}
+
+/* Ensure simulation view accounts for navbar */
+.view.active {
+    padding-top: 60px;
+}
+
+@media (max-width: 768px) {
+    .view.active {
+        padding-top: 50px;
+    }
+}
+
+/* Canvas spacing */
+#simulation-canvas {
+    position: relative;
+    margin-top: 10px;
+}
+
+/* Controls accessibility on mobile */
+@media (max-width: 768px) {
+    .controls-wrapper {
+        max-height: calc(100vh - 50px - 60px);
+        overflow-y: auto;
+    }
 }
 
 .nav-container {
@@ -472,6 +528,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 
 .logo-section {
@@ -712,7 +769,6 @@ html, body {
     cursor: pointer;
     transition: all var(--transition);
     position: relative;
-    group: card;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
@@ -859,9 +915,16 @@ html, body {
     background: rgba(15, 15, 35, 0.95);
     backdrop-filter: blur(20px);
     position: sticky;
-    top: 0;
+    top: 60px;
     z-index: 100;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .sim-header {
+        top: 50px;
+        padding: 15px 20px;
+    }
 }
 
 .btn-back {
@@ -939,7 +1002,7 @@ html, body {
     padding: 28px;
     height: fit-content;
     position: sticky;
-    top: 100px;
+    top: 140px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
