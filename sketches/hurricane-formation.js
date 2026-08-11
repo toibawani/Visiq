@@ -101,7 +101,8 @@ let hurricaneSketch = function(p) {
         }
         
         cloudParticles = [];
-        for (let i = 0; i < 400; i++) {
+        const cloudParticleCount = window.performanceSettings.getScaledParticleCount(400);
+        for (let i = 0; i < cloudParticleCount; i++) {
             const angle = p.random(p.TWO_PI);
             const radius = p.random(20, 300);
             
@@ -138,7 +139,8 @@ let hurricaneSketch = function(p) {
         }
         
         convectiveUpdrafts = [];
-        for (let i = 0; i < 30; i++) {
+        const updraftCount = window.performanceSettings.getScaledParticleCount(30);
+        for (let i = 0; i < updraftCount; i++) {
             const angle = p.random(p.TWO_PI);
             const radius = p.random(30, 150);
             

@@ -106,7 +106,7 @@ let blackHoleSketch = function(p) {
         }
         
         accretionDiskParticles = [];
-        const diskParticleCount = 400;
+        const diskParticleCount = window.performanceSettings.getScaledDiskParticleCount(400);
         for (let i = 0; i < diskParticleCount; i++) {
             const angle = p.random(p.TWO_PI);
             const radius = p.random(schwarzschildRadius * 1.5, schwarzschildRadius * 4);
@@ -128,7 +128,7 @@ let blackHoleSketch = function(p) {
         }
         
         particles = [];
-        const particleCount = 150;
+        const particleCount = window.performanceSettings.getScaledParticleCount(150);
         for (let i = 0; i < particleCount; i++) {
             const angle = p.random(p.TWO_PI);
             const dist = p.random(150, 400);
@@ -153,7 +153,7 @@ let blackHoleSketch = function(p) {
         }
         
         photons = [];
-        const photonCount = 60;
+        const photonCount = window.performanceSettings.getScaledParticleCount(60);
         for (let i = 0; i < photonCount; i++) {
             const angle = p.random(p.TWO_PI);
             const dist = p.random(250, 450);
@@ -385,7 +385,6 @@ let blackHoleSketch = function(p) {
     }
     
     function updateQuantumEffects() {
-        // Quantum fluctuations near event horizon
         if (p.random() < 0.1) {
             const angle = p.random(p.TWO_PI);
             const radius = schwarzschildRadius * 1.5;
@@ -403,7 +402,6 @@ let blackHoleSketch = function(p) {
             return q.age < 50;
         });
         
-        // Hawking radiation
         if (blackHoleMass > 0.5 && p.random() < 0.05) {
             const angle = p.random(p.TWO_PI);
             
@@ -512,7 +510,6 @@ let blackHoleSketch = function(p) {
         p.push();
         
         photons.forEach(photon => {
-            // Trail
             for (let i = 0; i < photon.trail.length; i++) {
                 const t = i / photon.trail.length;
                 const opacity = t * 0.2;

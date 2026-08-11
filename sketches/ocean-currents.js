@@ -94,9 +94,9 @@ let oceanSketch = function(p) {
     function initializeOcean() {
         // Create particle field (water parcels)
         particles = [];
-        const particleCount = 200;
+        const oceanParticleCount = window.performanceSettings.getScaledParticleCount(200);
         
-        for (let i = 0; i < particleCount; i++) {
+        for (let i = 0; i < oceanParticleCount; i++) {
             const depth = p.random(0, oceanDepth);
             
             particles.push({
