@@ -15,9 +15,6 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2300d9ff'/><text x='50' y='65' font-size='60' font-weight='bold' text-anchor='middle' fill='%23050507'>V</text></svg>">
     
     <link rel="stylesheet" href="style.css">
-    <script src="assets/sounds.js"></script>
-    <script src="assets/auth.js"></script>
-    <script src="gallery.js"></script>
 </head>
 <body>
     <!-- ===== AUTH PAGE ===== -->
@@ -80,25 +77,19 @@
                             </div>
                         </div>
                         
-                        <button type="button" class="btn-auth" onclick="handleLogin(event)">Sign In</button>
+                        <button type="submit" class="btn-auth">Sign In</button>
                         
                         <div class="auth-toggle">
-                            Don't have an account? <a onclick="toggleForm(event)">Create one</a>
+                            Don't have an account? <a href="#" onclick="window.authSystem.switchToSignup(); return false;">Create one</a>
                         </div>
                     </form>
                     
                     <!-- Signup Form -->
-                    <form class="auth-form" id="signup-form">
+                    <form class="auth-form" id="signup-form" style="display: none;">
                         <h2>Join VISIQ</h2>
                         <p>Create account to get started</p>
                         
                         <div class="form-fields">
-                            <div class="form-field">
-                                <label for="signup-name">Full Name</label>
-                                <input type="text" id="signup-name" placeholder="Your name" required>
-                                <div class="field-focus"></div>
-                            </div>
-                            
                             <div class="form-field">
                                 <label for="signup-email">Email Address</label>
                                 <input type="email" id="signup-email" placeholder="you@example.com" required>
@@ -112,32 +103,16 @@
                             </div>
                             
                             <div class="form-field">
-                                <label>Interests</label>
-                                <div class="interests-grid">
-                                    <label class="interest-option">
-                                        <input type="checkbox" name="interest" value="physics">
-                                        <span>Physics</span>
-                                    </label>
-                                    <label class="interest-option">
-                                        <input type="checkbox" name="interest" value="biology">
-                                        <span>Biology</span>
-                                    </label>
-                                    <label class="interest-option">
-                                        <input type="checkbox" name="interest" value="geography">
-                                        <span>Geography</span>
-                                    </label>
-                                    <label class="interest-option">
-                                        <input type="checkbox" name="interest" value="astronomy">
-                                        <span>Astronomy</span>
-                                    </label>
-                                </div>
+                                <label for="signup-confirm">Confirm Password</label>
+                                <input type="password" id="signup-confirm" placeholder="••••••••" required>
+                                <div class="field-focus"></div>
                             </div>
                         </div>
                         
-                        <button type="button" class="btn-auth" onclick="handleSignup(event)">Create Account</button>
+                        <button type="submit" class="btn-auth">Create Account</button>
                         
                         <div class="auth-toggle">
-                            Already have an account? <a onclick="toggleForm(event)">Sign in</a>
+                            Already have an account? <a href="#" onclick="window.authSystem.switchToLogin(); return false;">Sign in</a>
                         </div>
                     </form>
                 </div>
@@ -156,25 +131,24 @@
                 </div>
                 
                 <div class="nav-links">
-                    <a class="nav-link" onclick="document.getElementById('gallery-view').classList.add('active'); document.getElementById('simulation-view').classList.remove('active');">Explore</a>
+                    <a class="nav-link" onclick="goHome();">Explore</a>
                     <a class="nav-link" href="#features">Features</a>
                     <a class="nav-link" href="#about">About</a>
                 </div>
                 
                 <div class="nav-right">
                     <span class="user-name" id="user-display">User</span>
-                    <button class="btn-logout" onclick="handleLogout()">Logout</button>
+                    <button class="btn-logout" onclick="window.authSystem.handleLogout()">Logout</button>
                 </div>
             </div>
         </nav>
         
-        <!-- Hero Section -->
+        <!-- Gallery View -->
         <div id="gallery-view" class="view active">
             <section class="hero-section">
                 <div class="hero-content">
                     <h1>Explore the <span>Universe</span></h1>
                     <p>Immerse yourself in interactive simulations spanning physics, biology, geography, and astronomy. Watch complex phenomena unfold in real-time with cutting-edge visualizations.</p>
-                    <button class="btn-hero" onclick="document.querySelector('[onclick*=scrollIntoView]') && document.querySelector('[onclick*=scrollIntoView]').click()">Start Exploring</button>
                 </div>
                 <div class="hero-canvas">
                     <canvas id="hero-canvas"></canvas>
@@ -259,7 +233,7 @@
         <!-- Simulation View -->
         <div id="simulation-view" class="view">
             <div class="sim-header">
-                <button class="btn-back" onclick="backToGallery()">← Back to Gallery</button>
+                <button class="btn-back" onclick="window.gallery.backToGallery()">← Back to Gallery</button>
                 <div class="sim-title">
                     <h1 id="sim-title">Simulation</h1>
                     <div class="sim-category" id="sim-category">Category</div>
@@ -289,14 +263,13 @@
         <p style="color: rgba(0, 217, 255, 0.8); font-size: 16px; font-family: 'Space Grotesk';">Loading VISIQ...</p>
     </div>
 
+    <!-- Scripts in correct order -->
     <script src="assets/sounds.js"></script>
-    <script src="assets/ios-audio-fix.js"></script>
     <script src="assets/auth.js"></script>
-    <script src="assets/performance-scaling.js"></script> 
+    <script src="assets/performance-scaling.js"></script>
+    <script src="assets/ios-audio-fix.js"></script>
     <script src="gallery.js"></script>
     <script src="assets/navbar-manager.js"></script>
-    <script src="assets/navbar-manager.js"></script>
     <script src="assets/screenshot.js"></script>
-    
 </body>
 </html>
