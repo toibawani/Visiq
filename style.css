@@ -1722,3 +1722,152 @@ a:focus-visible {
         gap: 15px;
     }
 }
+/* ===== FULLSCREEN MODE ===== */
+.sim-header-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-left: auto;
+}
+
+.btn-fullscreen {
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: #fff;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-fullscreen:hover:not(:disabled) {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-fullscreen:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Fullscreen layout */
+body.fullscreen-mode {
+    overflow: hidden;
+}
+
+body.fullscreen-mode .navbar {
+    display: none;
+}
+
+body.fullscreen-mode .sim-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(5, 5, 7, 0.98);
+    border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+    z-index: 1001;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+body.fullscreen-mode .sim-container {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: calc(100vh - 60px);
+    margin: 0;
+    padding: 0;
+}
+
+body.fullscreen-mode #simulation-canvas {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.fullscreen-mode .canvas-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+body.fullscreen-mode .controls-wrapper {
+    position: fixed;
+    right: 0;
+    top: 60px;
+    bottom: 0;
+    width: 350px;
+    max-width: 30%;
+    background: rgba(5, 5, 7, 0.95);
+    border-left: 1px solid rgba(0, 217, 255, 0.2);
+    overflow-y: auto;
+    padding: 20px;
+    z-index: 1000;
+}
+
+body.fullscreen-mode .sim-info-panel {
+    display: none;
+}
+
+@media (max-width: 1200px) {
+    body.fullscreen-mode .controls-wrapper {
+        width: 40%;
+    }
+}
+
+@media (max-width: 768px) {
+    body.fullscreen-mode .controls-wrapper {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        top: auto;
+        width: 100%;
+        height: 200px;
+        max-height: 40vh;
+        border-left: none;
+        border-top: 1px solid rgba(0, 217, 255, 0.2);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    
+    body.fullscreen-mode .sim-container {
+        bottom: 200px;
+    }
+}
+
+/* Exit fullscreen hint */
+.fullscreen-hint {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(26, 26, 62, 0.95);
+    color: rgba(0, 217, 255, 0.8);
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Space Grotesk';
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    z-index: 999;
+    animation: slideInLeft 0.3s ease-out;
+}
+
+@media (max-width: 768px) {
+    .fullscreen-hint {
+        display: none;
+    }
+}
