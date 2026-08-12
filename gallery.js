@@ -244,12 +244,11 @@ function openSimulation(sim) {
     document.getElementById('sim-title').textContent = sim.title;
     document.getElementById('sim-category').textContent = `${sim.category} • ${sim.difficulty}`;
     document.getElementById('sim-description').textContent = sim.description;
-    document.getElementById('sim-description').textContent = sim.description;
 
-// Update info panel
-if (window.simInfo) {
-    window.simInfo.updatePanel(sim.name, sim.category);
-}
+    // Update info panel
+    if (window.simInfo) {
+        window.simInfo.updatePanel(sim.title, sim.category);
+    }
 
     // Play category audio
     currentCategory = sim.category;
@@ -258,6 +257,11 @@ if (window.simInfo) {
 
     // Load sketch
     loadSketch(sim.file);
+
+    // Start stats monitoring
+    if (window.statsMonitor) {
+        window.statsMonitor.start();
+    }
 }
 
 function startCategoryAudio(category) {
@@ -312,6 +316,11 @@ function backToGallery() {
     if (simView) simView.classList.remove('active');
     
     soundManager.playChime(600, 0.2);
+
+    // Stop stats monitoring
+    if (window.statsMonitor) {
+        window.statsMonitor.stop();
+    }
 }
 
 function resetSimulation() {

@@ -250,6 +250,20 @@
             <div class="sim-container">
                 <div class="canvas-wrapper">
                     <div id="simulation-canvas"></div>
+                    <div class="stats-panel" id="stats-panel">
+                        <div class="stat-item">
+                            <span class="stat-label">FPS</span>
+                            <span class="stat-value" id="stat-fps">60</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Particles</span>
+                            <span class="stat-value" id="stat-particles">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Render</span>
+                            <span class="stat-value" id="stat-render">0ms</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="controls-wrapper">
                     <div class="control-header">
@@ -278,6 +292,7 @@
     <script src="assets/mute-system.js"></script>
     <script src="assets/sim-info.js"></script> 
     <script src="assets/fullscreen-system.js"></script>
+    <script src="assets/stats-monitor.js"></script>
     <script src="assets/ui-polish.js"></script> 
 </body>
 </html>
