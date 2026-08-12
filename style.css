@@ -1330,3 +1330,294 @@ body.navbar-hidden .navbar {
 .btn-logout:hover {
     background: rgba(255, 100, 50, 1);
 }
+/* ===== UI ANIMATIONS AND POLISH ===== */
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Loading Screen Enhancement */
+#loading-screen {
+    animation: fadeIn 0.3s ease-in;
+}
+
+#loading-screen div:first-child {
+    animation: spin 2s linear infinite;
+}
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-family: 'Space Grotesk';
+    font-size: 14px;
+    z-index: 9000;
+    animation: slideInLeft 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.toast-success {
+    background: rgba(100, 255, 150, 0.9);
+    color: #050507;
+    border: 1px solid rgba(100, 255, 150, 0.5);
+}
+
+.toast-error {
+    background: rgba(255, 100, 50, 0.9);
+    color: #fff;
+    border: 1px solid rgba(255, 100, 50, 0.5);
+}
+
+.toast-info {
+    background: rgba(0, 217, 255, 0.9);
+    color: #050507;
+    border: 1px solid rgba(0, 217, 255, 0.5);
+}
+
+/* Button Animations */
+.btn-reset,
+.btn-back,
+.btn-logout,
+.btn-auth,
+.btn-screenshot {
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-reset:hover:not(:disabled),
+.btn-back:hover:not(:disabled),
+.btn-logout:hover:not(:disabled),
+.btn-auth:hover:not(:disabled),
+.btn-screenshot:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 217, 255, 0.3);
+}
+
+.btn-reset:active:not(:disabled),
+.btn-back:active:not(:disabled),
+.btn-logout:active:not(:disabled),
+.btn-auth:active:not(:disabled),
+.btn-screenshot:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Button ripple effect on click */
+.btn-reset::after,
+.btn-back::after,
+.btn-logout::after,
+.btn-auth::after,
+.btn-screenshot::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.btn-reset:active::after,
+.btn-back:active::after,
+.btn-logout:active::after,
+.btn-auth:active::after,
+.btn-screenshot:active::after {
+    animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+    from {
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+    to {
+        width: 100px;
+        height: 100px;
+        opacity: 0;
+    }
+}
+
+/* Control Group Polish */
+.control-group {
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.control-group:hover {
+    border-left-color: rgba(0, 217, 255, 0.6);
+    background: rgba(26, 26, 62, 0.7);
+}
+
+/* Input Focus Animation */
+.form-field input:focus {
+    transform: scale(1.02);
+    border-color: rgba(0, 217, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+}
+
+/* Slider Enhancement */
+input[type="range"]::-webkit-slider-thumb {
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
+    transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    width: 18px;
+    height: 18px;
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+}
+
+/* Smooth transitions for view changes */
+.view {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.view.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.view:not(.active) {
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+}
+
+/* Tooltip Styling */
+.tooltip {
+    position: absolute;
+    background: rgba(26, 26, 62, 0.95);
+    color: rgba(245, 245, 247, 0.9);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'Space Grotesk';
+    white-space: nowrap;
+    z-index: 5000;
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    pointer-events: none;
+    animation: slideInLeft 0.2s ease-out;
+}
+
+/* Smooth navbar transitions */
+.navbar {
+    transition: transform 0.3s ease-in-out, background 0.2s ease;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Enhanced focus states for accessibility */
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+    outline: 2px solid rgba(0, 217, 255, 0.8);
+    outline-offset: 2px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(26, 26, 62, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 217, 255, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 217, 255, 0.8);
+}
+
+/* Card hover effects */
+.sim-card {
+    transition: all 0.3s ease;
+}
+
+.sim-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 217, 255, 0.2);
+}
+
+/* Smooth color transitions */
+.logo-section,
+.nav-link,
+.category-section {
+    transition: color 0.2s ease, background 0.2s ease;
+}
+/* ===== SCREENSHOT BUTTON STYLES ===== */
+.btn-screenshot {
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #ff006e 0%, #ff3385 100%);
+    color: #fff;
+    border: 1px solid rgba(255, 0, 110, 0.4);
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    margin-left: 10px;
+}
+
+.btn-screenshot:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ff3385 0%, #ff5fa3 100%);
+    box-shadow: 0 0 20px rgba(255, 0, 110, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-screenshot:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-screenshot:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .btn-screenshot {
+        padding: 8px 12px;
+        font-size: 11px;
+        margin-left: 5px;
+    }
+}
