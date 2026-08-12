@@ -244,6 +244,12 @@ function openSimulation(sim) {
     document.getElementById('sim-title').textContent = sim.title;
     document.getElementById('sim-category').textContent = `${sim.category} • ${sim.difficulty}`;
     document.getElementById('sim-description').textContent = sim.description;
+    document.getElementById('sim-description').textContent = sim.description;
+
+// Update info panel
+if (window.simInfo) {
+    window.simInfo.updatePanel(sim.name, sim.category);
+}
 
     // Play category audio
     currentCategory = sim.category;

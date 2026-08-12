@@ -1662,3 +1662,63 @@ a:focus-visible {
         font-size: 14px;
     }
 }
+/* ===== SIMULATION INFO PANEL ===== */
+.sim-info-panel {
+    padding: 20px 40px;
+    background: rgba(26, 26, 62, 0.3);
+    border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+.sim-description-text {
+    color: rgba(160, 160, 168, 0.9);
+    font-size: 14px;
+    max-width: 600px;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.sim-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    max-width: 600px;
+}
+
+.info-item {
+    padding: 12px;
+    background: rgba(0, 217, 255, 0.05);
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.info-item:hover {
+    background: rgba(0, 217, 255, 0.1);
+    border-color: rgba(0, 217, 255, 0.4);
+}
+
+.info-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(0, 217, 255, 0.6);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.info-value {
+    font-size: 14px;
+    color: rgba(245, 245, 247, 0.9);
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .sim-info-panel {
+        padding: 15px 20px;
+    }
+    
+    .sim-info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+}
