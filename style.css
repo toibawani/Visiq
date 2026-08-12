@@ -1621,3 +1621,44 @@ a:focus-visible {
         margin-left: 5px;
     }
 }
+/* ===== MUTE BUTTON STYLES ===== */
+.btn-mute {
+    padding: 8px 12px;
+    background: rgba(0, 217, 255, 0.2);
+    color: rgba(0, 217, 255, 0.9);
+    border: 1px solid rgba(0, 217, 255, 0.4);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+}
+
+.btn-mute:hover {
+    background: rgba(0, 217, 255, 0.4);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+}
+
+.btn-mute.muted {
+    background: rgba(255, 100, 50, 0.2);
+    color: rgba(255, 100, 50, 0.9);
+    border-color: rgba(255, 100, 50, 0.4);
+}
+
+.btn-mute.muted:hover {
+    background: rgba(255, 100, 50, 0.4);
+    box-shadow: 0 0 15px rgba(255, 100, 50, 0.3);
+}
+
+@media (max-width: 768px) {
+    .btn-mute {
+        min-width: 36px;
+        height: 36px;
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}
