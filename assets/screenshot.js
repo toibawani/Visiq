@@ -155,16 +155,20 @@ class ScreenshotSystem {
     }
     
     showSuccess() {
-        if (!this.button) return;
-        
-        this.button.textContent = '✓ Saved!';
-        this.button.style.background = 'linear-gradient(135deg, #00d9ff 0%, #00a8cc 100%)';
-        
-        setTimeout(() => {
-            this.button.style.background = '';
-        }, 2000);
+    if (!this.button) return;
+    
+    this.button.textContent = '✓ Saved!';
+    this.button.style.background = 'linear-gradient(135deg, #00d9ff 0%, #00a8cc 100%)';
+    
+    // Add haptic feedback
+    if (window.haptic) {
+        window.haptic.success();
     }
     
+    setTimeout(() => {
+        this.button.style.background = '';
+    }, 2000);
+}
     showError(message) {
         console.error('[VISIQ] Screenshot error:', message);
     }
