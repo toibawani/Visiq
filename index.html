@@ -305,34 +305,55 @@
         <p style="color: rgba(0, 217, 255, 0.8); font-size: 16px; font-family: 'Space Grotesk';">Loading VISIQ...</p>
     </div>
 
-    <!-- Scripts in correct order -->
+   <!-- Scripts - Critical load order -->
+    
+    <!-- FOUNDATION: Core systems must load first -->
+    <script src="assets/config.js"></script>
+    <script src="assets/simulations-data.js"></script>
     <script src="assets/sounds.js"></script>
+    <script src="assets/user-preferences.js"></script>
+    
+    <!-- AUTHENTICATION -->
     <script src="assets/auth.js"></script>
+    
+    <!-- PERFORMANCE & AUDIO -->
     <script src="assets/performance-scaling.js"></script>
     <script src="assets/ios-audio-fix.js"></script>
-    <script src="gallery.js"></script>
-    <script src="assets/navbar-manager.js"></script>
-    <script src="assets/screenshot.js"></script>
     <script src="assets/mute-system.js"></script>
-    <script src="assets/sim-info.js"></script> 
+    
+    <!-- UI & POLISH -->
+    <script src="assets/ui-polish.js"></script>
+    <script src="assets/status-indicator.js"></script>
+    <script src="assets/smooth-scroll.js"></script>
+    <script src="assets/particle-bg.js"></script>
+    
+    <!-- NAVIGATION & INTERACTION -->
+    <script src="assets/navbar-manager.js"></script>
+    <script src="assets/gesture-support.js"></script>
+    <script src="assets/haptic-feedback.js"></script>
+    <script src="assets/keyboard-shortcuts.js"></script>
+    
+    <!-- GALLERY & SIMULATIONS -->
+    <script src="gallery.js"></script>
+    <script src="assets/sim-info.js"></script>
+    
+    <!-- SIMULATION FEATURES -->
+    <script src="assets/screenshot.js"></script>
     <script src="assets/fullscreen-system.js"></script>
     <script src="assets/stats-monitor.js"></script>
-    <script src="assets/keyboard-shortcuts.js"></script>
-    <script src="assets/smooth-scroll.js"></script>
-    <script src="assets/haptic-feedback.js"></script> 
-    <script src="assets/gesture-support.js"></script>
-    <script src="assets/status-indicator.js"></script>
-    <script src="assets/particle-bg.js"></script> 
-    <script src="assets/user-preferences.js"></script>
-    <script src="assets/stats-dashboard.js"></script>
-    <script src="assets/achievements.js"></script> 
-    <script src="assets/theme-system.js"></script> 
-    <script src="assets/streaks-system.js"></script>  
-    <script src="assets/search-system.js"></script> 
-    <script src="assets/share-system.js"></script> 
-    <script src="assets/trending-system.js"></script> 
     <script src="assets/focus-mode.js"></script>
-
-    <script src="assets/ui-polish.js"></script> 
+    
+    <!-- USER ENGAGEMENT & TRACKING -->
+    <script src="assets/stats-dashboard.js"></script>
+    <script src="assets/achievements.js"></script>
+    <script src="assets/streaks-system.js"></script>
+    
+    <!-- PERSONALIZATION & DISCOVERY -->
+    <script src="assets/theme-system.js"></script>
+    <script src="assets/share-system.js"></script>
+    <script src="assets/trending-system.js"></script>
+    
+    <!-- NOTE: search-system.js moved from sketches to assets if needed -->
+    
 </body>
 </html>
