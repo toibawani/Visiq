@@ -80,7 +80,7 @@
                         <button type="submit" class="btn-auth">Sign In</button>
                         
                         <div class="auth-toggle">
-                            Don't have an account? <a href="#" onclick="window.authSystem.switchToSignup(); return false;">Create one</a>
+                            Don't have an account? <a href="#" onclick="event.preventDefault(); window.authSystem.switchToSignup();">Create one</a>
                         </div>
                     </form>
                     
@@ -112,7 +112,7 @@
                         <button type="submit" class="btn-auth">Create Account</button>
                         
                         <div class="auth-toggle">
-                            Already have an account? <a href="#" onclick="window.authSystem.switchToLogin(); return false;">Sign in</a>
+                            Already have an account? <a href="#" onclick="event.preventDefault(); window.authSystem.switchToLogin();">Sign in</a>
                         </div>
                     </form>
                 </div>
@@ -121,7 +121,7 @@
     </div>
     
     <!-- ===== MAIN APP ===== -->
-    <div id="main-app" class="main-app" style="display: none;">
+    <div id="main-app" class="main-app active" style="display: none;">
         <!-- Navbar -->
         <nav class="navbar">
             <div class="nav-container">
@@ -305,7 +305,7 @@
         <p style="color: rgba(0, 217, 255, 0.8); font-size: 16px; font-family: 'Space Grotesk';">Loading VISIQ...</p>
     </div>
 
-   <!-- Scripts - Critical load order -->
+    <!-- Scripts - Critical load order -->
     
     <!-- FOUNDATION: Core systems must load first -->
     <script src="assets/config.js"></script>
@@ -364,11 +364,6 @@
     <script src="assets/responsive-system.js"></script>
     <script src="assets/performance-optimizer.js"></script>
     <script src="assets/analytics.js"></script>
-    
-    
-
-    
-    <!-- NOTE: search-system.js moved from sketches to assets if needed -->
     
 </body>
 </html>
