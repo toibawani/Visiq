@@ -1,11 +1,11 @@
-cat > style.css << 'EOF'
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -15,14 +15,14 @@ html, body {
     line-height: 1.6;
 }
 
-/* AUTH */
+/* =========================================================
+   AUTH
+   ========================================================= */
+
 #auth-page {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: #0a0a0a;
     align-items: center;
     justify-content: center;
@@ -123,7 +123,10 @@ html, body {
     cursor: pointer;
 }
 
-/* MAIN APP */
+/* =========================================================
+   MAIN APP
+   ========================================================= */
+
 #main-app {
     display: none;
     width: 100%;
@@ -135,7 +138,10 @@ html, body {
     display: flex;
 }
 
-/* NAVBAR */
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
 .navbar {
     position: fixed;
     top: 0;
@@ -175,7 +181,8 @@ html, body {
     color: #888;
 }
 
-.btn-mute, .btn-logout {
+.btn-mute,
+.btn-logout {
     padding: 8px 12px;
     background: #2a2a2a;
     color: #e0e0e0;
@@ -185,11 +192,15 @@ html, body {
     font-size: 12px;
 }
 
-.btn-mute:hover, .btn-logout:hover {
+.btn-mute:hover,
+.btn-logout:hover {
     background: #333;
 }
 
-/* VIEWS */
+/* =========================================================
+   VIEWS
+   ========================================================= */
+
 .view {
     display: none;
     flex: 1;
@@ -201,7 +212,10 @@ html, body {
     display: block;
 }
 
-/* HERO */
+/* =========================================================
+   HERO
+   ========================================================= */
+
 .hero-section {
     padding: 80px 20px;
     text-align: center;
@@ -249,7 +263,10 @@ html, body {
     background: #444;
 }
 
-/* SIMULATIONS SECTION - THIS IS THE KEY */
+/* =========================================================
+   SIMULATIONS SECTION
+   ========================================================= */
+
 .simulations-section {
     padding: 80px 20px;
     background: #0a0a0a;
@@ -320,6 +337,28 @@ html, body {
     margin: 0;
 }
 
+/* =========================================================
+   CARD TAGS
+   ========================================================= */
+
+.card-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    font-size: 11px;
+    background: #2a2a2a;
+    color: #999;
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+/* =========================================================
+   CARD FOOTER
+   ========================================================= */
+
 .card-footer {
     display: flex;
     justify-content: space-between;
@@ -348,7 +387,10 @@ html, body {
     transform: translateX(4px);
 }
 
-/* HOW SECTION */
+/* =========================================================
+   HOW SECTION
+   ========================================================= */
+
 .how-section {
     padding: 80px 20px;
     background: #1a1a1a;
@@ -394,7 +436,10 @@ html, body {
     color: #888;
 }
 
-/* FOOTER */
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
 .footer {
     padding: 40px 20px;
     text-align: center;
@@ -403,7 +448,10 @@ html, body {
     font-size: 12px;
 }
 
-/* SIMULATION VIEW */
+/* =========================================================
+   SIMULATION VIEW
+   ========================================================= */
+
 #simulation-view {
     display: flex;
     flex-direction: column;
@@ -529,30 +577,32 @@ html, body {
     cursor: pointer;
 }
 
-/* MOBILE */
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 768px) {
     .hero-section h1 {
         font-size: 32px;
     }
-    
+
     .hero-subtitle {
         font-size: 16px;
     }
-    
+
     .simulations-container {
         grid-template-columns: 1fr;
     }
-    
+
     .how-grid {
         grid-template-columns: 1fr 1fr;
     }
-    
+
     .sim-container {
         grid-template-columns: 1fr;
     }
-    
+
     .controls-wrapper {
         max-height: 40vh;
     }
 }
-EOF

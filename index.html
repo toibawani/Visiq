@@ -1,102 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VISIQ - Interactive Science Learning</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <!-- AUTH PAGE -->
-    <div id="auth-page" class="auth-page active">
-        <div class="auth-container">
-            <div class="auth-left">
-                <h1>VISIQ</h1>
-                <p>Interactive Science Visualizations</p>
-            </div>
-
-            <form class="auth-form active" id="login-form">
-                <h2>Sign In</h2>
-                <div class="form-field">
-                    <label>Email</label>
-                    <input type="email" id="login-email" placeholder="you@example.com" required>
-                </div>
-                <div class="form-field">
-                    <label>Password</label>
-                    <input type="password" id="login-password" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn-primary">Sign In</button>
-                <div class="auth-toggle">
-                    Don't have an account? <a href="#" onclick="event.preventDefault(); window.authSystem.switchToSignup();">Create one</a>
-                </div>
-            </form>
-
-            <form class="auth-form" id="signup-form" style="display: none;">
-                <h2>Create Account</h2>
-                <div class="form-field">
-                    <label>Email</label>
-                    <input type="email" id="signup-email" placeholder="you@example.com" required>
-                </div>
-                <div class="form-field">
-                    <label>Password</label>
-                    <input type="password" id="signup-password" placeholder="••••••••" required>
-                </div>
-                <div class="form-field">
-                    <label>Confirm Password</label>
-                    <input type="password" id="signup-confirm" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn-primary">Create Account</button>
-                <div class="auth-toggle">
-                    Already have an account? <a href="#" onclick="event.preventDefault(); window.authSystem.switchToLogin();">Sign in</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MAIN APP -->
-    <div id="main-app" class="main-app" style="display: none;">
-        <!-- NAVBAR -->
-        <div class="navbar">
-            <div class="nav-container">
-                <div class="logo-section" onclick="window.gallery.backToGallery()">
-                    <span class="logo-text">VISIQ</span>
-                </div>
-                <div class="nav-right">
-                    <span class="user-name" id="user-display">User</span>
-                    <button id="mute-button" class="btn-mute" title="Mute/Unmute">🔊</button>
-                    <button class="btn-logout" onclick="window.authSystem.handleLogout()">Logout</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- GALLERY VIEW -->
-        <div id="gallery-view" class="view active">
-            <!-- HERO SECTION -->
-            <section class="hero-section">
-                <div class="hero-content">
-                    <h1>VISIQ</h1>
-                    <p class="hero-subtitle">See Science. Don't Just Read It.</p>
-                    <p class="hero-description">Explore the forces, patterns, and systems that shape our world through interactive simulations you can manipulate, experiment with, and learn from.</p>
-                    <button class="btn-explore" onclick="document.querySelector('.simulations-section').scrollIntoView({ behavior: 'smooth' })">Explore 5 Simulations</button>
-                </div>
-            </section>
-
-            <!-- SIMULATIONS SECTION -->
-            <section class="simulations-section">
-                <div class="simulations-container">
                     <div class="sim-card-featured" onclick="window.gallery.openSimulation('newton')">
                         <div class="card-header">
                             <div class="card-icon">⚛️</div>
                             <div class="card-meta">
                                 <div class="card-title">Newton's Playground</div>
-                                <div class="card-category">Physics</div>
+                                <div class="card-category">Physics • Beginner</div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <p>Drag objects. Apply forces. Understand F=ma through direct interaction.</p>
+                            <p>Drag objects and apply forces. Watch F=ma come alive with real physics.</p>
+                            <div class="card-tags">
+                                <span class="tag">forces</span>
+                                <span class="tag">motion</span>
+                                <span class="tag">interactive</span>
+                            </div>
                         </div>
                         <div class="card-footer">
-                            <span class="difficulty">Beginner</span>
+                            <span class="time">5-10 min</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
@@ -106,14 +25,19 @@
                             <div class="card-icon">🌌</div>
                             <div class="card-meta">
                                 <div class="card-title">Black Hole Orbit</div>
-                                <div class="card-category">Physics</div>
+                                <div class="card-category">Physics • Intermediate</div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <p>Adjust velocity and watch particles orbit a black hole or spiral in.</p>
+                            <p>Control orbital velocity and watch particles spiral around a black hole.</p>
+                            <div class="card-tags">
+                                <span class="tag">gravity</span>
+                                <span class="tag">orbits</span>
+                                <span class="tag">spacetime</span>
+                            </div>
                         </div>
                         <div class="card-footer">
-                            <span class="difficulty">Intermediate</span>
+                            <span class="time">8-12 min</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
@@ -123,14 +47,19 @@
                             <div class="card-icon">〰️</div>
                             <div class="card-meta">
                                 <div class="card-title">Wave Interference</div>
-                                <div class="card-category">Physics</div>
+                                <div class="card-category">Physics • Intermediate</div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <p>Change wavelength and watch interference patterns emerge from two sources.</p>
+                            <p>Change wavelength and watch constructive and destructive interference emerge.</p>
+                            <div class="card-tags">
+                                <span class="tag">waves</span>
+                                <span class="tag">superposition</span>
+                                <span class="tag">patterns</span>
+                            </div>
                         </div>
                         <div class="card-footer">
-                            <span class="difficulty">Intermediate</span>
+                            <span class="time">7-10 min</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
@@ -140,14 +69,19 @@
                             <div class="card-icon">🎯</div>
                             <div class="card-meta">
                                 <div class="card-title">Pendulum Chaos</div>
-                                <div class="card-category">Physics</div>
+                                <div class="card-category">Physics • Advanced</div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <p>Push a double pendulum and watch chaos emerge. The butterfly effect in action.</p>
+                            <p>Tiny changes create completely different outcomes. Experience chaos theory.</p>
+                            <div class="card-tags">
+                                <span class="tag">chaos</span>
+                                <span class="tag">butterfly effect</span>
+                                <span class="tag">nonlinear</span>
+                            </div>
                         </div>
                         <div class="card-footer">
-                            <span class="difficulty">Advanced</span>
+                            <span class="time">10-15 min</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
@@ -157,89 +91,19 @@
                             <div class="card-icon">🌌</div>
                             <div class="card-meta">
                                 <div class="card-title">Galaxy Collision</div>
-                                <div class="card-category">Astronomy</div>
+                                <div class="card-category">Astronomy • Intermediate</div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <p>Watch two galaxies spiral toward each other and merge into one.</p>
+                            <p>Watch two galaxies spiral together and merge into one in cosmic dance.</p>
+                            <div class="card-tags">
+                                <span class="tag">galaxies</span>
+                                <span class="tag">n-body</span>
+                                <span class="tag">gravity</span>
+                            </div>
                         </div>
                         <div class="card-footer">
-                            <span class="difficulty">Intermediate</span>
+                            <span class="time">8-12 min</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
-                </div>
-            </section>
-
-            <!-- HOW TO USE SECTION -->
-            <section class="how-section">
-                <h2>How to Use VISIQ</h2>
-                <div class="how-grid">
-                    <div class="how-card">
-                        <div class="how-number">1</div>
-                        <div class="how-title">Pick a Simulation</div>
-                        <div class="how-text">Choose something you're curious about.</div>
-                    </div>
-                    <div class="how-card">
-                        <div class="how-number">2</div>
-                        <div class="how-title">Interact with It</div>
-                        <div class="how-text">Drag sliders, adjust values, manipulate the system.</div>
-                    </div>
-                    <div class="how-card">
-                        <div class="how-number">3</div>
-                        <div class="how-title">Observe What Happens</div>
-                        <div class="how-text">See real science unfold in real-time.</div>
-                    </div>
-                    <div class="how-card">
-                        <div class="how-number">4</div>
-                        <div class="how-title">Understand Why</div>
-                        <div class="how-text">Learn the principles behind what you see.</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- FOOTER -->
-            <footer class="footer">
-                <p>VISIQ • Interactive Science Learning</p>
-            </footer>
-        </div>
-
-        <!-- SIMULATION VIEW -->
-        <div id="simulation-view" class="view">
-            <div class="sim-header">
-                <button class="btn-back">← Back</button>
-                <div class="sim-title">
-                    <h1 id="sim-title">Simulation</h1>
-                    <div id="sim-category" style="font-size: 12px; color: #888;">Category</div>
-                </div>
-                <button id="reset-button" class="btn-reset">Reset</button>
-            </div>
-
-            <div class="sim-info-panel">
-                <div id="sim-description" class="sim-description-text"></div>
-            </div>
-
-            <div class="sim-container">
-                <div class="canvas-wrapper">
-                    <div id="simulation-canvas"></div>
-                </div>
-                <div class="controls-wrapper" id="controls-section"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SCRIPTS -->
-    <!-- p5.js library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
-
-    <!-- Core systems -->
-    <script src="assets/config.js"></script>
-    <script src="assets/simulations-data.js"></script>
-    <script src="assets/sounds.js"></script>
-    <script src="assets/user-preferences.js"></script>
-    <script src="assets/auth.js"></script>
-
-    <!-- Gallery and simulations -->
-    <script src="gallery.js"></script>
-</body>
-</html>
