@@ -22,7 +22,10 @@ body {
 #auth-page {
     display: none;
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: #0a0a0a;
     align-items: center;
     justify-content: center;
@@ -264,6 +267,50 @@ body {
 }
 
 /* =========================================================
+   SEARCH
+   ========================================================= */
+
+.search-section {
+    padding: 40px 20px;
+    background: #0a0a0a;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.search-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.search-input::placeholder {
+    color: #666;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #444;
+    background: #222;
+}
+
+.no-results {
+    padding: 40px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
+
+/* =========================================================
    SIMULATIONS SECTION
    ========================================================= */
 
@@ -279,6 +326,10 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
 }
+
+/* =========================================================
+   SIMULATION CARDS
+   ========================================================= */
 
 .sim-card-featured {
     background: #1a1a1a;
@@ -582,12 +633,25 @@ body {
    ========================================================= */
 
 @media (max-width: 768px) {
+
+    .hero-section {
+        padding: 60px 20px;
+    }
+
     .hero-section h1 {
         font-size: 32px;
     }
 
     .hero-subtitle {
         font-size: 16px;
+    }
+
+    .hero-description {
+        font-size: 13px;
+    }
+
+    .simulations-section {
+        padding: 60px 20px;
     }
 
     .simulations-container {
@@ -604,5 +668,66 @@ body {
 
     .controls-wrapper {
         max-height: 40vh;
+    }
+
+    .sim-header {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .sim-title h1 {
+        font-size: 18px;
+    }
+
+    .navbar {
+        padding: 0 14px;
+    }
+
+    .nav-right {
+        gap: 6px;
+    }
+
+    .user-name {
+        display: none;
+    }
+}
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    html,
+    body {
+        font-size: 13px;
+    }
+
+    .hero-section h1 {
+        font-size: 28px;
+    }
+
+    .hero-subtitle {
+        font-size: 15px;
+    }
+
+    .how-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sim-card-featured {
+        padding: 18px;
+    }
+
+    .card-icon {
+        font-size: 30px;
+    }
+
+    .search-section {
+        padding: 28px 16px;
+    }
+
+    .search-input {
+        padding: 11px 14px;
     }
 }

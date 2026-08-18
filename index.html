@@ -1,3 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISIQ - Interactive Science Learning</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- AUTH PAGE -->
+    <div id="auth-page" class="auth-page active">
+        <div class="auth-container">
+            <div class="auth-left">
+                <h1>VISIQ</h1>
+                <p>Interactive Science Visualizations</p>
+            </div>
+
+            <form class="auth-form active" id="login-form">
+                <h2>Sign In</h2>
+                <div class="form-field">
+                    <label>Email</label>
+                    <input type="email" id="login-email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-field">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+                <div class="auth-toggle">
+                    Don't have an account? <a href="#" onclick="event.preventDefault(); window.authSystem.switchToSignup();">Create one</a>
+                </div>
+            </form>
+
+            <form class="auth-form" id="signup-form" style="display: none;">
+                <h2>Create Account</h2>
+                <div class="form-field">
+                    <label>Email</label>
+                    <input type="email" id="signup-email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-field">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="••••••••" required>
+                </div>
+                <div class="form-field">
+                    <label>Confirm Password</label>
+                    <input type="password" id="signup-confirm" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary">Create Account</button>
+                <div class="auth-toggle">
+                    Already have an account? <a href="#" onclick="event.preventDefault(); window.authSystem.switchToLogin();">Sign in</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="main-app" class="main-app" style="display: none;">
+        <!-- NAVBAR -->
+        <div class="navbar">
+            <div class="nav-container">
+                <div class="logo-section" onclick="window.gallery.backToGallery()">
+                    <span class="logo-text">VISIQ</span>
+                </div>
+                <div class="nav-right">
+                    <span class="user-name" id="user-display">User</span>
+                    <button class="btn-logout" onclick="window.authSystem.handleLogout()">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GALLERY VIEW -->
+        <div id="gallery-view" class="view active">
+            <!-- HERO SECTION -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1>VISIQ</h1>
+                    <p class="hero-subtitle">See Science. Don't Just Read It.</p>
+                    <p class="hero-description">Explore the forces, patterns, and systems that shape our world through interactive simulations you can manipulate, experiment with, and learn from.</p>
+                    <button class="btn-explore" onclick="document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' })">Explore Simulations</button>
+                </div>
+            </section>
+
+            <!-- SEARCH SECTION -->
+            <section class="search-section">
+                <div class="search-container">
+                    <input type="text" id="search-input" class="search-input" placeholder="Search simulations... (forces, waves, chaos, galaxies)">
+                </div>
+            </section>
+
+            <!-- SIMULATIONS SECTION -->
+            <section class="simulations-section">
+                <div class="simulations-container">
                     <div class="sim-card-featured" onclick="window.gallery.openSimulation('newton')">
                         <div class="card-header">
                             <div class="card-icon">⚛️</div>
@@ -107,3 +199,79 @@
                             <span class="arrow">→</span>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- HOW TO USE SECTION -->
+            <section class="how-section">
+                <h2>How to Use VISIQ</h2>
+                <div class="how-grid">
+                    <div class="how-card">
+                        <div class="how-number">1</div>
+                        <div class="how-title">Search or Browse</div>
+                        <div class="how-text">Find a simulation that interests you.</div>
+                    </div>
+                    <div class="how-card">
+                        <div class="how-number">2</div>
+                        <div class="how-title">Click to Open</div>
+                        <div class="how-text">Launch the interactive simulation.</div>
+                    </div>
+                    <div class="how-card">
+                        <div class="how-number">3</div>
+                        <div class="how-title">Experiment</div>
+                        <div class="how-text">Adjust controls and see what happens.</div>
+                    </div>
+                    <div class="how-card">
+                        <div class="how-number">4</div>
+                        <div class="how-title">Learn</div>
+                        <div class="how-text">Understand the science behind it all.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FOOTER -->
+            <footer class="footer">
+                <p>VISIQ • Interactive Science Learning</p>
+            </footer>
+        </div>
+
+        <!-- SIMULATION VIEW -->
+        <div id="simulation-view" class="view">
+            <div class="sim-header">
+                <button class="btn-back">← Back</button>
+                <div class="sim-title">
+                    <h1 id="sim-title">Simulation</h1>
+                    <div id="sim-category" style="font-size: 12px; color: #888;">Category</div>
+                </div>
+                <button id="reset-button" class="btn-reset">Reset</button>
+            </div>
+
+            <div class="sim-info-panel">
+                <div id="sim-description" class="sim-description-text"></div>
+            </div>
+
+            <div class="sim-container">
+                <div class="canvas-wrapper">
+                    <div id="simulation-canvas"></div>
+                </div>
+                <div class="controls-wrapper" id="controls-section"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <!-- p5.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+
+    <!-- Core systems -->
+    <script src="assets/config.js"></script>
+    <script src="assets/simulations-data.js"></script>
+    <script src="assets/auth.js"></script>
+
+    <!-- Features -->
+    <script src="assets/search.js"></script>
+
+    <!-- Gallery and simulations -->
+    <script src="gallery.js"></script>
+</body>
+</html>
