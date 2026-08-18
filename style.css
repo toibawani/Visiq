@@ -746,4 +746,227 @@ body.fullscreen-mode .controls-wrapper {
 
 body.fullscreen-mode .sim-info-panel {
     display: none;
+
+    /* ===== HERO SECTION ===== */
+.hero-section {
+    padding: 80px 20px;
+    text-align: center;
+    background: #0a0a0a;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.hero-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hero-section h1 {
+    font-size: 48px;
+    color: #fff;
+    margin-bottom: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    color: #ccc;
+    margin-bottom: 16px;
+    font-weight: 300;
+}
+
+.hero-description {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.8;
+    margin-bottom: 32px;
+}
+
+.btn-explore {
+    padding: 12px 32px;
+    background: #333;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-explore:hover {
+    background: #444;
+    border-color: #555;
+}
+
+/* ===== SIMULATIONS SECTION ===== */
+.simulations-section {
+    padding: 80px 20px;
+}
+
+.simulations-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.sim-card-featured {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sim-card-featured:hover {
+    background: #222;
+    border-color: #333;
+    transform: translateY(-4px);
+}
+
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.card-icon {
+    font-size: 36px;
+    min-width: 40px;
+}
+
+.card-meta {
+    flex: 1;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.card-category {
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.card-body {
+    flex: 1;
+}
+
+.card-body p {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.6;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #2a2a2a;
+}
+
+.difficulty {
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    background: #2a2a2a;
+    border-radius: 3px;
+}
+
+.arrow {
+    color: #666;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.sim-card-featured:hover .arrow {
+    color: #999;
+    transform: translateX(4px);
+}
+
+/* ===== HOW SECTION ===== */
+.how-section {
+    padding: 80px 20px;
+    background: #1a1a1a;
+    border-top: 1px solid #2a2a2a;
+}
+
+.how-section h2 {
+    font-size: 32px;
+    color: #fff;
+    margin-bottom: 48px;
+    text-align: center;
+}
+
+.how-grid {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.how-card {
+    padding: 24px;
+    text-align: center;
+}
+
+.how-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.how-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.how-text {
+    font-size: 12px;
+    color: #888;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    padding: 40px 20px;
+    text-align: center;
+    border-top: 1px solid #2a2a2a;
+    color: #666;
+    font-size: 12px;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 32px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+    }
+    
+    .simulations-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .how-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
 }

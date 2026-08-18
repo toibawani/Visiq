@@ -3,17 +3,20 @@
 
 class Gallery {
     constructor() {
+        console.log('[GALLERY] Constructor called');
+        console.log('[GALLERY] SIMULATIONS available:', typeof SIMULATIONS !== 'undefined');
+        
         this.currentFilter = 'all';
         this.currentSort = 'popular';
-        this.filteredSimulations = [...SIMULATIONS];
+        this.filteredSimulations = SIMULATIONS ? [...SIMULATIONS] : [];
         this.initialize();
     }
     
     initialize() {
+        console.log('[GALLERY] Initializing with ' + this.filteredSimulations.length + ' simulations');
         this.setupEventListeners();
         this.renderGallery();
         this.showResumeOption();
-        console.log('[GALLERY] Initialized with ' + SIMULATIONS.length + ' simulations');
     }
     
     setupEventListeners() {
@@ -22,16 +25,6 @@ class Gallery {
         if (searchInput) {
             searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
         }
-        
-        // Category filters
-        document.querySelectorAll('[data-category]').forEach(btn => {
-            btn.addEventListener('click', (e) => this.filterByCategory(e.target.dataset.category));
-        });
-        
-        // Difficulty filters
-        document.querySelectorAll('[data-difficulty]').forEach(btn => {
-            btn.addEventListener('btn', (e) => this.filterByDifficulty(e.target.dataset.difficulty));
-        });
     }
     
     handleSearch(query) {
@@ -39,47 +32,16 @@ class Gallery {
         this.filteredSimulations = SIMULATIONS.filter(sim =>
             sim.title.toLowerCase().includes(q) ||
             sim.description.toLowerCase().includes(q) ||
-            sim.tags.some(tag => tag.toLowerCase().includes(q))
+            (sim.tags && sim.tags.some(tag => tag.toLowerCase().includes(q)))
         );
         this.renderGallery();
     }
-    
-    filterByCategory(category) {
-        this.currentFilter = category;
-        
-        if (category === 'all') {
-            this.filteredSimulations = [...SIMULATIONS];
-        } else {
-            this.filteredSimulations = SIMULATIONS.filter(sim => sim.category === category);
-        }
-        
-        this.renderGallery();
-    }
-    
-    filterByDifficulty(difficulty) {
-        this.filteredSimulations = SIMULATIONS.filter(sim => sim.difficulty === difficulty);
-        this.renderGallery();
-    }
-    
-    sortSimulations() {
-        switch(this.currentSort) {
-            case 'popular':
-                this.filteredSimulations.sort((a, b) => 
-                    (window.shareSystem?.getShareCount(b.id) || 0) - 
-                    (window.shareSystem?.getShareCount(a.id) || 0)
-                );
-                break;
-            case 'difficulty':
-                const diffOrder = { 'Beginner': 0, 'Intermediate': 1, 'Advanced': 2 };
-                this.filteredSimulations.sort((a, b) => 
-                    diffOrder[a.difficulty] - diffOrder[b.difficulty]
-                );
-                break;
-        }
-    }
-    
     renderGallery() {
-        this.sortSimulations();
+    console.log('[GALLERY] Gallery is now a landing page');
+    // Gallery rendering is now handled by index.html hero section
+    // This function is kept for compatibility
+}
+    
         
         const sections = {};
         
@@ -92,7 +54,10 @@ class Gallery {
         });
         
         const galleryView = document.getElementById('gallery-view');
-        if (!galleryView) return;
+        if (!galleryView) {
+            console.error('[GALLERY] gallery-view not found');
+            return;
+        }
         
         let html = '';
         
@@ -113,13 +78,14 @@ class Gallery {
             `;
         });
         
-        // Replace gallery content
-        const galleryContent = galleryView.querySelector('.gallery-content') || galleryView;
-        galleryContent.innerHTML = html;
+        // Set gallery content
+        galleryView.innerHTML = html;
+        
+        console.log('[GALLERY] Gallery rendered successfully');
     }
     
     createSimulationCard(sim) {
-        const isFavorite = window.userPrefs?.preferences.favorites.includes(sim.id);
+        const isFavorite = window.userPrefs?.preferences?.favorites?.includes(sim.id);
         const shares = window.shareSystem?.getShareCount(sim.id) || 0;
         
         return `
@@ -154,10 +120,16 @@ class Gallery {
     }
     
     toggleFavorite(simId, button) {
-        if (!window.userPrefs) return;
+        if (!window.userPrefs) {
+            console.warn('[GALLERY] userPrefs not available');
+            return;
+        }
         
         const sim = SIMULATIONS.find(s => s.id === simId);
-        if (!sim) return;
+        if (!sim) {
+            console.warn('[GALLERY] Simulation not found:', simId);
+            return;
+        }
         
         if (window.userPrefs.isFavorite(simId)) {
             window.userPrefs.removeFavorite(simId);
@@ -172,8 +144,13 @@ class Gallery {
     }
     
     openSimulation(simId) {
+        console.log('[GALLERY] Opening simulation:', simId);
+        
         const sim = SIMULATIONS.find(s => s.id === simId);
-        if (!sim) return;
+        if (!sim) {
+            console.error('[GALLERY] Simulation not found:', simId);
+            return;
+        }
         
         // Track view
         if (window.userPrefs) {
@@ -204,8 +181,11 @@ class Gallery {
     
     renderSimulation(sim) {
         // Update header
-        document.getElementById('sim-title').textContent = sim.title;
-        document.getElementById('sim-category').textContent = sim.category;
+        const titleEl = document.getElementById('sim-title');
+        const categoryEl = document.getElementById('sim-category');
+        
+        if (titleEl) titleEl.textContent = sim.title;
+        if (categoryEl) categoryEl.textContent = sim.category;
         
         // Update description
         const descEl = document.getElementById('sim-description');
@@ -224,22 +204,28 @@ class Gallery {
     
     loadSketch(sketchId) {
         const container = document.getElementById('simulation-canvas');
-        if (!container) return;
+        if (!container) {
+            console.error('[GALLERY] simulation-canvas not found');
+            return;
+        }
         
-        container.innerHTML = '';
+        container.innerHTML = '<div class="sketch-loading">Loading simulation...</div>';
         
-        // Check if sketch exists
-        const scriptPath = `sketches/${sketchId}.js`;
+        console.log('[GALLERY] Loading sketch:', sketchId);
         
-        // Create script loader
+        // Create and load script
         const script = document.createElement('script');
-        script.src = scriptPath;
+        script.src = 'sketches/' + sketchId + '.js';
+        
         script.onload = () => {
+            console.log('[GALLERY] Sketch loaded:', sketchId);
             if (window.initSketch) {
-                window.initSketch({ container });
+                window.initSketch({ containerId: 'simulation-canvas' });
             }
         };
+        
         script.onerror = () => {
+            console.error('[GALLERY] Failed to load sketch:', sketchId);
             container.innerHTML = '<div class="sketch-error">Simulation not found</div>';
             if (window.UIPolish) {
                 window.UIPolish.showError('Failed to load simulation');
@@ -250,6 +236,8 @@ class Gallery {
     }
     
     backToGallery() {
+        console.log('[GALLERY] Back to gallery');
+        
         const simView = document.getElementById('simulation-view');
         const galleryView = document.getElementById('gallery-view');
         
@@ -265,11 +253,13 @@ class Gallery {
     }
     
     showResumeOption() {
-        const lastSimId = window.userPrefs?.preferences.lastSimulation;
+        const lastSimId = window.userPrefs?.preferences?.lastSimulation;
         if (!lastSimId) return;
         
         const sim = SIMULATIONS.find(s => s.id === lastSimId);
         if (!sim) return;
+        
+        console.log('[GALLERY] Showing resume option for:', sim.title);
         
         const banner = document.createElement('div');
         banner.className = 'resume-banner';
@@ -300,11 +290,30 @@ class Gallery {
     }
 }
 
-// Initialize
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+// Initialize when everything is ready
+function initGallery() {
+    console.log('[GALLERY] Init function called');
+    console.log('[GALLERY] SIMULATIONS defined?', typeof SIMULATIONS !== 'undefined');
+    console.log('[GALLERY] Gallery class exists?', typeof Gallery !== 'undefined');
+    
+    if (typeof SIMULATIONS === 'undefined') {
+        console.error('[GALLERY] SIMULATIONS not defined! Check simulations-data.js loaded');
+        setTimeout(initGallery, 100); // Retry
+        return;
+    }
+    
+    if (!window.gallery) {
         window.gallery = new Gallery();
-    });
-} else {
-    window.gallery = new Gallery();
+        console.log('[GALLERY] Gallery instance created');
+    }
 }
+
+// Wait for DOM and other systems
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGallery);
+} else {
+    initGallery();
+}
+
+// Also try after a small delay to ensure everything loaded
+setTimeout(initGallery, 500);
