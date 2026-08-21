@@ -67,6 +67,13 @@
                 </div>
             </div>
         </div>
+                        <div class="nav-right">
+                    <span class="user-name" id="user-display">User</span>
+                    <button class="btn-stats" onclick="window.statsTracker && alert('Simulations: ' + window.statsTracker.getStats().simulationsViewed + ' | Time: ' + window.statsTracker.getStats().totalTimeSpent)">📊</button>
+                    <button class="btn-theme-toggle" title="Toggle theme">🌙</button>
+                    <button class="btn-logout" onclick="window.authSystem.handleLogout()">Logout</button>
+                </div>
+
 
         <!-- GALLERY VIEW -->
         <div id="gallery-view" class="view active">
