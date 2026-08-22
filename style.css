@@ -836,4 +836,33 @@ kbd {
     .search-input {
         padding: 11px 14px;
     }
+    /* FAVORITES FILTER */
+.btn-favorites-toggle {
+    padding: 8px 12px;
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #333;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.btn-favorites-toggle:hover {
+    background: #333;
+}
+
+.btn-favorites-toggle.active {
+    background: #d32f2f;
+    border-color: #d32f2f;
+    color: #fff;
+}
+
+.no-favorites-msg {
+    grid-column: 1 / -1;
+    padding: 40px 20px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
 }
