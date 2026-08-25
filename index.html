@@ -63,17 +63,13 @@
                 </div>
                 <div class="nav-right">
                     <span class="user-name" id="user-display">User</span>
+                    <button class="btn-favorites-toggle" title="Show favorites" onclick="window.favoritesFilter.toggleFavoritesOnly()">❤️</button>
+                    <button class="btn-sort" title="Sort by most used" onclick="window.sortingSystem.toggleSort()">📊</button>
+                    <button class="btn-theme-toggle" title="Toggle theme">🌙</button>
                     <button class="btn-logout" onclick="window.authSystem.handleLogout()">Logout</button>
                 </div>
             </div>
         </div>
-                        <div class="nav-right">
-                    <span class="user-name" id="user-display">User</span>
-                    <button class="btn-stats" onclick="window.statsTracker && alert('Simulations: ' + window.statsTracker.getStats().simulationsViewed + ' | Time: ' + window.statsTracker.getStats().totalTimeSpent)">📊</button>
-                    <button class="btn-theme-toggle" title="Toggle theme">🌙</button>
-                    <button class="btn-logout" onclick="window.authSystem.handleLogout()">Logout</button>
-                </div>
-
 
         <!-- GALLERY VIEW -->
         <div id="gallery-view" class="view active">
@@ -97,15 +93,16 @@
             <!-- SIMULATIONS SECTION -->
             <section class="simulations-section">
                 <div class="simulations-container">
-                    <div class="sim-card-featured" onclick="window.gallery.openSimulation('newton')">
+                    <div class="sim-card-featured">
                         <div class="card-header">
                             <div class="card-icon">⚛️</div>
+                            <button class="btn-favorite" onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('newton'); fav ? window.statsTracker.addFavorite('newton') : window.statsTracker.removeFavorite('newton'); this.textContent = fav ? '❤️' : '🤍';">🤍</button>
                             <div class="card-meta">
                                 <div class="card-title">Newton's Playground</div>
                                 <div class="card-category">Physics • Beginner</div>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" onclick="window.gallery.openSimulation('newton')" style="cursor: pointer;">
                             <p>Drag objects and apply forces. Watch F=ma come alive with real physics.</p>
                             <div class="card-tags">
                                 <span class="tag">forces</span>
@@ -113,21 +110,22 @@
                                 <span class="tag">interactive</span>
                             </div>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer" onclick="window.gallery.openSimulation('newton')" style="cursor: pointer;">
                             <span class="time">5-10 min</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
 
-                    <div class="sim-card-featured" onclick="window.gallery.openSimulation('black-hole-orbit')">
+                    <div class="sim-card-featured">
                         <div class="card-header">
                             <div class="card-icon">🌌</div>
+                            <button class="btn-favorite" onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('black-hole-orbit'); fav ? window.statsTracker.addFavorite('black-hole-orbit') : window.statsTracker.removeFavorite('black-hole-orbit'); this.textContent = fav ? '❤️' : '🤍';">🤍</button>
                             <div class="card-meta">
                                 <div class="card-title">Black Hole Orbit</div>
                                 <div class="card-category">Physics • Intermediate</div>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" onclick="window.gallery.openSimulation('black-hole-orbit')" style="cursor: pointer;">
                             <p>Control orbital velocity and watch particles spiral around a black hole.</p>
                             <div class="card-tags">
                                 <span class="tag">gravity</span>
@@ -135,21 +133,22 @@
                                 <span class="tag">spacetime</span>
                             </div>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer" onclick="window.gallery.openSimulation('black-hole-orbit')" style="cursor: pointer;">
                             <span class="time">8-12 min</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
 
-                    <div class="sim-card-featured" onclick="window.gallery.openSimulation('wave-interference')">
+                    <div class="sim-card-featured">
                         <div class="card-header">
                             <div class="card-icon">〰️</div>
+                            <button class="btn-favorite" onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('wave-interference'); fav ? window.statsTracker.addFavorite('wave-interference') : window.statsTracker.removeFavorite('wave-interference'); this.textContent = fav ? '❤️' : '🤍';">🤍</button>
                             <div class="card-meta">
                                 <div class="card-title">Wave Interference</div>
                                 <div class="card-category">Physics • Intermediate</div>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" onclick="window.gallery.openSimulation('wave-interference')" style="cursor: pointer;">
                             <p>Change wavelength and watch constructive and destructive interference emerge.</p>
                             <div class="card-tags">
                                 <span class="tag">waves</span>
@@ -157,21 +156,22 @@
                                 <span class="tag">patterns</span>
                             </div>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer" onclick="window.gallery.openSimulation('wave-interference')" style="cursor: pointer;">
                             <span class="time">7-10 min</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
 
-                    <div class="sim-card-featured" onclick="window.gallery.openSimulation('pendulum-chaos')">
+                    <div class="sim-card-featured">
                         <div class="card-header">
                             <div class="card-icon">🎯</div>
+                            <button class="btn-favorite" onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('pendulum-chaos'); fav ? window.statsTracker.addFavorite('pendulum-chaos') : window.statsTracker.removeFavorite('pendulum-chaos'); this.textContent = fav ? '❤️' : '🤍';">🤍</button>
                             <div class="card-meta">
                                 <div class="card-title">Pendulum Chaos</div>
                                 <div class="card-category">Physics • Advanced</div>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" onclick="window.gallery.openSimulation('pendulum-chaos')" style="cursor: pointer;">
                             <p>Tiny changes create completely different outcomes. Experience chaos theory.</p>
                             <div class="card-tags">
                                 <span class="tag">chaos</span>
@@ -179,21 +179,22 @@
                                 <span class="tag">nonlinear</span>
                             </div>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer" onclick="window.gallery.openSimulation('pendulum-chaos')" style="cursor: pointer;">
                             <span class="time">10-15 min</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
 
-                    <div class="sim-card-featured" onclick="window.gallery.openSimulation('galaxy-collision')">
+                    <div class="sim-card-featured">
                         <div class="card-header">
                             <div class="card-icon">🌌</div>
+                            <button class="btn-favorite" onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('galaxy-collision'); fav ? window.statsTracker.addFavorite('galaxy-collision') : window.statsTracker.removeFavorite('galaxy-collision'); this.textContent = fav ? '❤️' : '🤍';">🤍</button>
                             <div class="card-meta">
                                 <div class="card-title">Galaxy Collision</div>
                                 <div class="card-category">Astronomy • Intermediate</div>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" onclick="window.gallery.openSimulation('galaxy-collision')" style="cursor: pointer;">
                             <p>Watch two galaxies spiral together and merge into one in cosmic dance.</p>
                             <div class="card-tags">
                                 <span class="tag">galaxies</span>
@@ -201,7 +202,7 @@
                                 <span class="tag">gravity</span>
                             </div>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer" onclick="window.gallery.openSimulation('galaxy-collision')" style="cursor: pointer;">
                             <span class="time">8-12 min</span>
                             <span class="arrow">→</span>
                         </div>
@@ -238,7 +239,7 @@
 
             <!-- FOOTER -->
             <footer class="footer">
-                <p>VISIQ • Interactive Science Learning</p>
+                <p>VISIQ • Interactive Science Learning • August 2026</p>
             </footer>
         </div>
 
@@ -250,6 +251,7 @@
                     <h1 id="sim-title">Simulation</h1>
                     <div id="sim-category" style="font-size: 12px; color: #888;">Category</div>
                 </div>
+                <div class="sim-timer-display">0m 0s</div>
                 <button id="reset-button" class="btn-reset">Reset</button>
             </div>
 
@@ -267,24 +269,19 @@
     </div>
 
     <!-- SCRIPTS -->
-    <!-- p5.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
-
-    <!-- Core systems -->
     <script src="assets/config.js"></script>
     <script src="assets/simulations-data.js"></script>
     <script src="assets/auth.js"></script>
-
-    <!-- Features -->
-        <!-- Features -->
-    <script src="assets/search.js"></script>
-    <script src="assets/keyboard.js"></script>
+    <script src="assets/advanced-search.js"></script>
     <script src="assets/sim-details.js"></script>
-
-    <!-- Gallery and simulations -->
+    <script src="assets/sim-timer.js"></script>
+    <script src="assets/theme-toggle.js"></script>
+    <script src="assets/stats-tracker.js"></script>
+    <script src="assets/card-feedback.js"></script>
+    <script src="assets/favorites-filter.js"></script>
+    <script src="assets/sorting-system.js"></script>
+    <script src="assets/keyboard.js"></script>
     <script src="gallery.js"></script>
-        <script src="assets/stats-tracker.js"></script>
-            <script src="assets/favorites-filter.js"></script>
-                <script src="assets/sorting-system.js"></script>
 </body>
 </html>
