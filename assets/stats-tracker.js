@@ -1,12 +1,8 @@
-// ===== STATS TRACKER =====
-// Track user engagement and learning
-
 class StatsTracker {
     constructor() {
         this.stats = this.loadStats();
         this.currentSimulation = null;
         this.setupTracking();
-        console.log('[STATS-TRACKER] Initialized');
     }
     
     loadStats() {
@@ -14,6 +10,7 @@ class StatsTracker {
         return saved ? JSON.parse(saved) : {
             simulationsViewed: [],
             totalTimeSpent: 0,
+            favoriteIds: [],
             favoriteCount: 0,
             sessionsCompleted: 0
         };
@@ -24,7 +21,6 @@ class StatsTracker {
     }
     
     setupTracking() {
-        // Track simulation opens
         const originalOpen = window.gallery?.openSimulation;
         if (originalOpen) {
             window.gallery.openSimulation = function(simId) {
@@ -33,7 +29,6 @@ class StatsTracker {
             };
         }
         
-        // Track session close
         window.addEventListener('beforeunload', () => {
             this.trackSessionEnd();
         });
@@ -58,11 +53,32 @@ class StatsTracker {
         }
     }
     
+    addFavorite(simId) {
+        if (!this.stats.favoriteIds.includes(simId)) {
+            this.stats.favoriteIds.push(simId);
+            this.stats.favoriteCount = this.stats.favoriteIds.length;
+            this.saveStats();
+            return true;
+        }
+        return false;
+    }
+    
+    removeFavorite(simId) {
+        this.stats.favoriteIds = this.stats.favoriteIds.filter(id => id !== simId);
+        this.stats.favoriteCount = this.stats.favoriteIds.length;
+        this.saveStats();
+        return true;
+    }
+    
+    isFavorite(simId) {
+        return this.stats.favoriteIds.includes(simId);
+    }
+    
     getStats() {
         return {
-            ...this.stats,
             simulationsViewed: this.stats.simulationsViewed.length,
-            totalTimeSpent: this.formatTime(this.stats.totalTimeSpent)
+            totalTimeSpent: this.formatTime(this.stats.totalTimeSpent),
+            favorites: this.stats.favoriteCount
         };
     }
     
@@ -74,7 +90,6 @@ class StatsTracker {
     }
 }
 
-// Initialize
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         window.statsTracker = new StatsTracker();
