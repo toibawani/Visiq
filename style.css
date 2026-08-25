@@ -327,6 +327,146 @@ body {
     color: #666;
     font-size: 14px;
 }
+/* MOBILE OPTIMIZATION */
+@media (max-width: 1024px) {
+    .sim-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .controls-wrapper {
+        max-height: 50vh;
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        height: 50px;
+        padding: 0 12px;
+    }
+    
+    .nav-right {
+        gap: 8px;
+    }
+    
+    .hero-section h1 {
+        font-size: 32px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+    }
+    
+    .hero-description {
+        font-size: 13px;
+    }
+    
+    .simulations-container {
+        grid-template-columns: 1fr;
+        padding: 0 12px;
+    }
+    
+    .sim-card-featured {
+        padding: 16px;
+    }
+    
+    .card-title {
+        font-size: 14px;
+    }
+    
+    .card-body p {
+        font-size: 12px;
+    }
+    
+    .card-tags {
+        gap: 4px;
+    }
+    
+    .tag {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+    
+    .how-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .sim-header {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+    
+    .sim-title h1 {
+        font-size: 18px;
+    }
+    
+    .search-input {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+    
+    #gallery-view {
+        padding-top: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section {
+        padding: 40px 16px;
+    }
+    
+    .hero-section h1 {
+        font-size: 24px;
+    }
+    
+    .hero-subtitle {
+        font-size: 14px;
+    }
+    
+    .simulations-section {
+        padding: 40px 16px;
+    }
+    
+    .how-section {
+        padding: 40px 16px;
+    }
+    
+    .how-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .nav-right button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .user-name {
+        display: none;
+    }
+    
+    .sim-info-panel {
+        max-height: 200px;
+    }
+    
+    .sim-description-text {
+        font-size: 12px;
+    }
+    
+    .meta-item {
+        padding: 8px;
+    }
+    
+    .meta-label {
+        font-size: 10px;
+    }
+    
+    .meta-value {
+        font-size: 12px;
+    }
+}
+
 
 /* =========================================================
    SIMULATIONS SECTION
