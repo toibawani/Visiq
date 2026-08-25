@@ -1,14 +1,10 @@
-// ===== SIMULATION DETAILS =====
-// Show learning outcomes and detailed info
-
 class SimulationDetails {
     constructor() {
         this.setupDetails();
-        console.log('[SIM-DETAILS] Initialized');
     }
     
     setupDetails() {
-        // Details will be shown when simulation opens
+        // Details shown when simulation opens
     }
     
     showDetails(sim) {
@@ -17,7 +13,6 @@ class SimulationDetails {
         
         let html = `<div id="sim-description" class="sim-description-text">${sim.longDescription}</div>`;
         
-        // Add learning outcomes
         if (sim.learningOutcomes && sim.learningOutcomes.length > 0) {
             html += `
                 <div class="learning-outcomes">
@@ -29,7 +24,6 @@ class SimulationDetails {
             `;
         }
         
-        // Add simulation info
         html += `
             <div class="sim-meta">
                 <div class="meta-item">
@@ -51,7 +45,6 @@ class SimulationDetails {
     }
 }
 
-// Initialize
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         window.simDetails = new SimulationDetails();
