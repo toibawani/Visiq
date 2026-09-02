@@ -1,14 +1,21 @@
+// ===== THEME TOGGLE (DARK & HIGH-CLARITY) =====
+// Switches between Deep Obsidian Dark and High-Clarity Light modes with WCAG AAA contrast
+
 class ThemeToggle {
     constructor() {
         this.currentTheme = localStorage.getItem('visiq-theme') || 'dark';
         this.setupToggle();
         this.applyTheme();
+        console.log('[THEME] Initialized in', this.currentTheme, 'mode');
     }
     
     setupToggle() {
         const btn = document.querySelector('.btn-theme-toggle');
         if (btn) {
-            btn.addEventListener('click', () => this.toggleTheme());
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggleTheme();
+            });
         }
     }
     
@@ -16,30 +23,33 @@ class ThemeToggle {
         this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
         localStorage.setItem('visiq-theme', this.currentTheme);
         this.applyTheme();
+
+        if (window.statsTracker && typeof window.statsTracker.trackInteraction === 'function') {
+            window.statsTracker.trackInteraction('theme_toggle');
+        }
     }
     
     applyTheme() {
         const root = document.documentElement;
-        if (this.currentTheme === 'light') {
-            root.style.setProperty('--bg-primary', '#ffffff');
-            root.style.setProperty('--bg-secondary', '#f5f5f5');
-            root.style.setProperty('--text-primary', '#1a1a1a');
-            root.style.setProperty('--text-secondary', '#666');
-            document.body.style.background = '#ffffff';
-            document.body.style.color = '#1a1a1a';
-        } else {
-            root.style.setProperty('--bg-primary', '#0a0a0a');
-            root.style.setProperty('--bg-secondary', '#1a1a1a');
-            root.style.setProperty('--text-primary', '#e0e0e0');
-            root.style.setProperty('--text-secondary', '#888');
-            document.body.style.background = '#0a0a0a';
-            document.body.style.color = '#e0e0e0';
-        }
-        
+        root.setAttribute('data-theme', this.currentTheme);
+
         const btn = document.querySelector('.btn-theme-toggle');
         if (btn) {
-            btn.textContent = this.currentTheme === 'dark' ? '☀️' : '🌙';
+            if (this.currentTheme === 'dark') {
+                btn.textContent = '🌙';
+                btn.setAttribute('title', 'Switch to High-Clarity Light Mode (T)');
+                btn.setAttribute('data-tooltip', 'High-Clarity Light Mode (T)');
+                btn.setAttribute('aria-label', 'Switch to High-Clarity Light Mode');
+            } else {
+                btn.textContent = '☀️';
+                btn.setAttribute('title', 'Switch to Deep Obsidian Dark Mode (T)');
+                btn.setAttribute('data-tooltip', 'Deep Dark Mode (T)');
+                btn.setAttribute('aria-label', 'Switch to Deep Obsidian Dark Mode');
+            }
         }
+
+        // Dispatch custom event for canvas or other components
+        window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: this.currentTheme } }));
     }
 }
 
