@@ -1,109 +1,189 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VISIQ - Interactive Science Learning</title>
+    <title>VISIQ – Interactive Science Learning</title>
+    <meta name="description" content="Explore the forces, patterns, and systems that shape our world through stunning interactive simulations. Physics, astronomy, biology and more.">
+    <meta name="theme-color" content="#07090f">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- AUTH PAGE -->
-    <div id="auth-page" class="auth-page active">
+    <div id="auth-page" class="auth-page active" role="main" aria-label="Sign in or Create Account">
         <div class="auth-container">
             <div class="auth-left">
                 <h1>VISIQ</h1>
                 <p>Interactive Science Visualizations</p>
             </div>
 
-            <form class="auth-form active" id="login-form">
+            <form class="auth-form active" id="login-form" autocomplete="on" novalidate>
                 <h2>Sign In</h2>
                 <div class="form-field">
-                    <label>Email</label>
-                    <input type="email" id="login-email" placeholder="you@example.com" required>
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" name="email"
+                           placeholder="you@example.com" required
+                           autocomplete="email"
+                           aria-label="Email address">
                 </div>
                 <div class="form-field">
-                    <label>Password</label>
-                    <input type="password" id="login-password" placeholder="••••••••" required>
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password"
+                           placeholder="••••••••" required
+                           autocomplete="current-password"
+                           aria-label="Password">
                 </div>
-                <button type="submit" class="btn-primary">Sign In</button>
+                <button type="submit" class="btn-primary" id="btn-login">Sign In</button>
                 <div class="auth-toggle">
-                    Don't have an account? <a href="#" onclick="event.preventDefault(); window.authSystem.switchToSignup();">Create one</a>
+                    Don't have an account? <a href="#" id="link-to-signup" onclick="event.preventDefault(); window.authSystem.switchToSignup();">Create one</a>
                 </div>
             </form>
 
-            <form class="auth-form" id="signup-form" style="display: none;">
+            <form class="auth-form" id="signup-form" style="display: none;" autocomplete="on" novalidate>
                 <h2>Create Account</h2>
                 <div class="form-field">
-                    <label>Email</label>
-                    <input type="email" id="signup-email" placeholder="you@example.com" required>
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" name="email"
+                           placeholder="you@example.com" required
+                           autocomplete="email"
+                           aria-label="Email address">
                 </div>
                 <div class="form-field">
-                    <label>Password</label>
-                    <input type="password" id="signup-password" placeholder="••••••••" required>
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" name="password"
+                           placeholder="••••••••" required
+                           autocomplete="new-password"
+                           aria-label="Password (at least 6 characters)">
                 </div>
                 <div class="form-field">
-                    <label>Confirm Password</label>
-                    <input type="password" id="signup-confirm" placeholder="••••••••" required>
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input type="password" id="signup-confirm" name="confirm-password"
+                           placeholder="••••••••" required
+                           autocomplete="new-password"
+                           aria-label="Confirm password">
                 </div>
-                <button type="submit" class="btn-primary">Create Account</button>
+                <button type="submit" class="btn-primary" id="btn-signup">Create Account</button>
                 <div class="auth-toggle">
-                    Already have an account? <a href="#" onclick="event.preventDefault(); window.authSystem.switchToLogin();">Sign in</a>
+                    Already have an account? <a href="#" id="link-to-login" onclick="event.preventDefault(); window.authSystem.switchToLogin();">Sign in</a>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- MAIN APP -->
-    <div id="main-app" class="main-app" style="display: none;">
+    <div id="main-app" class="main-app" style="display: none;" aria-label="VISIQ Application">
+
         <!-- NAVBAR -->
-        <div class="navbar">
+        <nav class="navbar" role="navigation" aria-label="Main navigation">
             <div class="nav-container">
-                <div class="logo-section" onclick="window.gallery.backToGallery()">
+                <div class="logo-section" onclick="window.gallery.backToGallery()"
+                     role="button" tabindex="0"
+                     aria-label="VISIQ – Back to gallery"
+                     title="VISIQ – Back to Gallery"
+                     onkeydown="if(event.key==='Enter'||event.key===' ') window.gallery.backToGallery()">
                     <span class="logo-text">VISIQ</span>
                 </div>
-                <div class="nav-right">
-                    <span class="user-name" id="user-display">User</span>
-                    <button class="btn-favorites-toggle" title="Show favorites" onclick="window.favoritesFilter.toggleFavoritesOnly()">❤️</button>
-                    <button class="btn-sort" title="Sort by most used" onclick="window.sortingSystem.toggleSort()">📊</button>
-                    <button class="btn-theme-toggle" title="Toggle theme">🌙</button>
-                    <button class="btn-logout" onclick="window.authSystem.handleLogout()">Logout</button>
+
+                <div class="nav-right" role="toolbar" aria-label="Toolbar">
+                    <span class="user-name" id="user-display" aria-live="polite">User</span>
+
+                    <button class="btn-favorites-toggle"
+                            id="btn-favorites"
+                            title="Filter: Favorites Only (F)"
+                            data-tooltip="Filter Favorites (F)"
+                            aria-label="Toggle favorites filter"
+                            aria-pressed="false"
+                            onclick="window.favoritesFilter.toggleFavoritesOnly()">❤️</button>
+
+                    <button class="btn-sort"
+                            id="btn-sort"
+                            title="Sort Simulations"
+                            data-tooltip="Sort Simulations"
+                            aria-label="Sort simulations"
+                            onclick="window.sortingSystem.toggleSort()">📊</button>
+
+                    <button class="btn-stats"
+                            id="btn-stats"
+                            title="Session Analytics &amp; History (S)"
+                            data-tooltip="Analytics Drawer (S)"
+                            aria-label="Open session analytics and history">📈 Analytics</button>
+
+                    <button class="btn-theme-toggle"
+                            id="btn-theme"
+                            title="Toggle Theme (T)"
+                            data-tooltip="Toggle Theme (T)"
+                            aria-label="Toggle light/dark theme">🌙</button>
+
+                    <button class="btn-logout"
+                            id="btn-logout"
+                            data-tooltip="Sign Out"
+                            title="Sign Out"
+                            aria-label="Sign out"
+                            onclick="window.authSystem.handleLogout()">Logout</button>
                 </div>
             </div>
-        </div>
+        </nav>
 
         <!-- GALLERY VIEW -->
-        <div id="gallery-view" class="view active">
+        <main id="gallery-view" class="view active">
+
             <!-- HERO SECTION -->
-            <section class="hero-section">
+            <section class="hero-section" aria-label="Hero">
                 <div class="hero-content">
                     <h1>VISIQ</h1>
                     <p class="hero-subtitle">See Science. Don't Just Read It.</p>
-                    <p class="hero-description">Explore the forces, patterns, and systems that shape our world through interactive simulations you can manipulate, experiment with, and learn from.</p>
-                    <button class="btn-explore" onclick="document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' })">Explore Simulations</button>
+                    <p class="hero-description">Explore the forces, patterns, and systems that shape our world through interactive simulations you can manipulate, experiment with, and truly learn from.</p>
+                    <button class="btn-explore"
+                            id="btn-explore"
+                            aria-label="Explore simulations"
+                            onclick="document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' })">
+                        Explore Simulations ↓
+                    </button>
                 </div>
             </section>
 
             <!-- SEARCH SECTION -->
-            <section class="search-section">
+            <section class="search-section" aria-label="Search simulations">
                 <div class="search-container">
-                    <input type="text" id="search-input" class="search-input" placeholder="Search simulations... (forces, waves, chaos, galaxies)">
+                    <label for="search-input" class="visually-hidden">Search simulations</label>
+                    <input type="text"
+                           id="search-input"
+                           class="search-input"
+                           placeholder="Search simulations… forces, waves, chaos, gravity"
+                           aria-label="Search simulations by title, category, or topic"
+                           autocomplete="off"
+                           spellcheck="false">
                 </div>
             </section>
 
+            <!-- KEYBOARD SHORTCUT BADGE -->
+            <div style="text-align:center; padding: 8px 20px 0; font-size: 12px; color: var(--text-muted);">
+                Press <kbd style="font-size:11px; padding:2px 6px; background:var(--bg-elevated); border:1px solid var(--border-default); border-radius:4px; font-family:var(--font-mono);">?</kbd>
+                for keyboard shortcuts &nbsp;·&nbsp;
+                Press <kbd style="font-size:11px; padding:2px 6px; background:var(--bg-elevated); border:1px solid var(--border-default); border-radius:4px; font-family:var(--font-mono);">1</kbd>–<kbd style="font-size:11px; padding:2px 6px; background:var(--bg-elevated); border:1px solid var(--border-default); border-radius:4px; font-family:var(--font-mono);">5</kbd> to launch any simulation instantly
+            </div>
+
             <!-- SIMULATIONS SECTION -->
-            <section class="simulations-section">
-                <div class="simulations-container">
-                    <div class="sim-card-featured">
+            <section class="simulations-section" aria-label="Simulation library">
+                <div class="simulations-container" id="simulations-container">
+
+                    <!-- Newton's Playground -->
+                    <article class="sim-card-featured" role="article" aria-label="Newton's Playground simulation">
                         <div class="card-header">
-                            <div class="card-icon">⚛️</div>
-                            <button class="btn-favorite" onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('newton'); fav ? window.statsTracker.addFavorite('newton') : window.statsTracker.removeFavorite('newton'); this.textContent = fav ? '❤️' : '🤍';">🤍</button>
+                            <div class="card-icon" aria-hidden="true">⚛️</div>
+                            <button class="btn-favorite no-ripple"
+                                    id="fav-btn-newton"
+                                    data-sim-id="newton"
+                                    aria-label="Add Newton's Playground to favorites"
+                                    data-tooltip="Add to Favorites"
+                                    onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('newton'); fav ? window.statsTracker.addFavorite('newton') : window.statsTracker.removeFavorite('newton');">🤍</button>
                             <div class="card-meta">
                                 <div class="card-title">Newton's Playground</div>
                                 <div class="card-category">Physics • Beginner</div>
                             </div>
                         </div>
                         <div class="card-body" onclick="window.gallery.openSimulation('newton')" style="cursor: pointer;">
-                            <p>Drag objects and apply forces. Watch F=ma come alive with real physics.</p>
+                            <p>Drag objects and apply forces. Watch F=ma come alive with real-time physics interactions.</p>
                             <div class="card-tags">
                                 <span class="tag">forces</span>
                                 <span class="tag">motion</span>
@@ -111,22 +191,28 @@
                             </div>
                         </div>
                         <div class="card-footer" onclick="window.gallery.openSimulation('newton')" style="cursor: pointer;">
-                            <span class="time">5-10 min</span>
+                            <span class="time">⏱ 5–10 min</span>
                             <span class="arrow">→</span>
                         </div>
-                    </div>
+                    </article>
 
-                    <div class="sim-card-featured">
+                    <!-- Black Hole Orbit -->
+                    <article class="sim-card-featured" role="article" aria-label="Black Hole Orbit simulation">
                         <div class="card-header">
-                            <div class="card-icon">🌌</div>
-                            <button class="btn-favorite" onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('black-hole-orbit'); fav ? window.statsTracker.addFavorite('black-hole-orbit') : window.statsTracker.removeFavorite('black-hole-orbit'); this.textContent = fav ? '❤️' : '🤍';">🤍</button>
+                            <div class="card-icon" aria-hidden="true">🌌</div>
+                            <button class="btn-favorite no-ripple"
+                                    id="fav-btn-black-hole-orbit"
+                                    data-sim-id="black-hole-orbit"
+                                    aria-label="Add Black Hole Orbit to favorites"
+                                    data-tooltip="Add to Favorites"
+                                    onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('black-hole-orbit'); fav ? window.statsTracker.addFavorite('black-hole-orbit') : window.statsTracker.removeFavorite('black-hole-orbit');">🤍</button>
                             <div class="card-meta">
                                 <div class="card-title">Black Hole Orbit</div>
                                 <div class="card-category">Physics • Intermediate</div>
                             </div>
                         </div>
                         <div class="card-body" onclick="window.gallery.openSimulation('black-hole-orbit')" style="cursor: pointer;">
-                            <p>Control orbital velocity and watch particles spiral around a black hole.</p>
+                            <p>Control orbital velocity and watch particles spiral around a black hole's event horizon.</p>
                             <div class="card-tags">
                                 <span class="tag">gravity</span>
                                 <span class="tag">orbits</span>
@@ -134,22 +220,28 @@
                             </div>
                         </div>
                         <div class="card-footer" onclick="window.gallery.openSimulation('black-hole-orbit')" style="cursor: pointer;">
-                            <span class="time">8-12 min</span>
+                            <span class="time">⏱ 8–12 min</span>
                             <span class="arrow">→</span>
                         </div>
-                    </div>
+                    </article>
 
-                    <div class="sim-card-featured">
+                    <!-- Wave Interference -->
+                    <article class="sim-card-featured" role="article" aria-label="Wave Interference simulation">
                         <div class="card-header">
-                            <div class="card-icon">〰️</div>
-                            <button class="btn-favorite" onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('wave-interference'); fav ? window.statsTracker.addFavorite('wave-interference') : window.statsTracker.removeFavorite('wave-interference'); this.textContent = fav ? '❤️' : '🤍';">🤍</button>
+                            <div class="card-icon" aria-hidden="true">〰️</div>
+                            <button class="btn-favorite no-ripple"
+                                    id="fav-btn-wave-interference"
+                                    data-sim-id="wave-interference"
+                                    aria-label="Add Wave Interference to favorites"
+                                    data-tooltip="Add to Favorites"
+                                    onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('wave-interference'); fav ? window.statsTracker.addFavorite('wave-interference') : window.statsTracker.removeFavorite('wave-interference');">🤍</button>
                             <div class="card-meta">
                                 <div class="card-title">Wave Interference</div>
                                 <div class="card-category">Physics • Intermediate</div>
                             </div>
                         </div>
                         <div class="card-body" onclick="window.gallery.openSimulation('wave-interference')" style="cursor: pointer;">
-                            <p>Change wavelength and watch constructive and destructive interference emerge.</p>
+                            <p>Change wavelength and watch constructive and destructive interference patterns emerge.</p>
                             <div class="card-tags">
                                 <span class="tag">waves</span>
                                 <span class="tag">superposition</span>
@@ -157,22 +249,28 @@
                             </div>
                         </div>
                         <div class="card-footer" onclick="window.gallery.openSimulation('wave-interference')" style="cursor: pointer;">
-                            <span class="time">7-10 min</span>
+                            <span class="time">⏱ 7–10 min</span>
                             <span class="arrow">→</span>
                         </div>
-                    </div>
+                    </article>
 
-                    <div class="sim-card-featured">
+                    <!-- Pendulum Chaos -->
+                    <article class="sim-card-featured" role="article" aria-label="Pendulum Chaos simulation">
                         <div class="card-header">
-                            <div class="card-icon">🎯</div>
-                            <button class="btn-favorite" onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('pendulum-chaos'); fav ? window.statsTracker.addFavorite('pendulum-chaos') : window.statsTracker.removeFavorite('pendulum-chaos'); this.textContent = fav ? '❤️' : '🤍';">🤍</button>
+                            <div class="card-icon" aria-hidden="true">🎯</div>
+                            <button class="btn-favorite no-ripple"
+                                    id="fav-btn-pendulum-chaos"
+                                    data-sim-id="pendulum-chaos"
+                                    aria-label="Add Pendulum Chaos to favorites"
+                                    data-tooltip="Add to Favorites"
+                                    onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('pendulum-chaos'); fav ? window.statsTracker.addFavorite('pendulum-chaos') : window.statsTracker.removeFavorite('pendulum-chaos');">🤍</button>
                             <div class="card-meta">
                                 <div class="card-title">Pendulum Chaos</div>
                                 <div class="card-category">Physics • Advanced</div>
                             </div>
                         </div>
                         <div class="card-body" onclick="window.gallery.openSimulation('pendulum-chaos')" style="cursor: pointer;">
-                            <p>Tiny changes create completely different outcomes. Experience chaos theory.</p>
+                            <p>Tiny initial changes create completely different outcomes. Experience chaos theory firsthand.</p>
                             <div class="card-tags">
                                 <span class="tag">chaos</span>
                                 <span class="tag">butterfly effect</span>
@@ -180,22 +278,28 @@
                             </div>
                         </div>
                         <div class="card-footer" onclick="window.gallery.openSimulation('pendulum-chaos')" style="cursor: pointer;">
-                            <span class="time">10-15 min</span>
+                            <span class="time">⏱ 10–15 min</span>
                             <span class="arrow">→</span>
                         </div>
-                    </div>
+                    </article>
 
-                    <div class="sim-card-featured">
+                    <!-- Galaxy Collision -->
+                    <article class="sim-card-featured" role="article" aria-label="Galaxy Collision simulation">
                         <div class="card-header">
-                            <div class="card-icon">🌌</div>
-                            <button class="btn-favorite" onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('galaxy-collision'); fav ? window.statsTracker.addFavorite('galaxy-collision') : window.statsTracker.removeFavorite('galaxy-collision'); this.textContent = fav ? '❤️' : '🤍';">🤍</button>
+                            <div class="card-icon" aria-hidden="true">✨</div>
+                            <button class="btn-favorite no-ripple"
+                                    id="fav-btn-galaxy-collision"
+                                    data-sim-id="galaxy-collision"
+                                    aria-label="Add Galaxy Collision to favorites"
+                                    data-tooltip="Add to Favorites"
+                                    onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('galaxy-collision'); fav ? window.statsTracker.addFavorite('galaxy-collision') : window.statsTracker.removeFavorite('galaxy-collision');">🤍</button>
                             <div class="card-meta">
                                 <div class="card-title">Galaxy Collision</div>
                                 <div class="card-category">Astronomy • Intermediate</div>
                             </div>
                         </div>
                         <div class="card-body" onclick="window.gallery.openSimulation('galaxy-collision')" style="cursor: pointer;">
-                            <p>Watch two galaxies spiral together and merge into one in cosmic dance.</p>
+                            <p>Watch two galaxies spiral together and merge into one in a slow cosmic dance driven by gravity.</p>
                             <div class="card-tags">
                                 <span class="tag">galaxies</span>
                                 <span class="tag">n-body</span>
@@ -203,72 +307,97 @@
                             </div>
                         </div>
                         <div class="card-footer" onclick="window.gallery.openSimulation('galaxy-collision')" style="cursor: pointer;">
-                            <span class="time">8-12 min</span>
+                            <span class="time">⏱ 8–12 min</span>
                             <span class="arrow">→</span>
                         </div>
-                    </div>
-                </div>
+                    </article>
+
+                </div><!-- /.simulations-container -->
             </section>
 
             <!-- HOW TO USE SECTION -->
-            <section class="how-section">
+            <section class="how-section" aria-label="How to use VISIQ">
                 <h2>How to Use VISIQ</h2>
                 <div class="how-grid">
                     <div class="how-card">
                         <div class="how-number">1</div>
                         <div class="how-title">Search or Browse</div>
-                        <div class="how-text">Find a simulation that interests you.</div>
+                        <div class="how-text">Find a simulation that sparks your curiosity, or press a number key to launch one instantly.</div>
                     </div>
                     <div class="how-card">
                         <div class="how-number">2</div>
                         <div class="how-title">Click to Open</div>
-                        <div class="how-text">Launch the interactive simulation.</div>
+                        <div class="how-text">Launch any interactive simulation with one click. The environment loads in seconds.</div>
                     </div>
                     <div class="how-card">
                         <div class="how-number">3</div>
-                        <div class="how-title">Experiment</div>
-                        <div class="how-text">Adjust controls and see what happens.</div>
+                        <div class="how-title">Experiment Freely</div>
+                        <div class="how-text">Drag, adjust sliders, and observe how parameters affect behavior in real time.</div>
                     </div>
                     <div class="how-card">
                         <div class="how-number">4</div>
-                        <div class="how-title">Learn</div>
-                        <div class="how-text">Understand the science behind it all.</div>
+                        <div class="how-title">Learn & Discover</div>
+                        <div class="how-text">Understand the science and principles behind each phenomenon through guided outcomes.</div>
                     </div>
                 </div>
             </section>
 
             <!-- FOOTER -->
-            <footer class="footer">
-                <p>VISIQ • Interactive Science Learning • August 2026</p>
+            <footer class="footer" role="contentinfo">
+                <p>VISIQ &nbsp;·&nbsp; Interactive Science Learning &nbsp;·&nbsp; 2026</p>
             </footer>
-        </div>
+
+        </main><!-- /#gallery-view -->
 
         <!-- SIMULATION VIEW -->
-        <div id="simulation-view" class="view">
+        <section id="simulation-view" class="view" aria-label="Active simulation">
             <div class="sim-header">
-                <button class="btn-back">← Back</button>
+                <button class="btn-back"
+                        aria-label="Back to gallery (Esc)"
+                        data-tooltip="Back to Gallery (Esc)"
+                        title="Back to Gallery (Esc)">← Back</button>
                 <div class="sim-title">
                     <h1 id="sim-title">Simulation</h1>
-                    <div id="sim-category" style="font-size: 12px; color: #888;">Category</div>
+                    <div id="sim-category">Category</div>
                 </div>
-                <div class="sim-timer-display">0m 0s</div>
-                <button id="reset-button" class="btn-reset">Reset</button>
+                <div class="sim-timer-display" role="timer" aria-label="Session timer" aria-live="polite">0m 0s</div>
+                <button id="reset-button"
+                        class="btn-reset"
+                        data-tooltip="Reset Simulation (R)"
+                        title="Reset Simulation (R)"
+                        aria-label="Reset simulation">⟳ Reset</button>
             </div>
 
-            <div class="sim-info-panel">
+            <div class="sim-info-panel" role="complementary" aria-label="Simulation information">
                 <div id="sim-description" class="sim-description-text"></div>
             </div>
 
             <div class="sim-container">
-                <div class="canvas-wrapper">
+                <div class="canvas-wrapper" role="application" aria-label="Simulation canvas">
                     <div id="simulation-canvas"></div>
                 </div>
-                <div class="controls-wrapper" id="controls-section"></div>
+                <div class="controls-wrapper" id="controls-section" role="group" aria-label="Simulation controls"></div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- SCRIPTS -->
+    </div><!-- /#main-app -->
+
+    <!-- VISUALLY HIDDEN UTILITY CLASS -->
+    <style>
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+
+    <!-- SCRIPTS — ordered by dependency -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <script src="assets/config.js"></script>
     <script src="assets/simulations-data.js"></script>
