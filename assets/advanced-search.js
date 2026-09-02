@@ -1,3 +1,6 @@
+// ===== ADVANCED SEARCH SYSTEM =====
+// Live search with tag filtering and empathetic suggestions
+
 class AdvancedSearch {
     constructor() {
         this.setupSearch();
@@ -13,6 +16,7 @@ class AdvancedSearch {
             if (e.key === 'Escape') {
                 searchInput.value = '';
                 this.performSearch('');
+                searchInput.blur();
             }
         });
     }
@@ -50,32 +54,69 @@ class AdvancedSearch {
         });
         
         if (visibleCount === 0) {
-            this.showNoResults();
+            this.showNoResults(query);
         } else {
             this.hideNoResults();
         }
+
+        if (window.statsTracker && typeof window.statsTracker.trackInteraction === 'function') {
+            window.statsTracker.trackInteraction('search');
+        }
     }
     
-    showNoResults() {
+    showNoResults(query) {
         let noResults = document.querySelector('.no-results-message');
         const container = document.querySelector('.simulations-container');
         
         if (!noResults && container) {
             noResults = document.createElement('div');
             noResults.className = 'no-results-message';
+            container.appendChild(noResults);
+        }
+        
+        if (noResults) {
             noResults.innerHTML = `
-                <div class="no-results-content">
-                    <p>No simulations found for your search.</p>
-                    <p style="font-size: 12px; color: #666; margin-top: 8px;">Try searching: forces, waves, chaos, gravity</p>
+                <div class="empty-state-card">
+                    <span class="empty-state-emoji">🔍</span>
+                    <h3>No simulations matched "${this.escapeHtml(query)}"</h3>
+                    <p>Try searching for core physics and science principles, or explore these popular topics:</p>
+                    <div class="empty-tags-row">
+                        <button class="pill-btn" onclick="window.advancedSearch.applyQuery('forces')">⚛️ Forces</button>
+                        <button class="pill-btn" onclick="window.advancedSearch.applyQuery('waves')">〰️ Waves</button>
+                        <button class="pill-btn" onclick="window.advancedSearch.applyQuery('chaos')">🎯 Chaos</button>
+                        <button class="pill-btn" onclick="window.advancedSearch.applyQuery('gravity')">🌌 Gravity</button>
+                    </div>
+                    <button class="btn-clear-search" onclick="window.advancedSearch.clearSearch()">Clear Search</button>
                 </div>
             `;
-            container.appendChild(noResults);
         }
     }
     
     hideNoResults() {
         const noResults = document.querySelector('.no-results-message');
         if (noResults) noResults.remove();
+    }
+
+    applyQuery(text) {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.value = text;
+            this.performSearch(text);
+        }
+    }
+
+    clearSearch() {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.value = '';
+            this.performSearch('');
+        }
+    }
+
+    escapeHtml(str) {
+        return (str || '').replace(/[&<>"']/g, (m) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[m]);
     }
 }
 
