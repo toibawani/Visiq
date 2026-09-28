@@ -1,47 +1,190 @@
 // ===== GALLERY SYSTEM =====
-// Complete simulation gallery with p5 lifecycle management, empathetic states, and analytics hooks
+// Complete simulation gallery with p5 lifecycle management, 29-simulation catalog,
+// IntersectionObserver pause/resume, URL deep-linking, and complete memory leak prevention.
 
 class Gallery {
     constructor() {
         console.log('[GALLERY] Initializing');
         this.currentSimulation = null;
+        this._currentSimController = null;
         this._p5Instance = null;
         this._keydownHandler = null;
+        this._cardObserver = null;
         this.loadingMessages = [
-            'Calibrating wave superposition fields...',
-            'Computing gravitational matrices...',
-            'Initializing particle trajectories...',
-            'Mapping orbital resonance curves...',
-            'Engaging chaos theory variables...',
-            'Rendering quantum probability clouds...',
-            'Aligning cosmic force vectors...',
+            'Preparing physical force calculations...',
+            'Setting up coordinate spaces...',
+            'Calibrating differential equations...',
+            'Positioning particle bounds...',
+            'Initializing state variables...',
+            'Loading physical constants...',
         ];
         this.initialize();
     }
     
     initialize() {
+        this.renderSimulationsCatalog();
         this.setupEventListeners();
+        this.setupCardIntersectionObserver();
         this.loadUserData();
         this.setupOnboarding();
         this.syncFavoriteButtons();
-        console.log('[GALLERY] Ready');
+        this.checkInitialUrlParam();
+        console.log('[GALLERY] Ready with 29 simulations');
+    }
+
+    renderSimulationsCatalog() {
+        const container = document.getElementById('simulations-container');
+        if (!container || typeof SIMULATIONS === 'undefined') return;
+
+        // Render all 29 simulations with accessible semantics
+        container.innerHTML = '';
+
+        const categories = ['Physics', 'Biology', 'Geography', 'Astronomy'];
+
+        categories.forEach(category => {
+            const sims = SIMULATIONS.filter(s => s.category === category);
+            if (sims.length === 0) return;
+
+            // Category group header
+            const sectionHeader = document.createElement('div');
+            sectionHeader.className = 'gallery-category-header';
+            sectionHeader.innerHTML = `
+                <div class="category-title-wrap">
+                    <h2>${category}</h2>
+                    <span class="category-count">${sims.length} simulations</span>
+                </div>
+            `;
+            container.appendChild(sectionHeader);
+
+            const grid = document.createElement('div');
+            grid.className = 'category-sim-grid';
+
+            sims.forEach(sim => {
+                const card = document.createElement('article');
+                card.className = 'sim-card-featured';
+                card.setAttribute('role', 'article');
+                card.setAttribute('aria-label', `${sim.title} simulation`);
+                card.setAttribute('data-sim-id', sim.id);
+                card.setAttribute('data-category', sim.category);
+
+                const isFav = window.statsTracker?.isFavorite(sim.id) || false;
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-icon" aria-hidden="true">${sim.icon}</div>
+                        <button class="btn-favorite no-ripple"
+                                id="fav-btn-${sim.id}"
+                                data-sim-id="${sim.id}"
+                                aria-label="${isFav ? 'Remove from favorites' : 'Add to favorites'}"
+                                data-tooltip="${isFav ? 'Remove favorite' : 'Add favorite'}"
+                                type="button">
+                            ${isFav ? '❤️' : '🤍'}
+                        </button>
+                        <div class="card-meta">
+                            <div class="card-title">${sim.title}</div>
+                            <div class="card-category">${sim.category} • ${sim.difficulty}</div>
+                        </div>
+                    </div>
+                    <div class="card-body" role="button" tabindex="0" aria-label="Open ${sim.title} simulation" style="cursor: pointer;">
+                        <p>${sim.description}</p>
+                        <div class="card-tags">
+                            ${sim.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="card-footer" role="button" tabindex="0" aria-label="Launch ${sim.title}" style="cursor: pointer;">
+                        <span class="time">⏱ ${sim.estimatedTime}</span>
+                        <span class="arrow" aria-hidden="true">→</span>
+                    </div>
+                `;
+
+                // Wire click and keyboard handlers
+                const openHandler = () => this.openSimulation(sim.id);
+                const body = card.querySelector('.card-body');
+                const footer = card.querySelector('.card-footer');
+                const favBtn = card.querySelector('.btn-favorite');
+
+                if (body) {
+                    body.onclick = openHandler;
+                    body.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHandler(); } };
+                }
+                if (footer) {
+                    footer.onclick = openHandler;
+                    footer.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHandler(); } };
+                }
+                if (favBtn) {
+                    favBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        if (window.statsTracker) {
+                            const cur = window.statsTracker.isFavorite(sim.id);
+                            cur ? window.statsTracker.removeFavorite(sim.id) : window.statsTracker.addFavorite(sim.id);
+                            favBtn.textContent = cur ? '🤍' : '❤️';
+                            favBtn.setAttribute('data-tooltip', cur ? 'Add favorite' : 'Remove favorite');
+                        }
+                    };
+                }
+
+                grid.appendChild(card);
+            });
+
+            container.appendChild(grid);
+        });
+    }
+
+    setupCardIntersectionObserver() {
+        if (typeof IntersectionObserver === 'undefined') return;
+
+        this._cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const card = entry.target;
+                const canvas = card.querySelector('canvas');
+                if (canvas && canvas._p5Instance) {
+                    if (entry.isIntersecting) {
+                        canvas._p5Instance.loop();
+                    } else {
+                        canvas._p5Instance.noLoop();
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.sim-card-featured').forEach(card => {
+            this._cardObserver.observe(card);
+        });
+    }
+
+    checkInitialUrlParam() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const simId = urlParams.get('sim');
+        if (simId && typeof SIMULATIONS !== 'undefined') {
+            const match = SIMULATIONS.find(s => s.id === simId);
+            if (match) {
+                setTimeout(() => this.openSimulation(simId), 100);
+            }
+        }
     }
     
     setupEventListeners() {
-        // Cleanup any existing handler before adding new one
         if (this._keydownHandler) {
             document.removeEventListener('keydown', this._keydownHandler);
         }
 
         const backBtn = document.querySelector('.btn-back');
         if (backBtn) {
-            backBtn.addEventListener('click', () => this.backToGallery());
+            backBtn.onclick = () => this.backToGallery();
         }
         
         const resetBtn = document.getElementById('reset-button');
         if (resetBtn) {
-            resetBtn.addEventListener('click', () => this.resetSimulation());
+            resetBtn.onclick = () => this.resetSimulation();
         }
+
+        this._keydownHandler = (e) => {
+            const activeSimView = document.getElementById('simulation-view')?.classList.contains('active');
+            if (activeSimView && e.key === 'Escape') {
+                this.backToGallery();
+            }
+        };
+        document.addEventListener('keydown', this._keydownHandler);
     }
     
     loadUserData() {
@@ -64,8 +207,8 @@ class Gallery {
             <div class="onboarding-inner">
                 <span class="onboarding-icon">👋</span>
                 <div class="onboarding-text">
-                    <strong>Welcome to VISIQ!</strong>
-                    <p>Pick any simulation below to explore forces, waves, and chaos interactively. Press <kbd>?</kbd> anytime for keyboard shortcuts. Click ❤️ to save your favorites.</p>
+                    <strong>Welcome to VISIQ</strong>
+                    <p>Pick any simulation below to explore physical principles interactively. Press <kbd>?</kbd> anytime for keyboard shortcuts, and <kbd>Esc</kbd> to return.</p>
                 </div>
                 <button class="onboarding-dismiss" aria-label="Dismiss welcome hint" title="Dismiss">Got it ✓</button>
             </div>
@@ -85,21 +228,13 @@ class Gallery {
         const simIds = window.statsTracker.stats?.favoriteIds || [];
         document.querySelectorAll('.sim-card-featured').forEach(card => {
             const btn = card.querySelector('.btn-favorite');
-            const cardId = this.getCardId(card);
+            const cardId = card.getAttribute('data-sim-id');
             if (!btn || !cardId) return;
             const isFav = simIds.includes(cardId);
             btn.textContent = isFav ? '❤️' : '🤍';
             btn.setAttribute('title', isFav ? 'Remove from favorites' : 'Add to favorites');
             btn.setAttribute('data-tooltip', isFav ? 'Remove favorite' : 'Add favorite');
         });
-    }
-
-    getCardId(card) {
-        const body = card.querySelector('.card-body');
-        if (!body) return '';
-        const oc = body.getAttribute('onclick') || '';
-        const match = oc.match(/'([^']+)'/);
-        return match ? match[1] : '';
     }
     
     openSimulation(simId) {
@@ -124,6 +259,7 @@ class Gallery {
         if (galleryView && simView) {
             galleryView.classList.remove('active');
             simView.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
         this.updateSimulationHeader(sim);
@@ -133,7 +269,6 @@ class Gallery {
             window.simTimer.startTimer();
         }
 
-        // Track in stats
         if (window.statsTracker) {
             window.statsTracker.trackSimulationOpen(simId);
         }
@@ -144,9 +279,11 @@ class Gallery {
     updateSimulationHeader(sim) {
         const titleEl = document.getElementById('sim-title');
         const categoryEl = document.getElementById('sim-category');
+        const descEl = document.getElementById('sim-description');
         
         if (titleEl) titleEl.textContent = sim.title;
         if (categoryEl) categoryEl.textContent = `${sim.category} • ${sim.difficulty}`;
+        if (descEl) descEl.textContent = sim.longDescription || sim.description;
         
         if (window.simDetails) {
             window.simDetails.showDetails(sim);
@@ -160,10 +297,9 @@ class Gallery {
             return;
         }
 
-        // ===== CRITICAL: Teardown existing p5 instance to prevent memory leaks =====
+        // ===== TEARDOWN EXISTING INSTANCE TO GUARANTEE ZERO LEAKS =====
         this.destroyCurrentSketch(container);
         
-        // Show empathetic loading screen with rotating message
         const msgIndex = Math.floor(Math.random() * this.loadingMessages.length);
         container.innerHTML = `
             <div class="sim-loading">
@@ -174,13 +310,12 @@ class Gallery {
                     </svg>
                 </div>
                 <p class="loading-label">${this.loadingMessages[msgIndex]}</p>
-                <p class="loading-hint">Tip: Press <kbd>R</kbd> to reset • <kbd>?</kbd> for shortcuts • <kbd>Esc</kbd> to return</p>
+                <p class="loading-hint">Tip: Space = Play/Pause • R = Reset • Esc = Return to Gallery</p>
             </div>
         `;
         
         console.log('[GALLERY] Loading sketch:', sketchId);
         
-        // Remove old script tag to allow re-loading on reset
         const existingScript = document.querySelector(`script[data-sketch="${sketchId}"]`);
         if (existingScript) existingScript.remove();
 
@@ -189,16 +324,21 @@ class Gallery {
         script.setAttribute('data-sketch', sketchId);
         
         script.onload = () => {
-            console.log('[GALLERY] Sketch loaded:', sketchId);
+            console.log('[GALLERY] Sketch script loaded:', sketchId);
             container.innerHTML = '';
             
             if (typeof window.initSketch === 'function') {
-                const p5inst = window.initSketch({ containerId: 'simulation-canvas' });
-                // If the sketch returns a p5 instance, track it for cleanup
-                if (p5inst && typeof p5inst.remove === 'function') {
-                    this._p5Instance = p5inst;
+                const instance = window.initSketch({
+                    containerId: 'simulation-canvas',
+                    controlsContainerId: 'controls-section'
+                });
+
+                if (instance && typeof instance.destroy === 'function') {
+                    this._currentSimController = instance;
+                    this._p5Instance = instance.p5Instance || instance.p || null;
+                } else if (instance && typeof instance.remove === 'function') {
+                    this._p5Instance = instance;
                 } else {
-                    // Try to find the last created p5 instance
                     this._p5Instance = window.__lastP5Instance || null;
                 }
             }
@@ -209,8 +349,8 @@ class Gallery {
             container.innerHTML = `
                 <div class="sim-error">
                     <span class="sim-error-icon">⚠️</span>
-                    <p>Simulation couldn't be loaded right now.</p>
-                    <p class="sim-error-hint">Check your connection or try a different simulation.</p>
+                    <p>Simulation couldn't be loaded.</p>
+                    <p class="sim-error-hint">Please check your network connection or try another simulation.</p>
                     <button class="btn-retry-sketch" onclick="window.gallery.loadSketch('${sketchId}')">Retry</button>
                 </div>
             `;
@@ -220,7 +360,15 @@ class Gallery {
     }
 
     destroyCurrentSketch(container) {
-        // Clean up p5 instance if tracked
+        if (this._currentSimController && typeof this._currentSimController.destroy === 'function') {
+            try {
+                this._currentSimController.destroy();
+            } catch (e) {
+                console.warn('[GALLERY] SimController destroy warning:', e);
+            }
+            this._currentSimController = null;
+        }
+
         if (this._p5Instance && typeof this._p5Instance.remove === 'function') {
             try {
                 this._p5Instance.remove();
@@ -231,7 +379,9 @@ class Gallery {
             this._p5Instance = null;
         }
 
-        // Also remove any canvas elements orphaned in the container
+        const controlsWrapper = document.getElementById('controls-section');
+        if (controlsWrapper) controlsWrapper.innerHTML = '';
+
         if (container) {
             const oldCanvases = container.querySelectorAll('canvas');
             oldCanvases.forEach(c => c.remove());
@@ -264,12 +414,24 @@ class Gallery {
         this.destroyCurrentSketch(container);
         
         this.currentSimulation = null;
+
+        // Clear query parameters in URL cleanly
+        try {
+            const url = new URL(window.location.href);
+            url.search = '';
+            window.history.replaceState({}, '', url.toString());
+        } catch (e) {}
     }
     
     resetSimulation() {
         if (!this.currentSimulation) return;
         
         console.log('[GALLERY] Resetting simulation');
+
+        if (this._currentSimController && typeof this._currentSimController.reset === 'function') {
+            this._currentSimController.reset();
+            return;
+        }
 
         if (window.simTimer) {
             window.simTimer.stopTimer();
@@ -283,8 +445,6 @@ class Gallery {
         if (typeof SIMULATIONS === 'undefined') return;
         const sim = SIMULATIONS.find(s => s.id === simId);
         if (!sim) return;
-        
-        console.log('[GALLERY] Showing resume for:', sim.title);
         
         const existing = document.querySelector('.resume-banner');
         if (existing) existing.remove();
@@ -320,7 +480,6 @@ class Gallery {
         window.__lastP5Instance = inst;
         return inst;
     };
-    // Copy prototype and static props
     window.p5.prototype = _original.prototype;
     Object.keys(_original).forEach(k => { window.p5[k] = _original[k]; });
 })();
@@ -344,5 +503,4 @@ if (document.readyState === 'loading') {
     initGallery();
 }
 
-// Fallback in case scripts load out of order
 setTimeout(initGallery, 500);
