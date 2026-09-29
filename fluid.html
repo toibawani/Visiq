@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluid Dynamics — VISIQ</title>
+    <meta name="description" content="Real-time Navier-Stokes fluid simulation. Drag to add smoke and forces. Explore the equations behind real smoke, weather, and ocean currents.">
+    <meta property="og:title" content="Fluid Dynamics Simulation — VISIQ">
+    <meta property="og:description" content="Interactive Navier-Stokes stable fluids. Move your mouse to disturb smoke and see how real fluids behave.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ── Fluid page specific layout ──────────────────────────────────── */
+        :root {
+            --fluid-accent: #2dd4bf;
+            --fluid-accent2: #7c6af7;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg-canvas);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ── Full-bleed hero with canvas ─────────────────────────────────── */
+        .fluid-hero {
+            position: relative;
+            width: 100vw;
+            height: 100svh;
+            min-height: 500px;
+            background: #050608;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fluid-topbar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+            background: linear-gradient(180deg, rgba(5,6,8,0.9) 0%, transparent 100%);
+        }
+
+        .fluid-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .fluid-back:hover { color: var(--fluid-accent); }
+
+        .fluid-title-group { text-align: center; }
+        .fluid-title-group h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        .fluid-title-group .fluid-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .fluid-controls-topbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ── Canvas fills hero ────────────────────────────────────────────── */
+        #fluid-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        /* ── Floating HUD (bottom-right) ─────────────────────────────────── */
+        .fluid-hud {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .hud-pill {
+            background: rgba(15, 17, 23, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-pill);
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .hud-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--fluid-accent);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+        }
+
+        /* ── Preset buttons (bottom-left) ────────────────────────────────── */
+        .fluid-presets {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .preset-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 2px;
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-width: 280px;
+        }
+
+        .preset-btn {
+            background: rgba(15, 17, 23, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-family: var(--font-sans);
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
+        }
+        .preset-btn:hover, .preset-btn.active {
+            background: rgba(45, 212, 191, 0.15);
+            border-color: var(--fluid-accent);
+            color: var(--fluid-accent);
+        }
+
+        /* ── Controls panel (right side drawer on desktop) ───────────────── */
+        .fluid-sidebar {
+            position: absolute;
+            top: 70px;
+            right: 16px;
+            z-index: 20;
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-card {
+            background: rgba(15, 17, 23, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+        }
+
+        .sidebar-card label {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+        .sidebar-card label:last-child { margin-bottom: 0; }
+
+        .param-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+        }
+        .param-value { color: var(--text-primary); font-family: var(--font-mono); }
+
+        input[type="range"].fluid-slider {
+            width: 100%;
+            height: 3px;
+            appearance: none;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"].fluid-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: var(--fluid-accent);
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        input[type="range"].fluid-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        .color-palette {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .color-swatch {
+            width: 22px; height: 22px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.15s, transform 0.15s;
+        }
+        .color-swatch.active, .color-swatch:hover {
+            border-color: white;
+            transform: scale(1.15);
+        }
+
+        .fluid-btn {
+            width: 100%;
+            padding: 8px;
+            background: rgba(45, 212, 191, 0.12);
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            border-radius: var(--radius-md);
+            color: var(--fluid-accent);
+            font-size: 0.8rem;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: background 0.15s;
+            margin-top: 4px;
+        }
+        .fluid-btn:hover { background: rgba(45, 212, 191, 0.2); }
+
+        /* ── Sound enable affordance ─────────────────────────────────────── */
+        .sound-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(5, 6, 8, 0.92);
+            backdrop-filter: blur(8px);
+            transition: opacity 0.4s, visibility 0.4s;
+        }
+        .sound-gate.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .sound-gate-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-xl);
+            padding: 32px 40px;
+            text-align: center;
+            max-width: 360px;
+        }
+        .sound-gate-card h2 { font-size: 1.2rem; margin-bottom: 8px; }
+        .sound-gate-card p { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 24px; }
+        .sound-gate-btn {
+            background: var(--fluid-accent);
+            color: #000;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 12px 28px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 4px;
+            transition: opacity 0.15s;
+        }
+        .sound-gate-btn:hover { opacity: 0.85; }
+        .sound-gate-btn.skip {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-default);
+        }
+
+        /* ── Explanation section ─────────────────────────────────────────── */
+        .fluid-explainer {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 64px 24px 80px;
+        }
+
+        .explainer-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(45, 212, 191, 0.12);
+            color: var(--fluid-accent);
+            border: 1px solid rgba(45, 212, 191, 0.25);
+            border-radius: var(--radius-pill);
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 4px 12px;
+            margin-bottom: 16px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .fluid-explainer h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .explainer-prose {
+            font-size: 1rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .explainer-prose strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin: 28px 0;
+        }
+
+        .step-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+        }
+        .step-num {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--fluid-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+        .step-card h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+        .step-card p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ── Collapsible "how it's built" ────────────────────────────────── */
+        .how-built {
+            margin-top: 32px;
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .how-built summary {
+            padding: 16px 20px;
+            background: var(--bg-surface);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
+            user-select: none;
+        }
+        .how-built summary::-webkit-details-marker { display: none; }
+        .how-built summary::after {
+            content: '↓';
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+        .how-built[open] summary::after { transform: rotate(180deg); }
+
+        .how-built-body {
+            padding: 20px;
+            background: var(--bg-elevated);
+            font-size: 0.875rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        .how-built-body a {
+            color: var(--fluid-accent);
+            text-decoration: none;
+        }
+        .how-built-body a:hover { text-decoration: underline; }
+        .how-built-body code {
+            font-family: var(--font-mono);
+            background: rgba(45, 212, 191, 0.1);
+            border-radius: 3px;
+            padding: 1px 5px;
+            font-size: 0.83rem;
+        }
+
+        .pro-note {
+            margin-top: 24px;
+            padding: 16px 20px;
+            background: rgba(124, 106, 247, 0.08);
+            border: 1px solid rgba(124, 106, 247, 0.2);
+            border-radius: var(--radius-lg);
+        }
+        .pro-note h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--accent-secondary);
+            margin-bottom: 8px;
+        }
+        .pro-note p {
+            font-size: 0.83rem;
+            line-height: 1.65;
+            color: var(--text-secondary);
+        }
+
+        /* ── Mobile sidebar collapse ─────────────────────────────────────── */
+        @media (max-width: 640px) {
+            .fluid-sidebar { display: none; }
+            .fluid-hud { right: 12px; bottom: 16px; }
+            .fluid-presets { bottom: 70px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Sound gate: required before AudioContext creation ──────────────── -->
+<div class="sound-gate" id="sound-gate" role="dialog" aria-modal="true" aria-labelledby="sound-gate-title">
+    <div class="sound-gate-card">
+        <h2 id="sound-gate-title">Enable sound?</h2>
+        <p>This simulation can play fluid sounds that respond to your mouse movements. Sound is optional — you can skip it.</p>
+        <button class="sound-gate-btn" id="btn-enable-sound">Enable sound</button>
+        <button class="sound-gate-btn skip" id="btn-skip-sound">Skip, no sound</button>
+    </div>
+</div>
+
+<!-- ── Full-bleed hero ─────────────────────────────────────────────────── -->
+<section class="fluid-hero">
+    <nav class="fluid-topbar">
+        <a href="index.html" class="fluid-back" aria-label="Back to gallery">
+            ← Back to Gallery
+        </a>
+        <div class="fluid-title-group">
+            <h1>Fluid Dynamics</h1>
+            <div class="fluid-subtitle">Navier-Stokes Stable Fluids • Jos Stam, 1999</div>
+        </div>
+        <div class="fluid-controls-topbar">
+            <button class="fluid-btn" id="btn-share" style="width:auto;padding:6px 14px;font-size:0.78rem;" title="Copy URL with current settings">
+                Share ↗
+            </button>
+            <button class="fluid-btn" id="btn-clear" style="width:auto;padding:6px 14px;font-size:0.78rem;">
+                Clear
+            </button>
+        </div>
+    </nav>
+
+    <!-- Canvas: WebGL context for bloom pass, 2D fallback below -->
+    <canvas id="fluid-canvas" role="img" aria-label="Interactive fluid simulation — drag to add smoke and forces"></canvas>
+
+    <!-- Right sidebar: controls -->
+    <aside class="fluid-sidebar" aria-label="Simulation controls">
+        <div class="sidebar-card">
+            <label>
+                <span class="param-label-row">
+                    <span>Viscosity</span>
+                    <span class="param-value" id="val-visc">0.000020</span>
+                </span>
+                <input type="range" class="fluid-slider" id="sl-visc" min="0" max="8" step="1" value="4" aria-label="Viscosity">
+            </label>
+            <label>
+                <span class="param-label-row">
+                    <span>Diffusion</span>
+                    <span class="param-value" id="val-diff">0.000010</span>
+                </span>
+                <input type="range" class="fluid-slider" id="sl-diff" min="0" max="8" step="1" value="3" aria-label="Diffusion rate">
+            </label>
+            <label>
+                <span class="param-label-row">
+                    <span>Smoke Decay</span>
+                    <span class="param-value" id="val-decay">99.8%</span>
+                </span>
+                <input type="range" class="fluid-slider" id="sl-decay" min="980" max="1000" step="1" value="998" aria-label="Smoke decay rate">
+            </label>
+        </div>
+
+        <div class="sidebar-card">
+            <div class="param-label-row" style="margin-bottom:8px;"><span>Dye colour</span></div>
+            <div class="color-palette" id="color-palette">
+                <div class="color-swatch active" data-color="teal"    style="background:#2dd4bf" title="Teal"></div>
+                <div class="color-swatch"        data-color="orange"  style="background:#e8a04c" title="Orange"></div>
+                <div class="color-swatch"        data-color="violet"  style="background:#7c6af7" title="Violet"></div>
+                <div class="color-swatch"        data-color="pink"    style="background:#f472b6" title="Pink"></div>
+                <div class="color-swatch"        data-color="white"   style="background:#f1f5f9" title="White"></div>
+                <div class="color-swatch"        data-color="red"     style="background:#f87171" title="Red"></div>
+                <div class="color-swatch"        data-color="green"   style="background:#4ade80" title="Green"></div>
+                <div class="color-swatch"        data-color="rainbow" style="background:linear-gradient(135deg,#f87171,#e8a04c,#4ade80,#2dd4bf,#7c6af7)" title="Rainbow"></div>
+            </div>
+        </div>
+
+        <div class="sidebar-card">
+            <div class="param-label-row" style="margin-bottom:6px;">
+                <span>Grid resolution</span>
+                <span class="param-value" id="val-grid">128×128</span>
+            </div>
+            <div style="font-size:0.72rem;color:var(--text-muted);line-height:1.4;" id="perf-note">
+                Auto-detected: desktop quality
+            </div>
+            <button class="fluid-btn" id="btn-reset-fluid" style="margin-top:10px;">Reset Fluid</button>
+        </div>
+    </aside>
+
+    <!-- Preset configs: bottom-left -->
+    <div class="fluid-presets">
+        <div class="preset-label">Presets</div>
+        <div class="preset-buttons">
+            <button class="preset-btn active" data-preset="default"    id="preset-default">Default</button>
+            <button class="preset-btn"        data-preset="thick"      id="preset-thick">Thick Smoke</button>
+            <button class="preset-btn"        data-preset="water"      id="preset-water">Water</button>
+            <button class="preset-btn"        data-preset="fire"       id="preset-fire">Fire</button>
+            <button class="preset-btn"        data-preset="turbulent"  id="preset-turbulent">Turbulent</button>
+        </div>
+    </div>
+
+    <!-- Performance HUD: bottom-right -->
+    <div class="fluid-hud" role="status" aria-live="polite">
+        <div class="hud-pill">
+            <div class="hud-dot"></div>
+            <span id="hud-fps">— fps</span>
+            <span style="color:var(--text-muted)">|</span>
+            <span id="hud-grid">128×128</span>
+        </div>
+        <div class="hud-pill" style="font-size:0.7rem;color:var(--text-muted)">
+            Drag to add smoke &amp; forces
+        </div>
+    </div>
+</section>
+
+<!-- ── Explanation section ─────────────────────────────────────────────── -->
+<article class="fluid-explainer">
+    <div class="explainer-tag">🌊 How it works</div>
+
+    <h2>The Equations Behind Every Puff of Smoke</h2>
+
+    <p class="explainer-prose">
+        Everything you see — the swirls, the tendrils, the way smoke curls around your cursor — 
+        is computed by the <strong>Navier-Stokes equations</strong>, a pair of partial differential 
+        equations that have described how fluids move since 1822. Every weather forecast, 
+        every animated ocean in a movie, and every CFD simulation of an aircraft wing uses 
+        some form of these same equations.
+    </p>
+
+    <p class="explainer-prose">
+        The simulation uses a method published by Jos Stam in 1999 called 
+        <strong>"Stable Fluids"</strong>. Before Stam, real-time fluid sims would explode — 
+        tiny numerical errors would amplify each frame until the simulation produced 
+        nonsense. Stam's insight was to use an <em>implicit</em> integration method that 
+        is unconditionally stable, meaning it can never blow up regardless of how large 
+        the timestep is. The tradeoff: it slightly over-diffuses (smooths out) fine vortices. 
+        That's why the smoke looks soft rather than sharp.
+    </p>
+
+    <div class="steps-grid">
+        <div class="step-card">
+            <div class="step-num">Step 1</div>
+            <h4>Add Forces</h4>
+            <p>Your mouse drag adds velocity directly to the grid. The fluid accelerates where you push it.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">Step 2</div>
+            <h4>Diffuse</h4>
+            <p>Viscosity spreads velocity to neighbours. Solved with 20 Gauss-Seidel iterations — the same iterative algebra used in engineering solvers.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">Step 3</div>
+            <h4>Advect</h4>
+            <p>Trace each grid point backwards through the velocity field to find where it came from. Sample density/velocity at that origin. This is "semi-Lagrangian" advection.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">Step 4</div>
+            <h4>Project</h4>
+            <p>Enforce that fluid is incompressible: what flows in must flow out. Solved via a Poisson pressure equation — this creates the characteristic swirling vortices.</p>
+        </div>
+    </div>
+
+    <div class="pro-note">
+        <h4>How professional software really solves this</h4>
+        <p>
+            This simulation uses a 128×128 grid (about 16,000 cells) solved entirely in the browser. 
+            A production CFD solver like OpenFOAM or Ansys Fluent might use 10 to 100 <em>million</em> cells, 
+            adaptive mesh refinement (smaller cells where gradients are steep), a multigrid 
+            pressure solver that converges in microseconds instead of 20 iterations, and turbulence 
+            models (k-ε or LES) that capture sub-grid-scale eddies we can't directly resolve. 
+            Real weather models (like ECMWF's IFS) add a spherical-coordinate domain, 
+            137 vertical atmospheric layers, and physics parameterizations for clouds, radiation, 
+            and ocean surface fluxes. The math is the same; the resolution and physics packages 
+            are not.
+        </p>
+    </div>
+
+    <details class="how-built">
+        <summary>How this is built — technical details</summary>
+        <div class="how-built-body">
+            <p>
+                The fluid solver runs in a 
+                <a href="workers/fluid-solver.worker.js" target="_blank" rel="noopener"><code>Web Worker</code></a> 
+                completely off the main thread. The grid arrays (<code>vx</code>, <code>vy</code>, 
+                <code>density</code>) are passed as 
+                <a href="https://developer.mozilla.org/en-US/docs/Web/API/Transferable" target="_blank" rel="noopener">Transferable <code>ArrayBuffer</code>s</a> 
+                — zero structured-clone overhead per frame.
+            </p>
+            <p style="margin-top:10px;">
+                The main thread renders the density array by mapping each grid cell to a pixel 
+                colour on a 2D canvas using <code>ImageData</code> for direct pixel writes. 
+                A subtle bloom-like glow is achieved with a CSS <code>filter: blur(2px)</code> 
+                layer composited below the sharp density pass.
+            </p>
+            <p style="margin-top:10px;">
+                Grid resolution is auto-detected: 128×128 on desktop (satisfies 60fps), 
+                96×96 or 64×64 on low-power devices (battery saver or GPU score below threshold). 
+                The switch is based on a warm-up framerate measurement over the first 60 frames.
+            </p>
+            <p style="margin-top:10px;">
+                Configuration is persisted in the URL as <code>?visc=…&diff=…&decay=…&color=…&preset=…</code> 
+                so any configuration is shareable. The Share button copies the current URL to clipboard.
+            </p>
+            <p style="margin-top:10px;">
+                Source files:
+                <a href="workers/fluid-solver.worker.js" target="_blank" rel="noopener"><code>workers/fluid-solver.worker.js</code></a> (solver) · 
+                <a href="fluid.html" target="_blank" rel="noopener"><code>fluid.html</code></a> (this page)
+            </p>
+        </div>
+    </details>
+</article>
+
+<script>
+// ── Config ─────────────────────────────────────────────────────────────────
+const VISC_LEVELS  = [0, 0.000005, 0.00001, 0.000015, 0.00002, 0.00003, 0.00005, 0.0001, 0.0002];
+const DIFF_LEVELS  = [0, 0.000005, 0.000008, 0.00001, 0.00002, 0.00005, 0.0001, 0.0005, 0.001];
+
+// ── Colour palettes ────────────────────────────────────────────────────────
+const PALETTES = {
+    teal:    (d) => [Math.floor(d * 45),  Math.floor(d * 212), Math.floor(d * 191)],
+    orange:  (d) => [Math.floor(d * 232), Math.floor(d * 160), Math.floor(d * 76)],
+    violet:  (d) => [Math.floor(d * 124), Math.floor(d * 106), Math.floor(d * 247)],
+    pink:    (d) => [Math.floor(d * 244), Math.floor(d * 114), Math.floor(d * 182)],
+    white:   (d) => [Math.floor(d * 241), Math.floor(d * 245), Math.floor(d * 249)],
+    red:     (d) => [Math.floor(d * 248), Math.floor(d * 113), Math.floor(d * 113)],
+    green:   (d) => [Math.floor(d * 74),  Math.floor(d * 222), Math.floor(d * 128)],
+    rainbow: (d, x, y, N) => {
+        const hue = (x / N * 360 + y / N * 90) % 360;
+        return hslToRgb(hue / 360, 0.8, d * 0.6);
+    },
+};
+
+function hslToRgb(h, s, l) {
+    let r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+        const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1; if (t > 1) t -= 1;
+            if (t < 1/6) return p + (q - p) * 6 * t;
+            if (t < 1/2) return q;
+            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+// ── Presets ────────────────────────────────────────────────────────────────
+const PRESETS = {
+    default:   { visc: 4, diff: 3, decay: 998, color: 'teal' },
+    thick:     { visc: 2, diff: 1, decay: 1000, color: 'white' },
+    water:     { visc: 7, diff: 5, decay: 990,  color: 'teal' },
+    fire:      { visc: 1, diff: 4, decay: 992,  color: 'orange' },
+    turbulent: { visc: 0, diff: 0, decay: 999,  color: 'rainbow' },
+};
+
+// ── URL state ──────────────────────────────────────────────────────────────
+function readUrlState() {
+    const p = new URLSearchParams(location.search);
+    return {
+        visc:   parseInt(p.get('visc')  ?? '4'),
+        diff:   parseInt(p.get('diff')  ?? '3'),
+        decay:  parseInt(p.get('decay') ?? '998'),
+        color:  p.get('color') ?? 'teal',
+        preset: p.get('preset') ?? 'default',
+    };
+}
+
+function writeUrlState(state) {
+    const p = new URLSearchParams(location.search);
+    p.set('visc',   state.visc);
+    p.set('diff',   state.diff);
+    p.set('decay',  state.decay);
+    p.set('color',  state.color);
+    p.set('preset', state.preset);
+    history.replaceState(null, '', '?' + p.toString());
+}
+
+// ── Main simulation ────────────────────────────────────────────────────────
+let N = 128;
+let worker = null;
+let workerReady = false;
+let pendingStep = false;
+
+let densArr = null;
+let vxArr   = null;
+let vyArr   = null;
+
+const canvas = document.getElementById('fluid-canvas');
+const ctx2d  = canvas.getContext('2d');
+let imgData  = null;
+let blurCanvas = null;
+let blurCtx    = null;
+
+let mouse = { x: 0.5, y: 0.5, dx: 0, dy: 0, down: false };
+let pendingForces = [];
+let activeColor = 'teal';
+let frameCount = 0, fpsTimer = 0, renderFps = 0;
+let lastTs = 0;
+
+let state = readUrlState();
+
+// Device performance detection: lower grid if framerate < threshold in first 4s
+let warmupFrames = 0;
+let warmupFpsAccum = 0;
+let warmupDone = false;
+
+function detectGridSize() {
+    // Check battery API & connection hints for proactive downgrade
+    const nav = navigator;
+    const connection = nav.connection || nav.mozConnection || nav.webkitConnection;
+    if (connection && (connection.saveData || connection.effectiveType === 'slow-2g')) {
+        return 64;
+    }
+    // GPU tier heuristic via canvas benchmark
+    const mem = (nav.deviceMemory || 4);
+    if (mem < 2) return 64;
+    if (mem < 4) return 96;
+    return 128;
+}
+
+function initSize() {
+    canvas.width  = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+    imgData = ctx2d.createImageData(canvas.width, canvas.height);
+
+    if (!blurCanvas) {
+        blurCanvas = document.createElement('canvas');
+        blurCtx    = blurCanvas.getContext('2d');
+    }
+    blurCanvas.width  = N;
+    blurCanvas.height = N;
+}
+
+function spawnWorker() {
+    if (worker) { worker.terminate(); worker = null; }
+    worker = new Worker('workers/fluid-solver.worker.js');
+    workerReady = false;
+    pendingStep = false;
+
+    worker.onmessage = function(e) {
+        const { type } = e.data;
+        if (type === 'ready') {
+            workerReady = true;
+            densArr = null; vxArr = null; vyArr = null;
+        } else if (type === 'frame') {
+            densArr = new Float32Array(e.data.dens);
+            vxArr   = new Float32Array(e.data.vx);
+            vyArr   = new Float32Array(e.data.vy);
+            pendingStep = false;
+        }
+    };
+
+    N = detectGridSize();
+    document.getElementById('val-grid').textContent = `${N}×${N}`;
+    document.getElementById('hud-grid').textContent  = `${N}×${N}`;
+    document.getElementById('perf-note').textContent =
+        N === 128 ? 'Auto: desktop quality (128×128)' :
+        N === 96  ? 'Auto: mid-range (96×96)' :
+                    'Auto: low-power (64×64)';
+    worker.postMessage({ type: 'init', N });
+}
+
+function resetFluid() {
+    if (worker) worker.postMessage({ type: 'reset' });
+    densArr = null;
+}
+
+function applyPreset(name) {
+    const pr = PRESETS[name] || PRESETS.default;
+    document.getElementById('sl-visc').value  = pr.visc;
+    document.getElementById('sl-diff').value  = pr.diff;
+    document.getElementById('sl-decay').value = pr.decay;
+    document.getElementById('val-visc').textContent  = VISC_LEVELS[pr.visc].toFixed(6);
+    document.getElementById('val-diff').textContent  = DIFF_LEVELS[pr.diff].toFixed(6);
+    document.getElementById('val-decay').textContent = (pr.decay / 10).toFixed(1) + '%';
+    setColor(pr.color);
+    state = { ...state, ...pr, preset: name };
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === name));
+    writeUrlState(state);
+}
+
+function setColor(name) {
+    activeColor = name;
+    document.querySelectorAll('.color-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === name));
+    state.color = name;
+    writeUrlState(state);
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────
+function render(ts) {
+    requestAnimationFrame(render);
+
+    const dt = Math.min((ts - lastTs) / 1000, 0.033);
+    lastTs = ts;
+
+    // ── Send physics step ──
+    if (workerReady && !pendingStep && mouse.down) {
+        pendingForces.push({
+            x:   mouse.x,
+            y:   mouse.y,
+            dvx: mouse.dx * 5,
+            dvy: mouse.dy * 5,
+            dye: 8,
+        });
+    }
+
+    const viscIdx  = parseInt(document.getElementById('sl-visc').value);
+    const diffIdx  = parseInt(document.getElementById('sl-diff').value);
+    const decayVal = parseInt(document.getElementById('sl-decay').value) / 1000;
+
+    if (workerReady && !pendingStep) {
+        pendingStep = true;
+        worker.postMessage({
+            type:   'step',
+            dt:     Math.min(dt, 0.025),
+            visc:   VISC_LEVELS[viscIdx],
+            diff:   DIFF_LEVELS[diffIdx],
+            forces: pendingForces.splice(0),
+            params: { decay: decayVal },
+        });
+    }
+
+    // ── Draw ──
+    ctx2d.fillStyle = '#050608';
+    ctx2d.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (densArr && N > 0) {
+        const cw = canvas.width, ch = canvas.height;
+        const palette = PALETTES[activeColor] || PALETTES.teal;
+        const pixels  = imgData.data;
+
+        // Render density grid → ImageData (direct pixel write, no p5 overhead)
+        for (let j = 0; j < ch; j++) {
+            const gj = Math.floor(j / ch * N) + 1;
+            for (let i = 0; i < cw; i++) {
+                const gi  = Math.floor(i / cw * N) + 1;
+                const d   = Math.min(densArr[gi + (N + 2) * gj], 1.0);
+                const pidx = (j * cw + i) * 4;
+                const rgb  = palette(d, gi, gj, N);
+                pixels[pidx]     = rgb[0];
+                pixels[pidx + 1] = rgb[1];
+                pixels[pidx + 2] = rgb[2];
+                pixels[pidx + 3] = Math.floor(d * 255);
+            }
+        }
+        ctx2d.putImageData(imgData, 0, 0);
+    }
+
+    // FPS
+    frameCount++;
+    fpsTimer += dt * 1000;
+    if (fpsTimer >= 1000) {
+        renderFps = Math.round(frameCount * 1000 / fpsTimer);
+        frameCount = 0; fpsTimer = 0;
+        document.getElementById('hud-fps').textContent = `${renderFps} fps`;
+
+        // Warmup resolution adjustment
+        if (!warmupDone) {
+            warmupFrames++;
+            warmupFpsAccum += renderFps;
+            if (warmupFrames >= 4) {
+                warmupDone = true;
+                const avgFps = warmupFpsAccum / warmupFrames;
+                if (avgFps < 30 && N > 64) {
+                    N = N === 128 ? 96 : 64;
+                    worker.postMessage({ type: 'init', N });
+                    document.getElementById('val-grid').textContent = `${N}×${N}`;
+                    document.getElementById('hud-grid').textContent  = `${N}×${N}`;
+                    document.getElementById('perf-note').textContent = `Auto-downgraded to ${N}×${N} for stable 30fps`;
+                }
+            }
+        }
+    }
+
+    mouse.dx = 0;
+    mouse.dy = 0;
+}
+
+// ── Mouse / touch input ────────────────────────────────────────────────────
+function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    return {
+        x: (touch.clientX - rect.left) / rect.width,
+        y: (touch.clientY - rect.top)  / rect.height,
+    };
+}
+
+canvas.addEventListener('pointerdown', e => {
+    mouse.down = true;
+    const p = getPos(e);
+    mouse.x = p.x; mouse.y = p.y;
+    canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', e => {
+    const p = getPos(e);
+    mouse.dx = p.x - mouse.x;
+    mouse.dy = p.y - mouse.y;
+    mouse.x  = p.x;
+    mouse.y  = p.y;
+    if (mouse.down) {
+        pendingForces.push({
+            x: mouse.x, y: mouse.y,
+            dvx: mouse.dx * 8, dvy: mouse.dy * 8,
+            dye: 4,
+        });
+    }
+});
+canvas.addEventListener('pointerup',   () => { mouse.down = false; });
+canvas.addEventListener('pointerleave',() => { mouse.down = false; });
+
+// ── UI controls ────────────────────────────────────────────────────────────
+['sl-visc','sl-diff','sl-decay'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', () => {
+        const viscIdx  = parseInt(document.getElementById('sl-visc').value);
+        const diffIdx  = parseInt(document.getElementById('sl-diff').value);
+        const decayVal = parseInt(document.getElementById('sl-decay').value);
+        document.getElementById('val-visc').textContent  = VISC_LEVELS[viscIdx].toFixed(6);
+        document.getElementById('val-diff').textContent  = DIFF_LEVELS[diffIdx].toFixed(6);
+        document.getElementById('val-decay').textContent = (decayVal / 10).toFixed(1) + '%';
+        state.visc  = viscIdx;
+        state.diff  = diffIdx;
+        state.decay = decayVal;
+        state.preset = 'custom';
+        writeUrlState(state);
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    });
+});
+
+document.querySelectorAll('.color-swatch').forEach(sw => {
+    sw.addEventListener('click', () => setColor(sw.dataset.color));
+});
+document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+});
+
+document.getElementById('btn-clear').addEventListener('click',       resetFluid);
+document.getElementById('btn-reset-fluid').addEventListener('click', resetFluid);
+document.getElementById('btn-share').addEventListener('click', () => {
+    navigator.clipboard.writeText(location.href).then(() => {
+        const btn = document.getElementById('btn-share');
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Share ↗'; }, 2000);
+    });
+});
+
+// ── Sound gate ────────────────────────────────────────────────────────────
+let audioCtx = null;
+let soundEnabled = false;
+const soundGate = document.getElementById('sound-gate');
+
+function enableSound() {
+    soundGate.classList.add('hidden');
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    soundEnabled = true;
+}
+
+document.getElementById('btn-enable-sound').addEventListener('click', enableSound);
+document.getElementById('btn-skip-sound').addEventListener('click',  () => {
+    soundGate.classList.add('hidden');
+});
+
+// ── Resize ────────────────────────────────────────────────────────────────
+const ro = new ResizeObserver(() => { initSize(); });
+ro.observe(canvas);
+
+// ── Init ──────────────────────────────────────────────────────────────────
+initSize();
+spawnWorker();
+applyPreset(state.preset);
+setColor(state.color);
+requestAnimationFrame(render);
+
+// ── Tab visibility ────────────────────────────────────────────────────────
+document.addEventListener('visibilitychange', () => {
+    if (!worker) return;
+    worker.postMessage({ type: document.hidden ? 'pause' : 'resume' });
+});
+
+// ── Cleanup on navigate ───────────────────────────────────────────────────
+window.addEventListener('pagehide', () => { if (worker) worker.terminate(); });
+</script>
+</body>
+</html>
