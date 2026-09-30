@@ -214,14 +214,7 @@ window.initSketch = function(config) {
                 p.text('Physics runs in Web Worker • Press Reset to restart collision', 16, p.height - 14);
             };
 
-            // Pause worker when visibility changes
-            document.addEventListener('visibilitychange', () => {
-                if (document.hidden) {
-                    if (worker) worker.postMessage({ type: 'pause' });
-                } else {
-                    if (worker) worker.postMessage({ type: 'resume' });
-                }
-            });
+            // Visibility pause is handled by SimBase.onPause / onResume (no extra document listener).
         }
     });
 
