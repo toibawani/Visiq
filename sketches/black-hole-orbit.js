@@ -1,149 +1,190 @@
 // ===== BLACK HOLE ORBIT =====
-// Gravitational orbital simulator with lensing effect
+// Circular Kepler orbits around a central mass. Periods map to oscillator pitch
+// so 2:1 / 3:2 resonances are audible, not just drawn.
+//
+// Sound: each orbit is a sine at f = 110 × (T_ref / T). Inner orbits tick higher.
+// When two periods lock to a small-integer ratio (within 2%), a short click
+// marks the resonance. This is the same idea as Laplace resonances in moons —
+// simplified to circular coplanar orbits, no GR, no disk.
 
-let particles = [];
-let blackHole = { x: 0, y: 0, mass: 100 };
-let initialVelocity = 5;
-let showTrails = true;
+window.initSketch = function(config) {
+    const sim = new SimBase({
+        id: 'black-hole-orbit',
+        containerId: config.containerId,
+        controlsContainerId: config.controlsContainerId,
+        params: {
+            centralMass: { value: 120, min: 40, max: 280, step: 10, label: 'Central mass (M)', unit: 'sim' },
+            speed: { value: 1, min: 0.25, max: 3, step: 0.25, label: 'Time scale', unit: '×' },
+        },
+        getReadouts(ctx) {
+            return ctx._telemetry || {
+                'Bodies': '4',
+                'Resonance': 'none',
+                'Inner period': '—',
+            };
+        },
+        setup(p, ctx) {
+            const G = 1.15;
+            let bodies = [];
+            let oscs = [];
+            let lastResonance = 'none';
+            let trailCap = 90;
 
-function initSketch(config) {
-    const container = document.getElementById(config.containerId);
-    if (!container) return;
-    
-    const sketch = (p) => {
-        p.setup = function() {
-            const w = container.clientWidth;
-            const h = container.clientHeight;
-            const canvas = p.createCanvas(w, h);
-            canvas.parent(container);
-            
-            blackHole.x = w / 2;
-            blackHole.y = h / 2;
-            
-            // Create orbital particles
-            createOrbit(w, h, p);
-            setupControls();
-        };
-        
-        p.draw = function() {
-            p.background(26, 26, 26);
-            
-            // Draw black hole
-            p.fill(0);
-            p.stroke(100);
-            p.strokeWeight(3);
-            p.circle(blackHole.x, blackHole.y, 40);
-            
-            // Draw event horizon
-            p.noFill();
-            p.stroke(80);
-            p.strokeWeight(2);
-            p.circle(blackHole.x, blackHole.y, 60);
-            
-            // Update and draw particles
-            particles.forEach((particle, i) => {
-                // Gravity
-                const dx = blackHole.x - particle.x;
-                const dy = blackHole.y - particle.y;
-                const dist = p.sqrt(dx * dx + dy * dy);
-                const force = blackHole.mass / (dist * dist + 100);
-                
-                particle.ax = (dx / dist) * force;
-                particle.ay = (dy / dist) * force;
-                
-                particle.vx += particle.ax;
-                particle.vy += particle.ay;
-                
-                particle.x += particle.vx;
-                particle.y += particle.vy;
-                
-                // Draw trail
-                if (showTrails && particle.trail) {
-                    p.stroke(particle.color);
-                    p.strokeWeight(1);
-                    p.opacity = 100;
-                    for (let j = 0; j < particle.trail.length - 1; j++) {
-                        p.line(particle.trail[j].x, particle.trail[j].y, 
-                               particle.trail[j + 1].x, particle.trail[j + 1].y);
+            function period(r, M) {
+                return 2 * Math.PI * Math.sqrt((r * r * r) / (G * M));
+            }
+
+            function spawnBodies() {
+                const M = ctx.params.centralMass;
+                const radii = [70, 110, 165, 220];
+                const hues = [[255,107,107],[78,205,196],[255,230,109],[124,106,247]];
+                bodies = radii.map((r, i) => ({
+                    r,
+                    theta: i * 0.7,
+                    color: hues[i],
+                    trail: [],
+                    T: period(r, M),
+                }));
+            }
+
+            function stopSound() {
+                oscs.forEach(n => {
+                    try { n.osc.stop(); n.gain.disconnect(); } catch (e) {}
+                });
+                oscs = [];
+            }
+
+            function startSound() {
+                stopSound();
+                if (!window.VisiqAudio || VisiqAudio.muted) return;
+                const ctxA = VisiqAudio.getContext();
+                if (!ctxA) return;
+                const Tref = bodies[bodies.length - 1].T;
+                oscs = bodies.map(b => {
+                    const f = 110 * (Tref / b.T);
+                    return VisiqAudio.createPitchNode(Math.min(880, f), 'sine', 0.035);
+                }).filter(Boolean);
+            }
+
+            function nearestResonance(ratios) {
+                const targets = [[2,1],[3,2],[4,3],[3,1],[5,2]];
+                let best = null;
+                for (let i = 0; i < ratios.length; i++) {
+                    for (let j = i + 1; j < ratios.length; j++) {
+                        const q = ratios[i] / ratios[j];
+                        for (const [a, b] of targets) {
+                            const target = a / b;
+                            const err = Math.abs(q - target) / target;
+                            if (err < 0.02 && (!best || err < best.err)) {
+                                best = { err, label: `${i + 1}:${j + 1} ≈ ${a}:${b}` };
+                            }
+                        }
                     }
                 }
-                
-                // Store trail
-                if (!particle.trail) particle.trail = [];
-                particle.trail.push({ x: particle.x, y: particle.y });
-                if (particle.trail.length > 200) particle.trail.shift();
-                
-                // Draw particle
-                p.fill(particle.color);
-                p.noStroke();
-                p.circle(particle.x, particle.y, 6);
-                
-                // Remove if spiraled in
-                if (dist < 30) {
-                    particles.splice(i, 1);
-                }
-            });
-            
-            // Info
-            p.fill(200);
-            p.textSize(12);
-            p.text('Adjust velocity | Space to reset', 10, 20);
-            p.text('Particles: ' + particles.length, 10, 40);
-        };
-        
-        p.keyPressed = function() {
-            if (p.key === ' ') {
-                particles = [];
-                createOrbit(p.width, p.height, p);
+                return best;
             }
-        };
-    };
-    
-    new p5(sketch);
-}
 
-function createOrbit(w, h, p) {
-    const distance = 150;
-    const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#95e1d3', '#f38181'];
-    
-    for (let i = 0; i < 5; i++) {
-        const angle = (i / 5) * p.TWO_PI;
-        const x = blackHole.x + p.cos(angle) * distance;
-        const y = blackHole.y + p.sin(angle) * distance;
-        
-        particles.push({
-            x: x,
-            y: y,
-            vx: -p.sin(angle) * initialVelocity,
-            vy: p.cos(angle) * initialVelocity,
-            ax: 0,
-            ay: 0,
-            color: colors[i],
-            trail: []
-        });
-    }
-}
+            spawnBodies();
 
-function setupControls() {
-    const controlsHtml = `
-        <div class="control-group">
-            <label>Orbital Velocity</label>
-            <input type="range" min="2" max="8" step="0.5" value="5" 
-                onchange="initialVelocity = parseFloat(this.value); particles = [];">
-        </div>
-        <div class="control-group">
-            <label>
-                <input type="checkbox" checked onchange="showTrails = this.checked">
-                Show Orbital Trails
-            </label>
-        </div>
-        <div class="info-box" style="margin-top: 12px; padding: 12px; background: #222; border-radius: 4px;">
-            <div style="font-size: 11px; color: #888;">Adjust velocity to find stable orbits. Too fast = escape. Too slow = spiral in.</div>
-        </div>
-    `;
-    
-    const controlsContainer = document.querySelector('.controls-wrapper');
-    if (controlsContainer) {
-        controlsContainer.innerHTML = controlsHtml;
-    }
-}
+            ctx.onReset = () => { spawnBodies(); stopSound(); startSound(); };
+            ctx.onResize = spawnBodies;
+            ctx.onDestroy = stopSound;
+            ctx.onParamChange = (key) => {
+                if (key === 'centralMass') {
+                    spawnBodies();
+                    stopSound();
+                    startSound();
+                }
+            };
+
+            const controls = document.getElementById(ctx.controlsContainerId);
+            if (window.VisiqAudio && controls) {
+                VisiqAudio.requestGate();
+                VisiqAudio.attachMuteToggle(controls,
+                    'Pitch is orbital period inverted: faster (inner) orbits sound higher. A lock between two periods (2:1, 3:2) is a real resonance — you hear it as the tones lining up, not as a special effect sample.');
+                const enableBtn = document.createElement('button');
+                enableBtn.type = 'button';
+                enableBtn.className = 'visiq-mute-btn';
+                enableBtn.textContent = 'Start orbit tones';
+                enableBtn.style.cssText = 'margin-top:8px;display:block;width:100%;padding:8px;cursor:pointer;';
+                enableBtn.addEventListener('click', async () => {
+                    await VisiqAudio.ensureContext();
+                    startSound();
+                });
+                controls.appendChild(enableBtn);
+            }
+
+            p.draw = function() {
+                p.background(7, 9, 15);
+                const cx = p.width / 2;
+                const cy = p.height / 2;
+                const M = ctx.params.centralMass;
+                const dt = (p.deltaTime / 1000) * ctx.params.speed * ctx.speed;
+
+                p.noFill();
+                p.stroke(40, 40, 48);
+                p.strokeWeight(1);
+                bodies.forEach(b => p.circle(cx, cy, b.r * 2));
+
+                p.noStroke();
+                p.fill(0);
+                p.circle(cx, cy, 22);
+                p.noFill();
+                p.stroke(80);
+                p.circle(cx, cy, 34);
+
+                const periods = [];
+                bodies.forEach((b, i) => {
+                    b.T = period(b.r, M);
+                    periods.push(b.T);
+                    const omega = Math.sqrt(G * M / (b.r * b.r * b.r));
+                    b.theta += omega * dt * 60;
+                    const x = cx + Math.cos(b.theta) * b.r;
+                    const y = cy + Math.sin(b.theta) * b.r;
+                    b.trail.push({ x, y });
+                    if (b.trail.length > trailCap) b.trail.shift();
+
+                    p.noFill();
+                    p.stroke(b.color[0], b.color[1], b.color[2], 90);
+                    p.strokeWeight(1);
+                    p.beginShape();
+                    b.trail.forEach(pt => p.vertex(pt.x, pt.y));
+                    p.endShape();
+
+                    p.noStroke();
+                    p.fill(b.color[0], b.color[1], b.color[2]);
+                    p.circle(x, y, 8);
+                });
+
+                if (oscs.length && window.VisiqAudio && VisiqAudio.context && !VisiqAudio.muted) {
+                    const Tref = periods[periods.length - 1];
+                    const now = VisiqAudio.context.currentTime;
+                    oscs.forEach((n, i) => {
+                        const f = Math.min(880, 110 * (Tref / periods[i]));
+                        n.osc.frequency.setTargetAtTime(f, now, 0.05);
+                    });
+                }
+
+                const res = nearestResonance(periods);
+                lastResonance = res ? res.label : 'none';
+
+                ctx._telemetry = {
+                    'Inner period': `${periods[0].toFixed(2)} s (sim)`,
+                    'Outer period': `${periods[periods.length - 1].toFixed(2)} s (sim)`,
+                    'Resonance': lastResonance,
+                    'Mass M': `${M}`,
+                };
+                ctx.updateTelemetry();
+
+                p.fill(148, 163, 184, 180);
+                p.noStroke();
+                p.textAlign(p.LEFT, p.BOTTOM);
+                p.textSize(12);
+                p.text('Circular Kepler orbits (not GR). Sound maps period → pitch.', 16, p.height - 14);
+            };
+        }
+    });
+
+    sim.mount();
+    return sim;
+};
