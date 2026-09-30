@@ -25,6 +25,38 @@ window.initSketch = function(config) {
             let s1 = { x: 0, y: 0 };
             let s2 = { x: 0, y: 0 };
             let draggedSource = null;
+            let waveOsc = null;
+
+            function stopWaveSound() {
+                if (!waveOsc) return;
+                try {
+                    waveOsc.osc.stop();
+                    waveOsc.osc2.stop();
+                    waveOsc.gain.disconnect();
+                    waveOsc.gain2.disconnect();
+                } catch (e) {}
+                waveOsc = null;
+            }
+
+            ctx.onDestroy = stopWaveSound;
+
+            const controls = document.getElementById(ctx.controlsContainerId);
+            if (window.VisiqAudio && controls) {
+                VisiqAudio.requestGate();
+                VisiqAudio.attachMuteToggle(controls,
+                    'Two sines sit a few hertz apart. Their beat frequency is |f₂−f₁|. Path difference between S₁ and S₂ sets that detune, so walking the sources through a nodal pattern is audible as the beat slowing (destructive, near a node) or speeding (away from it). Equal-frequency waves at a fixed microphone would not beat — they make a standing spatial pattern. The detune is the translation that makes that pattern hearable.');
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = 'Start interference tones';
+                btn.style.cssText = 'margin-top:8px;display:block;width:100%;padding:8px;cursor:pointer;';
+                btn.addEventListener('click', async () => {
+                    await VisiqAudio.ensureContext();
+                    stopWaveSound();
+                    const f0 = 220 * ctx.params.frequency;
+                    waveOsc = VisiqAudio.createBeatPair(f0, f0 + 4, 0.04);
+                });
+                controls.appendChild(btn);
+            }
 
             function updateSourcePositions() {
                 const cx = p.width / 2;
@@ -130,6 +162,20 @@ window.initSketch = function(config) {
                     'Possible Orders': `${maxNodalOrders}`
                 };
                 ctx.updateTelemetry();
+
+                if (waveOsc && window.VisiqAudio && VisiqAudio.context && !VisiqAudio.muted) {
+                    const probeX = w / 2;
+                    const probeY = h / 2;
+                    const pd1 = Math.sqrt((probeX - s1.x) ** 2 + (probeY - s1.y) ** 2);
+                    const pd2 = Math.sqrt((probeX - s2.x) ** 2 + (probeY - s2.y) ** 2);
+                    const pathDiff = Math.abs(pd1 - pd2);
+                    const f0 = 180 + freq * 90;
+                    // Detune 0–8 Hz from path difference in wavelengths (beats = constructive/destructive cycling)
+                    const detune = 0.5 + 8 * (1 - Math.abs(Math.cos(Math.PI * pathDiff / lambda)));
+                    const now = VisiqAudio.context.currentTime;
+                    waveOsc.osc.frequency.setTargetAtTime(f0, now, 0.08);
+                    waveOsc.osc2.frequency.setTargetAtTime(f0 + detune, now, 0.08);
+                }
 
                 // Hint
                 p.fill('#94a3b8');
