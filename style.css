@@ -692,12 +692,30 @@ html, body {
     border-radius: var(--radius-lg);
     padding: 22px;
     cursor: pointer;
-    transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base), background var(--transition-base);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow var(--transition-base), border-color var(--transition-base), background var(--transition-base);
     display: flex;
     flex-direction: column;
     gap: 14px;
     position: relative;
     overflow: hidden;
+}
+
+/* Draggable cursor hint - for simulation interactive elements */
+.draggable-hint {
+    cursor: grab;
+}
+.draggable-hint:active {
+    cursor: grabbing;
+}
+
+/* Reduced motion - disable spring animation */
+@media (prefers-reduced-motion: reduce) {
+    .sim-card-featured {
+        transition: background var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+    }
+    .sim-card-featured:hover {
+        transform: none;
+    }
 }
 
 .sim-card-featured::before {
@@ -713,10 +731,11 @@ html, body {
 }
 
 .sim-card-featured:hover {
-    transform: translateY(-5px);
+    transform: translateY(-5px) scale(1.01);
     border-color: var(--border-strong);
     box-shadow: var(--shadow-lg), 0 0 0 1px var(--border-strong);
     background: var(--bg-hover);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .sim-card-featured:hover::before {
