@@ -117,11 +117,6 @@ window.initSketch = function(config) {
                 if (key === 'temperature') { tempGfx = null; drawTempBackground(); }
             };
 
-            document.addEventListener('visibilitychange', () => {
-                if (!worker) return;
-                worker.postMessage({ type: document.hidden ? 'pause' : 'resume' });
-            });
-
             reset();
 
             // ── Draw loop ──────────────────────────────────────────────────
