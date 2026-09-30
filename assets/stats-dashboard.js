@@ -33,14 +33,20 @@ class StatsDashboard {
     showDashboard() {
         const modal = this.createModal();
         document.body.appendChild(modal);
-        
+
+        // Render error log panel if VisiqErrors is available
+        const errorSection = modal.querySelector('#stats-error-section');
+        if (errorSection && window.VisiqErrors) {
+            window.VisiqErrors.renderPanel(errorSection);
+        }
+
         // Add close handler
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.remove();
             }
         });
-        
+
         // Close on ESC
         const closeHandler = (e) => {
             if (e.key === 'Escape') {
@@ -109,11 +115,16 @@ class StatsDashboard {
                 <div class="stats-section">
                     <h3>Favorite Simulations</h3>
                     <div class="favorites-list">
-                        ${favorites.length > 0 ? 
+                        ${favorites.length > 0 ?
                             favorites.map(fav => `<span class="favorite-tag">${fav}</span>`).join('') :
                             '<p style="color: var(--text-tertiary);">No favorites yet</p>'
                         }
                     </div>
+                </div>
+
+                <div class="stats-section" id="stats-error-section">
+                    <h3>Local Error Log</h3>
+                    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Stored in localStorage on this browser. Not sent anywhere.</p>
                 </div>
                 
                 <div class="modal-footer">
