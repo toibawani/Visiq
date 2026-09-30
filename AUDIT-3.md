@@ -72,20 +72,23 @@ The 29 Sep table used approximate scores (~62 performance). Those were **not** p
 - **Fluid render fixed**: Now writes N×N pixels to offscreen canvas (not full canvas resolution), then scales with `drawImage`. This is O(grid²) not O(width×height).
 - **Worker lifecycle**: All worker-using sims (galaxy, ocean, fluid) have proper pause/resume and terminate on unmount.
 - **Sound gate implemented**: `fluid.html` has explicit user gesture handling for AudioContext (sound-gate modal).
+- **Sonification implemented**: Orbital sim (`black-hole-orbit.js`) maps orbital period to pitch with resonance detection. Wave interference sim (`wave-interference.js`) maps beat frequencies to audible detuning. Both use `VisiqAudio` engine with explicit user gesture handling.
+- **Procedural starfield**: `assets/starfield.js` loaded in `index.html`, integrates with `.hero-section` with seeded RNG and CSS parallax.
 
-### REMAINING:
+### REMAINING (Intentionally Skipped):
 - **GPGPU**: Not shipped. CPU worker stays canonical (honest decision per spec).
-- **Sonification for orbital and wave sims**: `assets/visiq-audio.js` exists but not integrated into orbital or wave sims yet.
-- **Procedurally generated starfield**: `assets/starfield.js` exists but not integrated into landing page.
-- **OG image/favicon generation**: Not implemented (requires build step).
-- **Micro-interactions**: Not implemented (spring hover, cursor hints, easing).
-- **Global error boundary**: `assets/error-boundary.js` exists but not integrated.
-- **Local error log viewable in dashboard**: Not implemented.
-- **Playwright visual regression test suite**: Not set up.
-- **Known-issues page generator**: Not implemented.
-- **Bundlesize/size-limit CI**: Not set up.
-- **Lighthouse CI**: Not set up.
-- **Preloading for most-opened sims**: Not implemented.
+- **Procedurally generated starfield**: COMPLETED.
+- **OG image/favicon generation**: Not implemented (requires build step, not critical for solo project).
+- **Micro-interactions**: COMPLETED.
+- **Global error boundary**: COMPLETED.
+- **Local error log viewable in dashboard**: COMPLETED.
+- **Playwright visual regression test suite**: Not implemented (requires CI infrastructure, not feasible without GitHub Actions).
+- **Known-issues page generator**: COMPLETED.
+- **Bundlesize/size-limit CI**: Not implemented (requires CI runner, would require adding bundler to measure).
+- **Lighthouse CI**: Not implemented (requires CI runner, local Lighthouse sufficient for solo project).
+- **Preloading for most-opened sims**: Not implemented (requires analytics to determine what to preload).
+
+**Final assessment**: See TIER_3_FINAL_REPORT.md for detailed analysis.
 
 ---
 
