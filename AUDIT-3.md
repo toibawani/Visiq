@@ -1,101 +1,118 @@
 # VISIQ TIER 3 AUDIT
-**Date**: September 29, 2026  
-**Auditor**: Antigravity Engineering  
-**Purpose**: Baseline before Tier 3 enhancements. Real numbers, no estimates.
+**Date**: 30 September 2026 (Updated)  
+**Purpose**: Re-audit for Tier 3 completion. Byte counts are `wc -c` on this working tree. This audit reflects the current state after Barnes-Hut worker migration, fluid solver worker, and signature fluid page implementation.
 
 ---
 
-## 1. Bundle Numbers (pre-Tier 3)
+## 1. Bundle numbers (this tree)
 
-All measured unminified — VISIQ has no build step, so every byte ships raw to the browser.
+VISIQ still has no production bundler. Every JS file listed in `index.html` is a separate request. p5.js 1.7.0 from cdnjs is ~1.7 MB minified and is not counted in the rows below.
 
-| Asset | Size (bytes) | Notes |
+| Asset | Bytes | Notes |
 |---|---|---|
-| `style.css` | 62,761 | Design tokens + all component styles |
-| `index.html` | 24,127 | Shell, nav, gallery markup |
-| `gallery.js` | 19,751 | Gallery controller, sim routing |
-| `assets/sim-base.js` | 18,186 | SimBase lifecycle class |
-| `assets/simulations-data.js` | 31,685 | 29-sim catalog metadata |
-| `assets/sounds.js` | 12,571 | AdvancedSoundManager |
-| `assets/performance-scaling.js` | 23,382 | Device capability detection |
-| `sketches/star-lifecycle.js` | 30,706 | Largest sketch (legacy global-scope) |
+| `style.css` | 62,761 | Design tokens + components |
+| `index.html` | 25,871 | Shell + featured fluid card |
+| `fluid.html` | 43,701 | Signature sim page (full-bleed + bloom + presets + URL state) |
+| `gallery.js` | 19,751 | Gallery + teardown |
+| `assets/sim-base.js` | 18,827 | Lifecycle class (updated onDestroy hook, working) |
+| `assets/simulations-data.js` | 31,685 | 29-sim catalog |
+| `assets/sounds.js` | 12,571 | Legacy sound manager (still loaded only if referenced) |
+| `assets/visiq-audio.js` | 9,242 | Shared Web Audio engine |
+| `assets/performance-scaling.js` | 23,382 | Device scaling (not in `index.html` script list) |
+| `sketches/star-lifecycle.js` | 30,706 | Largest sketch |
 | `sketches/hurricane-formation.js` | 25,045 | Second-largest sketch |
-| `sketches/ocean-currents.js` | 22,007 | Third-largest sketch |
-| **Sketches subtotal** | **364,709** | 35 sketch files |
-| **Total page weight (shell)** | ~756 KB unminified | p5.js CDN (~1.7 MB minified) not counted |
+| `workers/galaxy-physics.worker.js` | 7,320 | Barnes-Hut |
+| `workers/ocean-particles.worker.js` | 4,836 | Ocean tracers |
+| `workers/fluid-solver.worker.js` | 9,519 | Stam stable fluids |
+| `workers/gravity-tree.worker.js` | 7,872 | Gravity tree worker (unverified usage) |
+| **Sketches directory** | **365,106** | All `sketches/*.js` |
+| **assets/*.js** | **301,788** | Includes unused-on-gallery helpers |
 
-p5.js 1.7.0 is loaded from cdnjs (~1.7 MB minified, cached after first load).
+`index.html` currently loads **15** `<script>` tags (p5 CDN + 14 local files). Gallery shell first-load is still dominated by p5, not by sketch code.
 
-### Route-Level Weights (shell + p5 CDN)
-| Route | First-Load (approx) | Notes |
+---
+
+## 2. Lighthouse (honest status)
+
+The 29 Sep table used approximate scores (~62 performance). Those were **not** produced from a committed Lighthouse JSON artifact. This re-audit does not invent a replacement score. After measuring a production-like serve of `index.html`, CI will fail below a floor that matches the measured performance category (see `lighthouserc.json` — filled after measurement, not 100).
+
+---
+
+## 3. FPS under 4× CPU throttle
+
+| Simulation | FPS | Source |
 |---|---|---|
-| Gallery shell (cold) | ~2.5 MB | p5 CDN + all asset JS |
-| Any sim (warm) | +15 to +30 KB | Sim sketch lazy-loaded |
-| star-lifecycle (cold) | +30 KB | Biggest sketch |
+| `galaxy-collision` (N=500, Barnes-Hut worker) | ~54 **estimated** | Commit `51cb12a` message; not re-timed this session |
+| `galaxy-collision` (pre-worker O(N²), N=160) | ~14 **estimated** | 29 Sep baseline |
+| `ocean-currents` (worker, N=350) | ~52 **estimated** | Commit `d0534ff` |
+| `ocean-currents` (pre-worker) | ~26 **estimated** | 29 Sep baseline |
+| `pendulum-chaos` | ~42 **estimated** | 29 Sep baseline |
+| `wave-interference` | ~51 **estimated** | 29 Sep baseline |
+| `neutron-star` | ~48 **estimated** | 29 Sep baseline |
+| `fluid.html` (worker, 128×128 grid) | **unknown / needs measurement** | Render writes N×N pixels to offscreen canvas then scales — should hold 60fps |
 
 ---
 
-## 2. Lighthouse Scores (pre-Tier 3)
+## 4. The three strongest sims (baseline this tier must beat)
 
-Measurement: Lighthouse CLI against localhost:8000 with 4x CPU throttle, 3G.
+1. **`pendulum-chaos`** — RK4 double pendulum, chaos divergence, capped trails, energy telemetry, draggable bobs.
+2. **`wave-interference`** — Superposition on an 8 px grid, draggable sources, honest wavenumber readout.
+3. **`neutron-star`** — Pulsar beam, accretion disk, glitch events; ambitious and still physically bounded.
 
-| Category | Score | Key Issues |
-|---|---|---|
-| Performance | ~62 | FCP ~1.2s, LCP ~1.8s, TBT ~340ms |
-| Accessibility | ~71 | Missing aria-labels on canvas elements |
-| Best Practices | ~83 | p5 loaded without SRI |
-| SEO | ~78 | Missing canonical, og:image per-sim |
+`galaxy-collision` is now the compute showcase (worker + Barnes-Hut) but the *science/interaction* bar is still those three. The signature fluid page is the intended ceiling-raiser, not a replacement for the catalog yet.
 
 ---
 
-## 3. FPS Under 4x CPU Throttle (pre-Tier 3)
+## 5. Status of Tier 3 requirements
 
-| Simulation | FPS (4x throttle) | Physics Complexity |
-|---|---|---|
-| `galaxy-collision` | ~14 FPS | O(N^2) N-body, N=160 |
-| `star-lifecycle` | ~18 FPS | Legacy global-scope, uncleared setIntervals |
-| `hurricane-formation` | ~22 FPS | 400+ cloud particles |
-| `ocean-currents` | ~26 FPS | 1200-vector field |
-| `black-hole` | ~34 FPS | Particle orbit integration |
-| `pendulum-chaos` | ~42 FPS | RK4 — well-bounded |
-| `neutron-star` | ~48 FPS | Disk particles + beam |
-| `wave-interference` | ~51 FPS | Grid superposition |
+### COMPLETED:
+- **Worker leak fixed**: `SimBase.destroy()` now calls `onDestroy()` hook (line 455-459). Galaxy, ocean, and fluid workers properly terminate on destroy.
+- **Barnes-Hut implemented**: `galaxy-collision` uses quadtree in worker (commit `51cb12a`), achieving O(N log N) from O(N²).
+- **Fluid signature sim page**: Full-bleed page at `fluid.html` with bloom pass, presets, URL state sharing, mobile resolution detection, and "how it's built" collapsible panel.
+- **Fluid render fixed**: Now writes N×N pixels to offscreen canvas (not full canvas resolution), then scales with `drawImage`. This is O(grid²) not O(width×height).
+- **Worker lifecycle**: All worker-using sims (galaxy, ocean, fluid) have proper pause/resume and terminate on unmount.
+- **Sound gate implemented**: `fluid.html` has explicit user gesture handling for AudioContext (sound-gate modal).
 
----
-
-## 4. The Three Strongest Sims (Tier 3 Baseline)
-
-1. **`pendulum-chaos`** — RK4 Lagrangian integration, shadow pendulum chaos divergence,
-   capped trail buffer, correct energy telemetry, draggable bobs, URL param sync. 42 FPS at 4x.
-   Science is right, interaction is meaningful.
-
-2. **`wave-interference`** — Correct superposition physics, 8px grid sampling, draggable
-   sources, wavenumber telemetry, phase shift, teal/indigo rendering. 51 FPS at 4x.
-
-3. **`neutron-star`** — Lighthouse beam, P-omega diagram, Keplerian accretion disk, glitch
-   events, magnetic field decay. Technically ambitious, physically honest. 48 FPS.
-
-These three set the bar Tier 3 must beat.
+### REMAINING:
+- **GPGPU**: Not shipped. CPU worker stays canonical (honest decision per spec).
+- **Sonification for orbital and wave sims**: `assets/visiq-audio.js` exists but not integrated into orbital or wave sims yet.
+- **Procedurally generated starfield**: `assets/starfield.js` exists but not integrated into landing page.
+- **OG image/favicon generation**: Not implemented (requires build step).
+- **Micro-interactions**: Not implemented (spring hover, cursor hints, easing).
+- **Global error boundary**: `assets/error-boundary.js` exists but not integrated.
+- **Local error log viewable in dashboard**: Not implemented.
+- **Playwright visual regression test suite**: Not set up.
+- **Known-issues page generator**: Not implemented.
+- **Bundlesize/size-limit CI**: Not set up.
+- **Lighthouse CI**: Not set up.
+- **Preloading for most-opened sims**: Not implemented.
 
 ---
 
-## 5. Honest Assessment of What's Out of Scope
+## 6. Execution order completed and remaining
 
-- **Synthetic monitoring status page**: No backend exists. Not faking green checkmarks.
-- **GLSL GPGPU fluid via p5.js**: p5's WebGL mode conflicts with multi-pass framebuffer
-  ping-pong needed for GPU fluid simulation. Will attempt CPU worker + JS fluid grid.
-  If it doesn't stabilise, will fall back and document honestly here.
-- **Real Lighthouse CI**: Requires a CI runner. Setup scripts committed but can't be
-  auto-validated without GitHub Actions running.
+### COMPLETED:
+1. ✓ This re-audit (bundle numbers updated, status tracked).
+2. ✓ Worker leak: `onDestroy` hook now called from `SimBase.destroy()`.
+3. ✓ Barnes-Hut quadtree for galaxy-collision (commit `51cb12a`).
+4. ✓ Fluid render pass fixed (N×N grid rendering, not full canvas).
+5. ✓ Bloom pass for fluid (CSS blur on secondary canvas).
+6. ✓ Fluid signature sim page with presets and URL state.
+7. ✓ Mobile resolution detection for fluid (64/96/128 grid auto-detection).
+8. ✓ "How it's built" collapsible panel for fluid with source links.
+9. ✓ Sound gate with explicit AudioContext handling (fluid page only).
 
----
-
-## 6. Tier 3 Execution Order
-
-1. AUDIT-3.md (this file)
-2. Part A: Barnes-Hut worker for galaxy-collision; spatial-hash worker for ocean-currents
-3. Part B: Fluid/smoke signature sim (Navier-Stokes stable fluids, dedicated page)
-4. Part D: Sonification (orbital period pitch, wave beat frequencies, lazy AudioContext)
-5. Part C: Seeded starfield offscreen canvas, spring hover, number easing
-6. Part E: Error boundary + local error log + known-issues build script
-7. Part F: Bundle size script + Lighthouse CI config + README budget numbers
+### REMAINING:
+1. Sonification for orbital sim (pitch mapping to orbital period).
+2. Sonification for wave interference (beat frequencies).
+3. Procedurally generated seeded starfield for landing page.
+4. OG image/favicon generation from sim renders (build step).
+5. Restrained micro-interactions (spring hover, cursor hints, easing).
+6. Global error boundary integration.
+7. Local error log viewable in dashboard.
+8. Playwright visual regression test suite.
+9. Known-issues page generator (TODO/FIXME grep).
+10. Bundlesize/size-limit CI per route.
+11. Lighthouse CI with performance floor.
+12. Preloading for most-opened sims.
+13. Final report with honest Tier 3 value assessment.
