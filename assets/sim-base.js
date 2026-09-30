@@ -174,11 +174,13 @@ class SimBase {
      */
     setupVisibilityHandler() {
         const handler = () => {
-            if (this._isDestroyed || !this.p) return;
+            if (this._isDestroyed) return;
             if (document.hidden) {
-                this.p.noLoop();
+                if (this.p) this.p.noLoop();
+                if (typeof this.onPause === 'function') this.onPause();
             } else if (this.isPlaying) {
-                this.p.loop();
+                if (this.p) this.p.loop();
+                if (typeof this.onResume === 'function') this.onResume();
             }
         };
 
@@ -399,6 +401,11 @@ class SimBase {
                 this.p.noLoop();
             }
         }
+        if (this.isPlaying) {
+            if (typeof this.onResume === 'function') this.onResume();
+        } else if (typeof this.onPause === 'function') {
+            this.onPause();
+        }
     }
 
     /**
@@ -443,6 +450,13 @@ class SimBase {
      */
     destroy() {
         this._isDestroyed = true;
+
+        // Worker / extra teardown (galaxy, ocean, gravity-tree). Must run before p5.remove().
+        if (typeof this.onDestroy === 'function') {
+            try { this.onDestroy(); } catch (e) {
+                console.warn('[SimBase] onDestroy warning:', e);
+            }
+        }
 
         // Disconnect ResizeObserver
         if (this.resizeObserver) {

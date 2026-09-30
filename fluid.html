@@ -87,6 +87,21 @@
             width: 100%;
             height: 100%;
             cursor: crosshair;
+            z-index: 1;
+            image-rendering: pixelated;
+        }
+        #fluid-bloom {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(10px) saturate(1.35);
+            opacity: 0.55;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #fluid-bloom { filter: none; opacity: 0.25; }
         }
 
         /* ── Floating HUD (bottom-right) ─────────────────────────────────── */
@@ -484,7 +499,7 @@
         </div>
     </nav>
 
-    <!-- Canvas: WebGL context for bloom pass, 2D fallback below -->
+    <canvas id="fluid-bloom" aria-hidden="true"></canvas>
     <canvas id="fluid-canvas" role="img" aria-label="Interactive fluid simulation — drag to add smoke and forces"></canvas>
 
     <!-- Right sidebar: controls -->
@@ -639,10 +654,16 @@
                 — zero structured-clone overhead per frame.
             </p>
             <p style="margin-top:10px;">
-                The main thread renders the density array by mapping each grid cell to a pixel 
-                colour on a 2D canvas using <code>ImageData</code> for direct pixel writes. 
-                A subtle bloom-like glow is achieved with a CSS <code>filter: blur(2px)</code> 
-                layer composited below the sharp density pass.
+                The main thread writes one pixel per <em>grid cell</em> (N×N ImageData), then
+                scales that bitmap to the viewport with <code>drawImage</code>. A second canvas
+                under the sharp pass uses CSS blur as a cheap bloom. That is not a HDR
+                threshold bloom from film compositors — it is a glow of the same density field.
+            </p>
+            <p style="margin-top:10px;">
+                GPU GPGPU (ping-pong float textures for the Stam steps) was not shipped.
+                WebGL2 float framebuffers are inconsistent on mid-range phones, and an unstable
+                solver is worse than a worker that holds 30–60 fps at 64–128². The solver stays
+                on the CPU worker.
             </p>
             <p style="margin-top:10px;">
                 Grid resolution is auto-detected: 128×128 on desktop (satisfies 60fps), 
@@ -744,10 +765,12 @@ let vxArr   = null;
 let vyArr   = null;
 
 const canvas = document.getElementById('fluid-canvas');
-const ctx2d  = canvas.getContext('2d');
+const bloomEl = document.getElementById('fluid-bloom');
+const ctx2d  = canvas.getContext('2d', { alpha: true });
+const bloom2d = bloomEl.getContext('2d', { alpha: true });
 let imgData  = null;
-let blurCanvas = null;
-let blurCtx    = null;
+let gridCanvas = null;
+let gridCtx = null;
 
 let mouse = { x: 0.5, y: 0.5, dx: 0, dy: 0, down: false };
 let pendingForces = [];
@@ -777,16 +800,20 @@ function detectGridSize() {
 }
 
 function initSize() {
-    canvas.width  = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-    imgData = ctx2d.createImageData(canvas.width, canvas.height);
+    const w = Math.max(1, canvas.clientWidth);
+    const h = Math.max(1, canvas.clientHeight);
+    canvas.width  = w;
+    canvas.height = h;
+    bloomEl.width = w;
+    bloomEl.height = h;
 
-    if (!blurCanvas) {
-        blurCanvas = document.createElement('canvas');
-        blurCtx    = blurCanvas.getContext('2d');
+    if (!gridCanvas) {
+        gridCanvas = document.createElement('canvas');
+        gridCtx = gridCanvas.getContext('2d', { alpha: true });
     }
-    blurCanvas.width  = N;
-    blurCanvas.height = N;
+    gridCanvas.width = N;
+    gridCanvas.height = N;
+    imgData = gridCtx.createImageData(N, N);
 }
 
 function spawnWorker() {
@@ -809,6 +836,7 @@ function spawnWorker() {
     };
 
     N = detectGridSize();
+    initSize();
     document.getElementById('val-grid').textContent = `${N}×${N}`;
     document.getElementById('hud-grid').textContent  = `${N}×${N}`;
     document.getElementById('perf-note').textContent =
@@ -878,30 +906,34 @@ function render(ts) {
         });
     }
 
-    // ── Draw ──
+    // ── Draw: N×N density → scaled blit + bloom layer ──
     ctx2d.fillStyle = '#050608';
     ctx2d.fillRect(0, 0, canvas.width, canvas.height);
+    bloom2d.fillStyle = '#050608';
+    bloom2d.fillRect(0, 0, bloomEl.width, bloomEl.height);
 
-    if (densArr && N > 0) {
-        const cw = canvas.width, ch = canvas.height;
+    if (densArr && N > 0 && imgData) {
         const palette = PALETTES[activeColor] || PALETTES.teal;
         const pixels  = imgData.data;
+        const row = N + 2;
 
-        // Render density grid → ImageData (direct pixel write, no p5 overhead)
-        for (let j = 0; j < ch; j++) {
-            const gj = Math.floor(j / ch * N) + 1;
-            for (let i = 0; i < cw; i++) {
-                const gi  = Math.floor(i / cw * N) + 1;
-                const d   = Math.min(densArr[gi + (N + 2) * gj], 1.0);
-                const pidx = (j * cw + i) * 4;
-                const rgb  = palette(d, gi, gj, N);
+        for (let j = 0; j < N; j++) {
+            const gj = j + 1;
+            for (let i = 0; i < N; i++) {
+                const gi = i + 1;
+                const d = Math.min(densArr[gi + row * gj], 1.0);
+                const pidx = (j * N + i) * 4;
+                const rgb = palette(d, gi, gj, N);
                 pixels[pidx]     = rgb[0];
                 pixels[pidx + 1] = rgb[1];
                 pixels[pidx + 2] = rgb[2];
-                pixels[pidx + 3] = Math.floor(d * 255);
+                pixels[pidx + 3] = Math.floor(Math.min(1, d * 1.4) * 255);
             }
         }
-        ctx2d.putImageData(imgData, 0, 0);
+        gridCtx.putImageData(imgData, 0, 0);
+        ctx2d.imageSmoothingEnabled = true;
+        ctx2d.drawImage(gridCanvas, 0, 0, canvas.width, canvas.height);
+        bloom2d.drawImage(gridCanvas, 0, 0, bloomEl.width, bloomEl.height);
     }
 
     // FPS
@@ -921,6 +953,7 @@ function render(ts) {
                 const avgFps = warmupFpsAccum / warmupFrames;
                 if (avgFps < 30 && N > 64) {
                     N = N === 128 ? 96 : 64;
+                    initSize();
                     worker.postMessage({ type: 'init', N });
                     document.getElementById('val-grid').textContent = `${N}×${N}`;
                     document.getElementById('hud-grid').textContent  = `${N}×${N}`;
