@@ -158,11 +158,52 @@
         return flashes.filter(f => f.age < f.maxAge);
     }
 
+    /**
+     * Draw the standardized dark glass chrome for telemetry and diagnostic insets.
+     * @param {object} p - p5 instance
+     * @param {number} x - Top-left X
+     * @param {number} y - Top-left Y
+     * @param {number} w - Panel width
+     * @param {number} h - Panel height
+     * @param {string} [title=''] - Header label
+     * @param {object} [options]
+     * @param {string} [options.align='left'] - Label alignment ('left' or 'center')
+     * @param {number} [options.cornerRadius=6] - Corner radius
+     * @param {number} [options.textSize=8.5] - Label text size
+     */
+    function drawInsetPanel(p, x, y, w, h, title = '', options = {}) {
+        const radius = options.cornerRadius !== undefined ? options.cornerRadius : 6;
+        const align = options.align || 'left';
+        p.push();
+        p.noStroke();
+        p.fill(8, 12, 22, 215);
+        p.rect(x, y, w, h, radius);
+        p.stroke(35, 48, 70);
+        p.strokeWeight(1);
+        p.noFill();
+        p.rect(x, y, w, h, radius);
+
+        if (title) {
+            p.noStroke();
+            p.fill(65, 85, 120);
+            p.textSize(options.textSize || 8.5);
+            if (align === 'center') {
+                p.textAlign(p.CENTER, p.TOP);
+                p.text(title, x + w * 0.5, y + 4);
+            } else {
+                p.textAlign(p.LEFT, p.TOP);
+                p.text(title, x + 5, y + 4);
+            }
+        }
+        p.pop();
+    }
+
     VisualKit.drawFadingTrail = drawFadingTrail;
     VisualKit.drawGlowBody = drawGlowBody;
     VisualKit.drawArrow = drawArrow;
     VisualKit.drawCollisionFlash = drawCollisionFlash;
     VisualKit.createCollisionFlash = createCollisionFlash;
     VisualKit.updateCollisionFlashes = updateCollisionFlashes;
+    VisualKit.drawInsetPanel = drawInsetPanel;
     window.VisualKit = VisualKit;
 })();
