@@ -7,14 +7,15 @@
     <meta name="description" content="Real-time Navier-Stokes fluid simulation. Drag to add smoke and forces. Explore the equations behind real smoke, weather, and ocean currents.">
     <meta property="og:title" content="Fluid Dynamics Simulation — VISIQ">
     <meta property="og:description" content="Interactive Navier-Stokes stable fluids. Move your mouse to disturb smoke and see how real fluids behave.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preload" href="assets/fonts/fraunces-latin-200-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* ── Fluid page specific layout ──────────────────────────────────── */
+        /* ── Fluid page specific layout (Instrument Panel Aesthetic) ────── */
         :root {
-            --fluid-accent: #2dd4bf;
-            --fluid-accent2: #7c6af7;
+            --fluid-accent: var(--accent-physics);
+            --fluid-accent2: #38bdf8;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,15 +28,29 @@
             min-height: 100vh;
         }
 
-        /* ── Full-bleed hero with canvas ─────────────────────────────────── */
+        /* ── Full-bleed hero with dramatic camera & lighting ──────────────── */
         .fluid-hero {
             position: relative;
             width: 100vw;
             height: 100svh;
             min-height: 500px;
-            background: #050608;
+            background: radial-gradient(ellipse at 50% 65%, rgba(0, 229, 255, 0.07) 0%, rgba(7, 9, 14, 0.98) 70%, #040508 100%);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+        }
+
+        .fluid-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 60%),
+                linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            pointer-events: none;
+            z-index: 2;
         }
 
         .fluid-topbar {
@@ -46,7 +61,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 14px 24px;
-            background: linear-gradient(180deg, rgba(5,6,8,0.9) 0%, transparent 100%);
+            background: linear-gradient(180deg, rgba(5,6,8,0.92) 0%, transparent 100%);
         }
 
         .fluid-back {
@@ -55,7 +70,9 @@
             gap: 8px;
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.875rem;
+            font-size: 0.825rem;
+            font-family: var(--font-mono);
+            letter-spacing: 0.04em;
             font-weight: 500;
             transition: color 0.2s;
         }
@@ -63,13 +80,16 @@
 
         .fluid-title-group { text-align: center; }
         .fluid-title-group h1 {
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
             color: var(--text-primary);
-            letter-spacing: -0.01em;
+            letter-spacing: -0.02em;
         }
         .fluid-title-group .fluid-subtitle {
-            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
             color: var(--text-muted);
             margin-top: 2px;
         }

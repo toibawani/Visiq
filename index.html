@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VISIQ – Interactive Science Learning</title>
     <meta name="description" content="Explore the forces, patterns, and systems that shape our world through stunning interactive simulations. Physics, astronomy, biology and more.">
-    <meta name="theme-color" content="#07090f">
+    <meta name="theme-color" content="#07090e">
+    <link rel="preload" href="assets/fonts/fraunces-latin-200-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -125,32 +128,37 @@
         </nav>
 
         <!-- GALLERY VIEW -->
-        <main id="gallery-view" class="view active">
+        <main id="gallery-view" class="view active instrument-grid">
 
             <!-- HERO SECTION -->
             <section class="hero-section" aria-label="Hero">
                 <div class="hero-content">
+                    <div class="hero-telemetry-badge">
+                        <span class="hero-telemetry-dot"></span>
+                        <span>SYSTEM ACTIVE · 29 SIMULATION ENGINES ONLINE · 64-BIT DYNAMICS</span>
+                    </div>
                     <h1>VISIQ</h1>
-                    <p class="hero-subtitle">See Science. Don't Just Read It.</p>
-                    <p class="hero-description">Explore the forces, patterns, and systems that shape our world through interactive simulations you can manipulate, experiment with, and truly learn from.</p>
+                    <p class="hero-subtitle">Scientific Instrumentation for Interactive Phenomena</p>
+                    <p class="hero-description">Directly manipulate physical laws, fluid mechanics, biological systems, and cosmic horizons in real-time calibrated digital instruments.</p>
                     <button class="btn-explore"
                             id="btn-explore"
                             aria-label="Explore simulations"
                             onclick="document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' })">
-                        Explore Simulations ↓
+                        Explore Modules ↓
                     </button>
                 </div>
             </section>
 
             <!-- SIGNATURE SIM FEATURE CARD -->
             <section style="padding: 0 20px 32px; max-width: 900px; margin: 0 auto;" aria-label="Featured simulation">
-                <a href="fluid.html" style="display:block; background: linear-gradient(135deg, rgba(45,212,191,0.08) 0%, rgba(124,106,247,0.08) 100%); border: 1px solid rgba(45,212,191,0.2); border-radius: 16px; padding: 24px 28px; text-decoration: none; transition: border-color 0.2s, background 0.2s; cursor: pointer;" onmouseover="this.style.borderColor='rgba(45,212,191,0.4)'" onmouseout="this.style.borderColor='rgba(45,212,191,0.2)'">
+                <a href="fluid.html" style="display:block; background: linear-gradient(135deg, rgba(0,229,255,0.05) 0%, rgba(12,15,23,0.95) 100%); border: 1px solid rgba(0,229,255,0.22); border-radius: var(--radius-lg); padding: 24px 28px; text-decoration: none; transition: border-color var(--transition-fast), box-shadow var(--transition-fast); cursor: pointer;" onmouseover="this.style.borderColor='rgba(0,229,255,0.5)'; this.style.boxShadow='0 0 20px rgba(0,229,255,0.15)'" onmouseout="this.style.borderColor='rgba(0,229,255,0.22)'; this.style.boxShadow='none'">
                     <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                        <span style="background: rgba(45,212,191,0.15); color:#2dd4bf; border: 1px solid rgba(45,212,191,0.3); border-radius:999px; font-size:0.7rem; font-weight:600; padding:3px 10px; letter-spacing:0.05em; text-transform:uppercase;">✦ Signature Simulation</span>
+                        <span style="background: rgba(0,229,255,0.12); color:var(--accent-physics); border: 1px solid rgba(0,229,255,0.3); border-radius:var(--radius-pill); font-size:0.7rem; font-weight:600; padding:3px 10px; letter-spacing:0.08em; text-transform:uppercase; font-family:var(--font-mono);">✦ Signature Instrument</span>
+                        <span style="font-family:var(--font-mono); font-size:0.7rem; color:var(--text-muted);">NAVIER-STOKES · WORKER 60 FPS</span>
                     </div>
-                    <h2 style="font-size:1.4rem; font-weight:700; color:var(--text-primary); margin:0 0 6px; letter-spacing:-0.02em;">Fluid Dynamics — Navier-Stokes Stable Fluids</h2>
-                    <p style="font-size:0.9rem; color:var(--text-secondary); margin:0 0 16px; line-height:1.6;">Drag your mouse to inject smoke and forces into a real-time fluid simulation. Built on Jos Stam's 1999 stable fluids method — the same equations behind weather models and movie VFX. Runs in a Web Worker at 60fps.</p>
-                    <span style="display:inline-flex; align-items:center; gap:6px; color:#2dd4bf; font-size:0.85rem; font-weight:600;">Open full simulation →</span>
+                    <h2 style="font-family:var(--font-display); font-size:1.5rem; font-weight:700; color:var(--text-primary); margin:0 0 8px; letter-spacing:-0.02em;">Fluid Dynamics — Navier-Stokes Stable Fluids</h2>
+                    <p style="font-size:0.9rem; color:var(--text-secondary); margin:0 0 16px; line-height:1.65;">Drag to inject vorticity, buoyant smoke, and momentum fields into a real-time Eulerian grid. Engineered from Jos Stam's stable fluids algorithm — identical mathematics to meteorological models and aerodynamic wind tunnels.</p>
+                    <span style="display:inline-flex; align-items:center; gap:6px; color:var(--accent-physics); font-size:0.85rem; font-weight:600; font-family:var(--font-mono); letter-spacing:0.04em;">Launch instrument module →</span>
                 </a>
             </section>
 

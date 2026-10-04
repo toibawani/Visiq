@@ -25,13 +25,13 @@
         const el = document.createElement('div');
         el.id = 'visiq-error-fallback';
         el.setAttribute('role', 'alert');
-        el.style.cssText = 'position:fixed;inset:0;z-index:10000;background:#07090f;color:#f1f5f9;display:flex;align-items:center;justify-content:center;padding:24px;font-family:system-ui,sans-serif;';
+        el.style.cssText = 'position:fixed;inset:0;z-index:10000;background:var(--bg-canvas,#07090e);color:var(--text-primary,#f1f5f9);display:flex;align-items:center;justify-content:center;padding:24px;font-family:var(--font-sans);';
         el.innerHTML = `
-            <div style="max-width:420px;border:1px solid #283150;border-radius:12px;padding:28px;background:#0f1117;">
-                <h1 style="font-size:1.15rem;margin:0 0 10px;">Something broke in this view</h1>
-                <p style="color:#94a3b8;font-size:0.9rem;line-height:1.5;margin:0 0 16px;">The rest of the tab may still work. This message is stored on this device only — VISIQ has no error reporting server.</p>
-                <pre style="white-space:pre-wrap;font-size:0.75rem;color:#e8a04c;margin:0 0 16px;">${String(message).slice(0, 400)}</pre>
-                <button type="button" id="visiq-error-reload" style="padding:8px 14px;cursor:pointer;">Reload page</button>
+            <div style="max-width:420px;border:1px solid var(--border-default,#283150);border-radius:8px;padding:28px;background:var(--bg-surface,#0c0f17);">
+                <h1 style="font-family:var(--font-display);font-size:1.25rem;margin:0 0 10px;font-weight:700;">Diagnostic Fault Detected</h1>
+                <p style="color:var(--text-muted,#94a3b8);font-size:0.875rem;line-height:1.5;margin:0 0 16px;">The rest of the tab may still work. This telemetry is stored locally on this device only — VISIQ has no error reporting server.</p>
+                <pre style="white-space:pre-wrap;font-family:var(--font-mono);font-size:0.75rem;color:var(--accent-primary,#e8a04c);margin:0 0 16px;background:var(--bg-elevated,#131824);padding:10px;border-radius:4px;">${String(message).slice(0, 400)}</pre>
+                <button type="button" id="visiq-error-reload" style="font-family:var(--font-mono);font-size:12px;padding:8px 16px;cursor:pointer;background:var(--accent-primary,#e8a04c);color:#07090e;border:none;border-radius:4px;font-weight:600;letter-spacing:0.04em;">Reload Module</button>
             </div>`;
         document.body.appendChild(el);
         document.getElementById('visiq-error-reload').onclick = () => location.reload();

@@ -107,17 +107,17 @@ class iOSAudioFix {
             position: fixed;
             bottom: 100px;
             right: 20px;
-            background: rgba(26, 26, 62, 0.98);
-            border: 2px solid rgba(255, 0, 110, 0.6);
-            border-radius: 8px;
+            background: rgba(12, 15, 23, 0.96);
+            border: 1px solid rgba(232, 160, 76, 0.4);
+            border-radius: 6px;
             padding: 14px 18px;
             color: rgba(245, 245, 247, 0.95);
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: var(--font-sans);
             font-size: 13px;
             z-index: 900;
             backdrop-filter: blur(20px);
             animation: slideIn 0.3s ease-out;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
             max-width: 250px;
         `;
         

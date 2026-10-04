@@ -611,7 +611,7 @@ let hurricaneSketch = function(p) {
         p.stroke('rgba(200, 100, 50, 0.2)');
         p.strokeWeight(0.5);
         p.textSize(9);
-        p.textFont('Space Grotesk');
+        p.textFont('JetBrains Mono');
         p.fill('rgba(200, 100, 50, 0.4)');
         
         for (let i = 0; i < 5; i++) {
@@ -648,11 +648,11 @@ let hurricaneSketch = function(p) {
         p.fill('rgba(245, 245, 247, 0.95)');
         p.noStroke();
         p.textAlign(p.LEFT, p.TOP);
-        p.textFont('Syne');
+        p.textFont('Fraunces');
         p.textSize(18);
         p.text('Hurricane Formation', 20, 15);
         
-        p.textFont('Space Grotesk');
+        p.textFont('IBM Plex Sans');
         p.textSize(12);
         p.fill('rgba(160, 160, 168, 0.95)');
         

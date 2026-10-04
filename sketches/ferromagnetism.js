@@ -151,15 +151,15 @@ let ferromagnetismSketch = function(p) {
         p.fill('rgba(245, 245, 247, 0.8)');
         p.noStroke();
         p.textAlign(p.LEFT, p.TOP);
-        p.textSize(14);
-        p.textFont('Inter');
+        p.textSize(13);
+        p.textFont('IBM Plex Sans');
         
         p.text(`Click to place magnets`, 20, 20);
-        p.text(`Magnets: ${magnets.length}`, 20, 45);
+        p.text(`Magnets: ${magnets.length}`, 20, 42);
         
-        p.textSize(12);
+        p.textSize(11);
         p.fill('rgba(160, 160, 168, 0.8)');
-        p.text('Left click = North (N) | Right click = South (S)', 20, canvasHeight - 30);
+        p.text('Left click = North (N) | Right click = South (S)', 20, canvasHeight - 25);
         
         p.pop();
     }

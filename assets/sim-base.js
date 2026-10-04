@@ -120,6 +120,11 @@ class SimBase {
                 p.pixelDensity(Math.min(window.devicePixelRatio || 1, 2));
                 p.frameRate(self.targetFps);
 
+                // Default canvas font to compliant IBM Plex Sans (Aesthetic Bible)
+                if (typeof p.textFont === 'function') {
+                    p.textFont('IBM Plex Sans');
+                }
+
                 // Call custom user setup
                 if (typeof self.setupFn === 'function') {
                     self.setupFn(p, self);

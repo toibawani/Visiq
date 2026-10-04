@@ -104,13 +104,13 @@ class AdvancedSoundManager {
             flex-direction: column;
             gap: 12px;
             align-items: flex-end;
-            background: rgba(26, 26, 62, 0.95);
+            background: rgba(12, 15, 23, 0.96);
             padding: 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 6px;
+            border: 1px solid rgba(0, 229, 255, 0.25);
             backdrop-filter: blur(20px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            font-family: 'Space Grotesk', sans-serif;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            font-family: var(--font-sans);
         `;
         
         document.body.appendChild(audioControl);

@@ -792,7 +792,7 @@ let starLifecycleSketch = function(p) {
         p.push();
         p.textAlign(p.CENTER, p.CENTER);
         p.textSize(10);
-        p.textFont('Space Grotesk');
+        p.textFont('JetBrains Mono');
         p.fill('rgba(255, 150, 50, 0.7)');
         p.text('H → He', star.x, star.y);
         p.pop();
@@ -829,11 +829,11 @@ let starLifecycleSketch = function(p) {
         p.fill('rgba(245, 245, 247, 0.95)');
         p.noStroke();
         p.textAlign(p.LEFT, p.TOP);
-        p.textFont('Syne');
+        p.textFont('Fraunces');
         p.textSize(18);
         p.text('Star Lifecycle', 20, 15);
         
-        p.textFont('Space Grotesk');
+        p.textFont('IBM Plex Sans');
         p.textSize(12);
         p.fill('rgba(160, 160, 168, 0.95)');
         

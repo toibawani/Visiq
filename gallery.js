@@ -40,6 +40,14 @@ class Gallery {
         container.innerHTML = '';
 
         const categories = ['Physics', 'Biology', 'Geography', 'Astronomy'];
+        const channelCodes = {
+            'Physics': 'CH-01 · PHYS',
+            'Biology': 'CH-02 · BIO',
+            'Geography': 'CH-03 · GEO',
+            'Astronomy': 'CH-04 · ASTRO'
+        };
+
+        let cardIdx = 0;
 
         categories.forEach(category => {
             const sims = SIMULATIONS.filter(s => s.category === category);
@@ -50,8 +58,9 @@ class Gallery {
             sectionHeader.className = 'gallery-category-header';
             sectionHeader.innerHTML = `
                 <div class="category-title-wrap">
+                    <span class="category-channel-badge">${channelCodes[category] || category.toUpperCase()}</span>
                     <h2>${category}</h2>
-                    <span class="category-count">${sims.length} simulations</span>
+                    <span class="category-count">${sims.length} modules</span>
                 </div>
             `;
             container.appendChild(sectionHeader);
@@ -66,6 +75,7 @@ class Gallery {
                 card.setAttribute('aria-label', `${sim.title} simulation`);
                 card.setAttribute('data-sim-id', sim.id);
                 card.setAttribute('data-category', sim.category);
+                card.style.setProperty('--card-idx', cardIdx++);
 
                 const isFav = window.statsTracker?.isFavorite(sim.id) || false;
 
@@ -327,21 +337,27 @@ class Gallery {
             console.log('[GALLERY] Sketch script loaded:', sketchId);
             container.innerHTML = '';
             
-            if (typeof window.initSketch === 'function') {
-                const instance = window.initSketch({
-                    containerId: 'simulation-canvas',
-                    controlsContainerId: 'controls-section'
-                });
+            const fontGate = (document.fonts && document.fonts.ready)
+                ? document.fonts.ready
+                : Promise.resolve();
 
-                if (instance && typeof instance.destroy === 'function') {
-                    this._currentSimController = instance;
-                    this._p5Instance = instance.p5Instance || instance.p || null;
-                } else if (instance && typeof instance.remove === 'function') {
-                    this._p5Instance = instance;
-                } else {
-                    this._p5Instance = window.__lastP5Instance || null;
+            fontGate.then(() => {
+                if (typeof window.initSketch === 'function') {
+                    const instance = window.initSketch({
+                        containerId: 'simulation-canvas',
+                        controlsContainerId: 'controls-section'
+                    });
+
+                    if (instance && typeof instance.destroy === 'function') {
+                        this._currentSimController = instance;
+                        this._p5Instance = instance.p5Instance || instance.p || null;
+                    } else if (instance && typeof instance.remove === 'function') {
+                        this._p5Instance = instance;
+                    } else {
+                        this._p5Instance = window.__lastP5Instance || null;
+                    }
                 }
-            }
+            });
         };
         
         script.onerror = () => {

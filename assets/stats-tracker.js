@@ -206,6 +206,34 @@ class StatsTracker {
         }
     }
 
+    // ── Aesthetic Bible Motion Logic ──────────────────────────────────────────
+    // "fluid cubic-bezier count-up easing for live numerical metrics"
+    // Respects prefers-reduced-motion — shows final value immediately.
+    animateCountUp(el, targetValue, duration = 700) {
+        if (!el) return;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reducedMotion || typeof targetValue !== 'number') {
+            el.textContent = targetValue;
+            return;
+        }
+
+        const startValue = 0;
+        const startTime = performance.now();
+
+        // Cubic ease-out approximating cubic-bezier(0.16, 1, 0.3, 1)
+        const easeOutExpo = (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+
+        const tick = (now) => {
+            const elapsed = now - startTime;
+            const t = Math.min(elapsed / duration, 1);
+            const current = Math.round(startValue + (targetValue - startValue) * easeOutExpo(t));
+            el.textContent = current;
+            if (t < 1) requestAnimationFrame(tick);
+        };
+
+        requestAnimationFrame(tick);
+    }
+
     openDrawer() {
         let drawer = document.getElementById('stats-drawer');
         let overlay = document.getElementById('stats-drawer-overlay');
@@ -222,6 +250,14 @@ class StatsTracker {
         requestAnimationFrame(() => {
             if (overlay) overlay.classList.add('active');
             if (drawer) drawer.classList.add('active');
+
+            // Animate numeric metrics after drawer is visible
+            requestAnimationFrame(() => {
+                const interactions = (this.stats.totalInteractions || 0) + this.sessionInteractions;
+                const favorites = this.stats.favoriteCount || 0;
+                this.animateCountUp(document.getElementById('metric-interactions'), interactions, 600);
+                this.animateCountUp(document.getElementById('metric-favorites'), favorites, 500);
+            });
         });
 
         // Live ticker for session time

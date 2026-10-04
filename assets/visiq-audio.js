@@ -43,7 +43,7 @@
             z-index: 9000; display: flex; align-items: center; gap: 8px;
             background: rgba(15,17,23,0.92); border: 1px solid rgba(45,212,191,0.35);
             border-radius: 999px; padding: 10px 18px;
-            font-family: var(--font-sans, Inter, sans-serif); font-size: 0.85rem;
+            font-family: var(--font-sans, 'IBM Plex Sans', sans-serif); font-size: 0.85rem;
             color: #f1f5f9; box-shadow: 0 4px 24px rgba(0,0,0,0.4);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         `;

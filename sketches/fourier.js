@@ -126,8 +126,8 @@ let fourierSketch = function(p) {
         p.fill('rgba(245, 245, 247, 0.8)');
         p.noStroke();
         p.textAlign(p.LEFT, p.BOTTOM);
-        p.textSize(13);
-        p.textFont('Inter');
+        p.textSize(12);
+        p.textFont('IBM Plex Sans');
         
         if (path.length === 0) {
             p.text('Draw any shape in the box above', 20, canvasHeight - 20);
