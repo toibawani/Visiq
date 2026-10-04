@@ -92,7 +92,33 @@
         }
     }
 
+    /**
+     * Draw a directional vector arrow with angled barb head.
+     * @param {object} p - p5 instance
+     * @param {number} x1 - Origin X
+     * @param {number} y1 - Origin Y
+     * @param {number} x2 - Target X
+     * @param {number} y2 - Target Y
+     * @param {Array<number>} rgb - [r, g, b] color array
+     * @param {number} [alpha=215] - Arrow alpha
+     * @param {number} [weight=2] - Stroke weight
+     * @param {number} [headLength=8] - Arrowhead barb length in px
+     */
+    function drawArrow(p, x1, y1, x2, y2, [r, g, b], alpha = 215, weight = 2, headLength = 8) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        if (Math.hypot(dx, dy) < 3) return;
+        p.stroke(r, g, b, alpha);
+        p.strokeWeight(weight);
+        p.line(x1, y1, x2, y2);
+        const ang = Math.atan2(dy, dx);
+        const hl = headLength || 8;
+        p.line(x2, y2, x2 - hl * Math.cos(ang - 0.45), y2 - hl * Math.sin(ang - 0.45));
+        p.line(x2, y2, x2 - hl * Math.cos(ang + 0.45), y2 - hl * Math.sin(ang + 0.45));
+    }
+
     VisualKit.drawFadingTrail = drawFadingTrail;
     VisualKit.drawGlowBody = drawGlowBody;
+    VisualKit.drawArrow = drawArrow;
     window.VisualKit = VisualKit;
 })();
