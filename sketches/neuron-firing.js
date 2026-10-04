@@ -8,46 +8,58 @@ window.initSketch = function(config) {
         containerId: config.containerId,
         controlsContainerId: config.controlsContainerId,
         params: {
-            stimulusCurrent: { value: 15, min: 2, max: 35, step: 1, label: 'Stimulus Injection', unit: 'μA' },
-            myelination: { value: 1, min: 0, max: 1, step: 1, label: 'Myelin Sheaths', unit: 'toggle' },
-            axonLength: { value: 380, min: 250, max: 500, step: 20, label: 'Axon Length', unit: 'μm' }
+            stimulusCurrent: { value: 15,  min: 2,   max: 35,  step: 1,  label: 'Stimulus Injection', unit: 'μA' },
+            myelination:     { value: 1,   min: 0,   max: 1,   step: 1,  label: 'Myelin Sheaths',     unit: 'toggle' },
+            axonLength:      { value: 380, min: 250, max: 500, step: 20, label: 'Axon Length',         unit: 'μm' }
         },
         getReadouts(ctx) {
             return ctx._telemetry || {
                 'Membrane Voltage': '-70.0 mV',
-                'Firing Status': 'Resting',
-                'Axon Spike Pos': 'Soma',
+                'Firing Status':    'Resting',
+                'Axon Spike Pos':   'Soma',
                 'Conduction Speed': '0 m/s'
             };
         },
+
         setup(p, ctx) {
-            let Vm = -70.0; // Resting potential in mV
-            let spikeX = -1; // -1 means no active spike propagating
+            // ── Color palette ──────────────────────────────────────────
+            const BIO    = VisualKit.getCategoryRGB('biology');   // teal – dendrites / terminals
+            const VIOLET = [124, 106, 247];  // soma
+            const AMBER  = [232, 160,  76];  // action-potential pulse
+            const SLATE  = [100, 116, 139];  // axon trunk
+
+            // ── State ──────────────────────────────────────────────────
+            let Vm             = -70.0;
+            let spikeX         = -1;
             let voltageHistory = [];
-            let isStimulating = false;
             let refractoryTimer = 0;
+            // Short trail of past spike positions for motion blur effect
+            let spikeTrail     = [];
+            const TRAIL_CAP    = 12;
+            // Collision flash on depolarization
+            let flashes        = [];
 
             function resetNeuron() {
-                Vm = -70.0;
-                spikeX = -1;
+                Vm             = -70.0;
+                spikeX         = -1;
                 voltageHistory = [];
                 refractoryTimer = 0;
+                spikeTrail     = [];
+                flashes        = [];
             }
 
-            ctx.onReset = resetNeuron;
+            ctx.onReset  = resetNeuron;
             ctx.onResize = resetNeuron;
 
-            // Trigger an electrical impulse
             function triggerSpike() {
                 if (refractoryTimer > 0) return;
                 const stim = ctx.params.stimulusCurrent;
-                // Threshold is roughly 12 μA (-55 mV equivalent)
                 if (stim >= 12) {
-                    spikeX = 0; // Launch spike from soma along axon
-                    Vm = 35.0; // Peak depolarization
+                    spikeX = 0;
+                    Vm     = 35.0;
                     refractoryTimer = 40;
+                    spikeTrail = [];
                 } else {
-                    // Sub-threshold graded potential
                     Vm = -70.0 + stim * 0.9;
                 }
             }
@@ -57,183 +69,225 @@ window.initSketch = function(config) {
 
                 const w = p.width;
                 const h = p.height;
-                const axonY = h * 0.42;
-                const somaX = 70;
-                const dt = ctx.speed;
-                const isMyelinated = ctx.params.myelination > 0.5;
-                const speedMult = isMyelinated ? 7.0 : 2.5;
+                const axonY    = h * 0.40;
+                const somaX    = 70;
+                const dt       = ctx.speed;
+                const isMyelinated  = ctx.params.myelination > 0.5;
+                const speedMult     = isMyelinated ? 7.0 : 2.5;
+                const axonEndX      = somaX + ctx.params.axonLength;
 
-                // 1. Action potential propagation along axon
+                // ─────────────────────────────────────────────────────
+                // 1. Physics
+                // ─────────────────────────────────────────────────────
                 if (ctx.isPlaying) {
-                    if (refractoryTimer > 0) {
-                        refractoryTimer -= dt;
-                    }
+                    if (refractoryTimer > 0) refractoryTimer -= dt;
 
                     if (spikeX >= 0) {
                         spikeX += speedMult * dt;
-                        // Voltage curve during propagation
-                        if (spikeX < 60) {
-                            Vm = 35.0; // Depolarizing
-                        } else if (spikeX < 140) {
-                            Vm = -85.0; // Hyperpolarizing undershoot
-                        } else {
-                            Vm = -70.0; // Return to baseline
-                        }
+                        spikeTrail.push({ x: somaX + spikeX, y: axonY });
+                        if (spikeTrail.length > TRAIL_CAP) spikeTrail.shift();
+
+                        if      (spikeX < 60)  Vm = 35.0;
+                        else if (spikeX < 140) Vm = -85.0;
+                        else                   Vm = -70.0;
 
                         if (spikeX > ctx.params.axonLength) {
-                            spikeX = -1; // Reached terminal buttons
-                            Vm = -70.0;
+                            // Flash at terminals on arrival
+                            flashes.push(VisualKit.createCollisionFlash(axonEndX, axonY, 14, 30));
+                            spikeX     = -1;
+                            Vm         = -70.0;
+                            spikeTrail = [];
                         }
                     } else if (refractoryTimer <= 0) {
-                        // Relax smoothly back to -70mV
                         Vm = Vm * 0.9 + (-70.0) * 0.1;
                     }
 
-                    // Record oscilloscope trace
                     voltageHistory.push(Vm);
                     if (voltageHistory.length > 140) voltageHistory.shift();
                 }
 
-                // 2. Render Neuron Morphology
-                // Soma (Cell Body)
-                p.fill('#7c6af7'); // Violet soma
-                p.stroke('#283150');
-                p.strokeWeight(3);
-                p.circle(somaX, axonY, 56);
+                // ─────────────────────────────────────────────────────
+                // 2. Neuron Morphology
+                // ─────────────────────────────────────────────────────
 
-                // Nucleus
-                p.fill('#1a2035');
-                p.noStroke();
-                p.circle(somaX, axonY, 22);
+                // Axon trunk
+                p.push();
+                p.stroke(SLATE[0], SLATE[1], SLATE[2]);
+                p.strokeWeight(6);
+                p.line(somaX, axonY, axonEndX, axonY);
+                p.pop();
 
-                // Dendrites radiating from soma
-                p.stroke('#7c6af7');
+                // Myelin sheaths (Schwann cells)
+                if (isMyelinated) {
+                    const sheathLen = 50;
+                    const gapLen    = 12;
+                    let curX = somaX + 35;
+                    p.push();
+                    p.strokeWeight(16);
+                    p.strokeCap(p.ROUND);
+                    while (curX + sheathLen < axonEndX) {
+                        p.stroke(BIO[0], BIO[1], BIO[2], 140);
+                        p.line(curX, axonY, curX + sheathLen, axonY);
+                        // Node of Ranvier glow dot
+                        VisualKit.drawGlowBody(p, curX + sheathLen + gapLen / 2, axonY, 3.5, BIO, {
+                            outerMult: 2.8, innerMult: 1.6, outerAlpha: 25, innerAlpha: 60, strokeWidth: 1
+                        });
+                        curX += sheathLen + gapLen;
+                    }
+                    p.pop();
+                }
+
+                // Dendrites
+                p.push();
                 p.strokeWeight(2);
                 const dendriteAngles = [-2.5, -2.0, -1.5, 1.5, 2.0, 2.5];
                 for (const angle of dendriteAngles) {
-                    const xEnd = somaX + Math.cos(angle) * 48;
-                    const yEnd = axonY + Math.sin(angle) * 48;
+                    const xEnd = somaX + Math.cos(angle) * 52;
+                    const yEnd = axonY  + Math.sin(angle) * 52;
+                    p.stroke(VIOLET[0], VIOLET[1], VIOLET[2], 160);
                     p.line(somaX, axonY, xEnd, yEnd);
-                    p.circle(xEnd, yEnd, 4);
+                    VisualKit.drawGlowBody(p, xEnd, yEnd, 3, VIOLET, {
+                        outerMult: 2.5, innerMult: 1.5, outerAlpha: 20, innerAlpha: 55, strokeWidth: 1
+                    });
                 }
+                p.pop();
 
-                // Axon trunk
-                const axonEnd = somaX + ctx.params.axonLength;
-                p.stroke('#64748b');
-                p.strokeWeight(6);
-                p.line(somaX, axonY, axonEnd, axonY);
-
-                // Myelin Sheaths (Schwann Cells) with Nodes of Ranvier
-                if (isMyelinated) {
-                    const sheathLen = 50;
-                    const gapLen = 12;
-                    let curX = somaX + 35;
-                    p.strokeWeight(16);
-                    p.strokeCap(p.ROUND);
-
-                    while (curX + sheathLen < axonEnd) {
-                        p.stroke('#2dd4bf'); // Teal myelin sheath
-                        p.line(curX, axonY, curX + sheathLen, axonY);
-                        curX += sheathLen + gapLen;
-                    }
-                }
-
-                // Axon Terminals
-                p.stroke('#7c6af7');
-                p.strokeWeight(2);
-                p.line(axonEnd, axonY, axonEnd + 25, axonY - 18);
-                p.line(axonEnd, axonY, axonEnd + 25, axonY);
-                p.line(axonEnd, axonY, axonEnd + 25, axonY + 18);
-                p.fill('#2dd4bf');
+                // Soma — big glow body
+                const somaR = refractoryTimer > 0 ? 26 : 28;
+                const somaRGB = refractoryTimer > 0 ? SLATE : VIOLET;
+                VisualKit.drawGlowBody(p, somaX, axonY, somaR, somaRGB, {
+                    outerMult: 1.7, innerMult: 1.25, outerAlpha: 35, innerAlpha: 80,
+                    strokeWidth: 2.5, specular: true
+                });
+                // Nucleus
+                p.push();
                 p.noStroke();
-                p.circle(axonEnd + 25, axonY - 18, 6);
-                p.circle(axonEnd + 25, axonY, 6);
-                p.circle(axonEnd + 25, axonY + 18, 6);
+                p.fill(18, 20, 35);
+                p.circle(somaX, axonY, 22);
+                p.fill(VIOLET[0], VIOLET[1], VIOLET[2], 60);
+                p.circle(somaX, axonY, 14);
+                p.pop();
 
-                // Active Action Potential Pulse
+                // Axon terminals
+                p.push();
+                p.stroke(VIOLET[0], VIOLET[1], VIOLET[2], 180);
+                p.strokeWeight(2);
+                for (const dy of [-18, 0, 18]) {
+                    p.line(axonEndX, axonY, axonEndX + 25, axonY + dy);
+                    VisualKit.drawGlowBody(p, axonEndX + 25, axonY + dy, 4, BIO, {
+                        outerMult: 2.6, innerMult: 1.5, outerAlpha: 30, innerAlpha: 70, strokeWidth: 1
+                    });
+                }
+                p.pop();
+
+                // ─────────────────────────────────────────────────────
+                // 3. Spike trail + pulse
+                // ─────────────────────────────────────────────────────
+                if (spikeTrail.length >= 2) {
+                    VisualKit.drawFadingTrail(p, spikeTrail, AMBER, {
+                        exponent: 2.0, maxAlpha: 140,
+                        minWeight: 2, maxWeight: 8
+                    });
+                }
+
                 if (spikeX >= 0) {
                     const pulseX = somaX + spikeX;
-                    // Glowing ion pulse
-                    p.fill('rgba(232, 160, 76, 0.4)');
-                    p.noStroke();
-                    p.circle(pulseX, axonY, 28);
-                    p.fill('#e8a04c'); // Amber electrical impulse
-                    p.circle(pulseX, axonY, 14);
+                    VisualKit.drawGlowBody(p, pulseX, axonY, 10, AMBER, {
+                        outerMult:  3.2, innerMult:  1.8,
+                        outerAlpha: 55,  innerAlpha: 110,
+                        strokeWidth: 1.5, specular: true
+                    });
                 }
 
-                // 3. Oscilloscope Voltage Trace (Bottom region)
-                const oscX = 30;
-                const oscY = h * 0.65;
-                const oscW = w - 60;
-                const oscH = h * 0.26;
+                // Terminal arrival flash
+                flashes = VisualKit.updateCollisionFlashes(p, flashes);
 
-                p.fill('#0f1117');
-                p.stroke('#283150');
-                p.strokeWeight(1.5);
-                p.rect(oscX, oscY, oscW, oscH, 6);
+                // ─────────────────────────────────────────────────────
+                // 4. Oscilloscope — drawInsetPanel + drawSparkline
+                // ─────────────────────────────────────────────────────
+                const oscX = 20;
+                const oscY = Math.floor(h * 0.56);
+                const oscW = w - 40;
+                const oscH = Math.floor(h * 0.30);
 
-                // Voltage baseline grid lines
-                p.stroke('#1e2438');
+                VisualKit.drawInsetPanel(p, oscX, oscY, oscW, oscH,
+                    'Action Potential — Oscilloscope Trace', { cornerRadius: 8, textSize: 9 });
+
+                // Reference lines
+                const mapV = (mv) => {
+                    const norm = (mv - (-90)) / 135;
+                    return oscY + oscH - 8 - norm * (oscH - 26);
+                };
+                const y0      = mapV(0);
+                const yThresh = mapV(-55);
+                const yRest   = mapV(-70);
+
+                p.push();
                 p.strokeWeight(1);
+
                 // 0 mV line
-                const y0 = oscY + oscH * 0.35;
-                p.line(oscX, y0, oscX + oscW, y0);
-                // Threshold -55 mV line
-                const yThresh = oscY + oscH * 0.62;
-                p.stroke('rgba(232, 160, 76, 0.4)');
-                p.line(oscX, yThresh, oscX + oscW, yThresh);
-                // Resting -70 mV line
-                const yRest = oscY + oscH * 0.72;
-                p.stroke('rgba(45, 212, 191, 0.4)');
-                p.line(oscX, yRest, oscX + oscW, yRest);
+                if (p.drawingContext?.setLineDash) p.drawingContext.setLineDash([4, 5]);
+                p.stroke(255, 255, 255, 22);
+                p.line(oscX + 8, y0, oscX + oscW - 8, y0);
 
-                // Grid labels
-                p.fill('#94a3b8');
+                // Threshold -55 mV
+                p.stroke(AMBER[0], AMBER[1], AMBER[2], 55);
+                p.line(oscX + 8, yThresh, oscX + oscW - 8, yThresh);
+
+                // Resting -70 mV
+                p.stroke(BIO[0], BIO[1], BIO[2], 55);
+                p.line(oscX + 8, yRest, oscX + oscW - 8, yRest);
+
+                if (p.drawingContext?.setLineDash) p.drawingContext.setLineDash([]);
+                p.pop();
+
+                // Labels
+                p.push();
                 p.noStroke();
-                p.textSize(10);
+                p.fill(80, 100, 130);
+                p.textSize(8.5);
                 p.textAlign(p.LEFT, p.CENTER);
-                p.text('+35 mV (Peak Na⁺)', oscX + 8, oscY + 12);
-                p.text('-55 mV (Threshold)', oscX + 8, yThresh - 6);
-                p.text('-70 mV (Resting)', oscX + 8, yRest - 6);
+                p.text('+35 mV  peak', oscX + 10, oscY + 18);
+                p.text('-55 mV  threshold', oscX + 10, yThresh - 7);
+                p.fill(BIO[0], BIO[1], BIO[2], 130);
+                p.text('-70 mV  resting',  oscX + 10, yRest - 7);
+                p.pop();
 
-                // Plot trace
+                // Voltage trace as sparkline
                 if (voltageHistory.length > 1) {
-                    p.noFill();
-                    p.stroke('#2dd4bf');
-                    p.strokeWeight(2);
-                    p.beginShape();
-                    for (let i = 0; i < voltageHistory.length; i++) {
-                        const vx = oscX + 110 + (i / 140) * (oscW - 130);
-                        // Map mV [-90, +45] to oscH
-                        const normV = (voltageHistory[i] - (-90)) / 135;
-                        const vy = oscY + oscH - normV * oscH;
-                        p.vertex(vx, vy);
-                    }
-                    p.endShape();
+                    VisualKit.drawSparkline(
+                        p, oscX + 5, oscY + 5, oscW - 10, oscH - 10,
+                        voltageHistory, BIO,
+                        { drawChrome: false, zeroFloor: false }
+                    );
                 }
 
-                // Telemetry
+                // ─────────────────────────────────────────────────────
+                // 5. Telemetry
+                // ─────────────────────────────────────────────────────
                 let status = 'Resting (-70mV)';
-                if (Vm > 0) status = 'Depolarized (Na⁺ Open)';
-                else if (Vm < -75) status = 'Hyperpolarized (Refractory)';
+                if (Vm > 0)          status = 'Depolarized (Na⁺ Open)';
+                else if (Vm < -75)   status = 'Hyperpolarized (Refractory)';
                 else if (spikeX >= 0) status = 'Propagating Along Axon';
-
-                const condSpeed = isMyelinated ? '100 - 120 m/s (Saltatory)' : '1 - 2 m/s (Continuous)';
 
                 ctx._telemetry = {
                     'Membrane Voltage': `${Vm.toFixed(1)} mV`,
-                    'Firing Status': status,
-                    'Axon Spike Pos': spikeX >= 0 ? `${spikeX.toFixed(0)} μm` : 'Inactive',
-                    'Conduction Speed': condSpeed
+                    'Firing Status':    status,
+                    'Axon Spike Pos':   spikeX >= 0 ? `${spikeX.toFixed(0)} μm` : 'Inactive',
+                    'Conduction Speed': isMyelinated ? '100 – 120 m/s (Saltatory)' : '1 – 2 m/s (Continuous)'
                 };
                 ctx.updateTelemetry();
 
-                // Instruction
-                p.fill('#94a3b8');
+                // ─────────────────────────────────────────────────────
+                // 6. Footer hint
+                // ─────────────────────────────────────────────────────
+                p.push();
                 p.noStroke();
+                p.fill(70, 90, 120);
+                p.textSize(11);
                 p.textAlign(p.LEFT, p.BOTTOM);
-                p.textSize(12);
-                p.text('Click the soma cell body or inject current ≥ 12 μA to trigger all-or-nothing action potential', 16, h - 8);
+                p.text('Click the soma (cell body) or inject current ≥ 12 μA to trigger all-or-nothing action potential', 16, h - 8);
+                p.pop();
             };
 
             function getPointerPos() {
@@ -242,10 +296,9 @@ window.initSketch = function(config) {
             }
 
             p.mousePressed = function() {
-                const pos = getPointerPos();
-                const somaX = 70;
-                const axonY = p.height * 0.42;
-                if (Math.hypot(pos.x - somaX, pos.y - axonY) < 45) {
+                const pos  = getPointerPos();
+                const axonY = p.height * 0.40;
+                if (Math.hypot(pos.x - 70, pos.y - axonY) < 45) {
                     triggerSpike();
                     return false;
                 }
