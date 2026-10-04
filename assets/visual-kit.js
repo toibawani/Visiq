@@ -267,6 +267,87 @@
         p.pop();
     }
 
+    /**
+     * Drag-with-inertia velocity tracker for interactive canvas entities.
+     * @param {object} [options]
+     * @param {number} [options.multiplier=0.85] - Velocity scaling factor per drag frame
+     * @param {number} [options.maxSpeed=24] - Maximum velocity clamp on release
+     */
+    function createDragTracker(options = {}) {
+        const mult = options.multiplier !== undefined ? options.multiplier : 0.85;
+        const maxV = options.maxSpeed !== undefined ? options.maxSpeed : 24;
+        let lastX = 0, lastY = 0;
+        let vx = 0, vy = 0;
+        let lastAngle = 0, deltaAngle = 0;
+
+        return {
+            start(x, y) {
+                lastX = x;
+                lastY = y;
+                vx = 0;
+                vy = 0;
+            },
+            drag(x, y) {
+                vx = (x - lastX) * mult;
+                vy = (y - lastY) * mult;
+                lastX = x;
+                lastY = y;
+                return { vx, vy, dx: vx / mult, dy: vy / mult };
+            },
+            release() {
+                const cx = Math.max(-maxV, Math.min(maxV, vx));
+                const cy = Math.max(-maxV, Math.min(maxV, vy));
+                return { vx: cx, vy: cy };
+            },
+            startAngle(angle) {
+                lastAngle = angle;
+                deltaAngle = 0;
+            },
+            dragAngle(angle) {
+                deltaAngle = angle - lastAngle;
+                lastAngle = angle;
+                return deltaAngle;
+            },
+            releaseAngle(angularMult = 14, maxOmega = 20) {
+                const omega = deltaAngle * angularMult;
+                return Math.max(-maxOmega, Math.min(maxOmega, omega));
+            }
+        };
+    }
+
+    /**
+     * Get [r, g, b] array for a given domain/category, honoring CSS custom properties.
+     * @param {string} category - 'physics', 'biology', 'chemistry', 'geography', or 'astronomy'
+     * @returns {Array<number>} [r, g, b]
+     */
+    function getCategoryRGB(category) {
+        const key = (category || 'physics').toLowerCase();
+        const FALLBACKS = {
+            physics:   [0, 229, 255],
+            biology:   [16, 185, 129],
+            chemistry: [192, 132, 252],
+            geography: [245, 158, 11],
+            astronomy: [251, 191, 36]
+        };
+        if (typeof document !== 'undefined' && document.documentElement) {
+            const raw = getComputedStyle(document.documentElement).getPropertyValue(`--accent-${key}`);
+            if (raw) {
+                const trimmed = raw.trim();
+                if (trimmed.startsWith('#')) {
+                    const hex = trimmed.slice(1);
+                    if (hex.length === 6) {
+                        return [
+                            parseInt(hex.slice(0, 2), 16),
+                            parseInt(hex.slice(2, 4), 16),
+                            parseInt(hex.slice(4, 6), 16)
+                        ];
+                    }
+                }
+            }
+        }
+        return FALLBACKS[key] || [232, 160, 76];
+    }
+
     VisualKit.drawFadingTrail = drawFadingTrail;
     VisualKit.drawGlowBody = drawGlowBody;
     VisualKit.drawArrow = drawArrow;
@@ -275,5 +356,7 @@
     VisualKit.updateCollisionFlashes = updateCollisionFlashes;
     VisualKit.drawInsetPanel = drawInsetPanel;
     VisualKit.drawSparkline = drawSparkline;
+    VisualKit.createDragTracker = createDragTracker;
+    VisualKit.getCategoryRGB = getCategoryRGB;
     window.VisualKit = VisualKit;
 })();
