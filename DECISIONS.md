@@ -1,5 +1,18 @@
 # VISIQ Design Decisions
 
+## Design Brief: Aesthetic Authority (Aesthetic Bible)
+
+- **Direction:** VISIQ is built as a **"Scientific instrument panel, after dark"** — drawing inspiration from high-precision oscilloscopes, deep-sea research vessels, and planetarium consoles, creating a dark, disciplined technical environment where fine graticules, calibrated units, and dark obsidian surfaces ensure the simulations' own particle trails and energetic emissions are the brightest, most vibrant elements on the screen.
+- **Font Pairing:** Typography delivers extreme structural contrast using **Fraunces** for expressive, high-impact display titles (pairing 200 light display weights with 800 punch weights), **IBM Plex Sans** for neutral, hyper-legible technical UI copy, and **JetBrains Mono** with native tabular figures for zero-jitter telemetry, coordinate readouts, and physical equations.
+- **Color Logic:** A near-black, subtly tinted obsidian chassis (`#07090e` / `#0d1117`) serves as the dominant backdrop, accented strictly by deliberate, phenomenon-derived categorical signatures (cool oscilloscope cyan for Physics, bio-luminescent emerald for Biology, reactive spectral violet/teal for Chemistry, seismic terra ochre for Geography, and phosphor starlight amber for Astronomy) with zero arbitrary purple-on-white or evenly-distributed pastel gradients.
+- **Motion Logic:** Visual motion focuses on a single grand entrance choreography with staggered reveal delays upon first load, fluid cubic-bezier count-up easing for live numerical metrics, and strict zero-overhead CSS micro-transitions elsewhere, completely suppressed when `prefers-reduced-motion` is active.
+
+### Three Chosen Fonts and Rationale
+1. **Display & Headings — Fraunces:** Chosen to banish the generic "AI SaaS" look. Its 19th-century optical-size heritage gives headings intellectual weight, human intention, and dramatic contrast when used in extreme weights (200 display vs 800 bold), proving this is a tool for scientific inquiry.
+2. **UI & Body Text — IBM Plex Sans:** Engineered specifically for technical clarity and IBM's scientific documentation. It features clear distinction between ambiguous glyphs (1, l, I), generous apertures, and an engineered personality that sits naturally next to instrument readouts.
+3. **Telemetry, Equations & Live Readouts — JetBrains Mono:** Live scientific monitors (F=ma, temperature, velocity, framerate, wave period) require true tabular numerals across all weights so active digits never jitter or vibrate the layout.
+All fonts are subset to Latin woff2, preloaded for primary weights with `font-display: swap` and size-adjusted metrics to guarantee zero layout shift. Canvas text in p5 is strictly rendered only after `document.fonts.load()` resolves.
+
 ## Visual Direction
 
 VISIQ looks like a scientific instrument, not a portfolio site. The aesthetic is lab notebook meets oscilloscope: dark canvas panels, fine grid rules, a single warm-amber accent (#e8a04c), thin hairline borders, and every number labeled with its unit. Headings use Fraunces (a serif with optical personality) to signal that this is a place for thinking, not consuming. UI copy uses IBM Plex Sans — a humanist sans with visible construction — and all live readouts render in JetBrains Mono with tabular figures so digits never jitter. Nothing is decorative that isn't also informative: a glow on a particle scales with its energy, a colored trail encodes velocity, a pulsing border means the simulation is live.
