@@ -8,6 +8,7 @@ window.initSketch = function(config) {
         containerId: config.containerId,
         controlsContainerId: config.controlsContainerId,
         params: {
+            population: { value: 250, min: 60, max: 600, step: 20, label: 'Population', unit: 'agents' },
             transmissionProb: { value: 65, min: 10, max: 100, step: 5, label: 'Infection Rate (β)', unit: '%' },
             recoveryTime: { value: 7.0, min: 3.0, max: 15.0, step: 0.5, label: 'Recovery Duration', unit: 's' },
             vaccinationRate: { value: 10, min: 0, max: 80, step: 5, label: 'Initial Immunity', unit: '%' }
@@ -35,8 +36,9 @@ window.initSketch = function(config) {
                 const cH = p.height - 70;
                 const vaxRate = ctx.params.vaccinationRate / 100;
 
+                const count = Math.floor(ctx.params.population || 250);
                 // Create population: 1 index case, vaxRate immune, remainder susceptible
-                for (let i = 0; i < totalAgents; i++) {
+                for (let i = 0; i < count; i++) {
                     let state = 'S'; // Susceptible
                     if (i === 0) {
                         state = 'I'; // Patient zero
@@ -49,7 +51,7 @@ window.initSketch = function(config) {
                         y: 35 + Math.random() * (cH - 60),
                         vx: (Math.random() - 0.5) * 2.2,
                         vy: (Math.random() - 0.5) * 2.2,
-                        radius: 5,
+                        radius: 4,
                         state: state,
                         infectionTime: 0
                     });
@@ -60,7 +62,7 @@ window.initSketch = function(config) {
             ctx.onReset = initEpidemic;
             ctx.onResize = initEpidemic;
             ctx.onParamChange = (k) => {
-                if (k === 'vaccinationRate') initEpidemic();
+                if (k === 'vaccinationRate' || k === 'population') initEpidemic();
             };
 
             p.draw = function() {
@@ -80,6 +82,15 @@ window.initSketch = function(config) {
                 if (ctx.isPlaying) {
                     timeElapsed += dt;
 
+                    // Spatial hash grid construction for O(N) contact checks:
+                    // Algorithm: Uniform Spatial Hash Grid
+                    // Instead of testing all pairs O(N²), divide arena into 20px cells (larger than 14px contact radius).
+                    // Insert susceptible agents into spatial grid buckets.
+                    // Infected agents only check agents within their own cell and the 8 immediate neighboring cells.
+                    const cellSize = 20;
+                    const grid = new Map();
+                    const hashCell = (gx, gy) => (gx << 16) ^ gy;
+
                     for (let i = 0; i < agents.length; i++) {
                         const a = agents[i];
                         a.x += a.vx * ctx.speed;
@@ -95,18 +106,44 @@ window.initSketch = function(config) {
                             if (a.infectionTime >= recTime) {
                                 a.state = 'R'; // Recovered and immune
                             }
+                        } else if (a.state === 'S') {
+                            // Register susceptible agent into spatial grid
+                            const gx = Math.floor(a.x / cellSize);
+                            const gy = Math.floor(a.y / cellSize);
+                            const key = hashCell(gx, gy);
+                            let bucket = grid.get(key);
+                            if (!bucket) {
+                                bucket = [];
+                                grid.set(key, bucket);
+                            }
+                            bucket.push(a);
                         }
+                    }
 
-                        // Contact infection transmission
+                    // Contact infection transmission via spatial hash query
+                    const radiusSq = 14 * 14;
+                    for (let i = 0; i < agents.length; i++) {
+                        const a = agents[i];
                         if (a.state === 'I') {
-                            for (let j = 0; j < agents.length; j++) {
-                                const other = agents[j];
-                                if (other.state === 'S') {
-                                    const d = Math.hypot(a.x - other.x, a.y - other.y);
-                                    if (d < 14) {
-                                        if (Math.random() < beta * 0.15) {
-                                            other.state = 'I';
-                                            other.infectionTime = 0;
+                            const gx = Math.floor(a.x / cellSize);
+                            const gy = Math.floor(a.y / cellSize);
+
+                            for (let ox = -1; ox <= 1; ox++) {
+                                for (let oy = -1; oy <= 1; oy++) {
+                                    const bucket = grid.get(hashCell(gx + ox, gy + oy));
+                                    if (bucket) {
+                                        for (let b = 0; b < bucket.length; b++) {
+                                            const other = bucket[b];
+                                            if (other.state === 'S') {
+                                                const dx = a.x - other.x;
+                                                const dy = a.y - other.y;
+                                                if (dx * dx + dy * dy < radiusSq) {
+                                                    if (Math.random() < beta * 0.15) {
+                                                        other.state = 'I';
+                                                        other.infectionTime = 0;
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
