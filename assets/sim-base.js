@@ -43,6 +43,7 @@ class SimBase {
         // Lifecycle tracking for leak prevention
         this.p5Instance = null;
         this.resizeObserver = null;
+        this.intersectionObserver = null;
         this.listeners = [];
         this.intervals = [];
         this.timeouts = [];
@@ -137,6 +138,9 @@ class SimBase {
         // Setup responsive container observer
         this.setupResizeObserver(container);
 
+        // Setup viewport intersection observer (pause when scrolled offscreen)
+        this.setupIntersectionObserver(container);
+
         // Setup page visibility pause
         this.setupVisibilityHandler();
 
@@ -172,6 +176,31 @@ class SimBase {
         });
 
         this.resizeObserver.observe(container);
+    }
+
+    /**
+     * Automatically pause draw loop via noLoop() when canvas scrolls offscreen,
+     * and resume on return to preserve battery and frame budget.
+     */
+    setupIntersectionObserver(container) {
+        if (typeof IntersectionObserver === 'undefined') return;
+
+        this.intersectionObserver = new IntersectionObserver((entries) => {
+            if (this._isDestroyed || !this.p) return;
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    if (this.isPlaying) {
+                        this.p.loop();
+                        if (typeof this.onResume === 'function') this.onResume();
+                    }
+                } else {
+                    this.p.noLoop();
+                    if (typeof this.onPause === 'function') this.onPause();
+                }
+            }
+        }, { threshold: 0.05 });
+
+        this.intersectionObserver.observe(container);
     }
 
     /**
@@ -467,6 +496,12 @@ class SimBase {
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
             this.resizeObserver = null;
+        }
+
+        // Disconnect IntersectionObserver
+        if (this.intersectionObserver) {
+            this.intersectionObserver.disconnect();
+            this.intersectionObserver = null;
         }
 
         // Remove all DOM listeners
