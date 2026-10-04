@@ -15,12 +15,14 @@ window.initSketch = function(config) {
         params: {
             centralMass: { value: 120, min: 40, max: 280, step: 10, label: 'Central mass (M)', unit: 'sim' },
             speed: { value: 1, min: 0.25, max: 3, step: 0.25, label: 'Time scale', unit: '×' },
+            showVectors: { value: 1, min: 0, max: 1, step: 1, label: 'Show Vectors', unit: '' }
         },
         getReadouts(ctx) {
             return ctx._telemetry || {
                 'Bodies': '4',
                 'Resonance': 'none',
                 'Inner period': '—',
+                'Orbital Energy': '0.0'
             };
         },
         setup(p, ctx) {
@@ -28,7 +30,10 @@ window.initSketch = function(config) {
             let bodies = [];
             let oscs = [];
             let lastResonance = 'none';
-            let trailCap = 90;
+            let trailCap = 110;
+            let energyHistory = [];
+            let draggedBody = null;
+            const dragTracker = VisualKit.createDragTracker({ maxSpeed: 20 });
 
             function period(r, M) {
                 return 2 * Math.PI * Math.sqrt((r * r * r) / (G * M));
@@ -37,14 +42,23 @@ window.initSketch = function(config) {
             function spawnBodies() {
                 const M = ctx.params.centralMass;
                 const radii = [70, 110, 165, 220];
-                const hues = [[255,107,107],[78,205,196],[255,230,109],[124,106,247]];
+                const hues = [
+                    [251, 191, 36],   // amber (astronomy accent)
+                    [56, 189, 248],   // sky blue
+                    [45, 212, 191],   // teal
+                    [167, 139, 250]   // violet
+                ];
                 bodies = radii.map((r, i) => ({
+                    id: i + 1,
                     r,
-                    theta: i * 0.7,
-                    color: hues[i],
+                    radius: 7 + i * 0.8,
+                    mass: 1.0 + i * 0.5,
+                    theta: i * 0.85,
+                    color: hues[i % hues.length],
                     trail: [],
                     T: period(r, M),
                 }));
+                energyHistory = [];
             }
 
             function stopSound() {
@@ -101,7 +115,7 @@ window.initSketch = function(config) {
             if (window.VisiqAudio && controls) {
                 VisiqAudio.requestGate();
                 VisiqAudio.attachMuteToggle(controls,
-                    'Pitch is orbital period inverted: faster (inner) orbits sound higher. A lock between two periods (2:1, 3:2) is a real resonance — you hear it as the tones lining up, not as a special effect sample.');
+                    'Pitch is orbital period inverted: faster (inner) orbits sound higher. A lock between two periods (2:1, 3:2) is a real resonance.');
                 const enableBtn = document.createElement('button');
                 enableBtn.type = 'button';
                 enableBtn.className = 'visiq-mute-btn';
@@ -120,41 +134,97 @@ window.initSketch = function(config) {
                 const cy = p.height / 2;
                 const M = ctx.params.centralMass;
                 const dt = (p.deltaTime / 1000) * ctx.params.speed * ctx.speed;
+                const showV = ctx.params.showVectors > 0.5;
 
+                // Orbit guide rails
                 p.noFill();
-                p.stroke(40, 40, 48);
+                p.stroke(24, 32, 48, 120);
                 p.strokeWeight(1);
                 bodies.forEach(b => p.circle(cx, cy, b.r * 2));
 
+                // Central Black Hole with accretion photon glow
                 p.noStroke();
-                p.fill(0);
-                p.circle(cx, cy, 22);
-                p.noFill();
-                p.stroke(80);
-                p.circle(cx, cy, 34);
+                p.fill(251, 191, 36, 25);
+                p.circle(cx, cy, 54);
+                p.fill(251, 191, 36, 60);
+                p.circle(cx, cy, 38);
+                p.fill(5, 7, 12);
+                p.stroke(251, 191, 36, 200);
+                p.strokeWeight(1.8);
+                p.circle(cx, cy, 26);
+                p.noStroke();
+                p.fill(255, 255, 255, 45);
+                p.circle(cx - 4, cy - 4, 6);
 
                 const periods = [];
-                bodies.forEach((b, i) => {
+                let totalEnergy = 0;
+
+                bodies.forEach((b) => {
                     b.T = period(b.r, M);
                     periods.push(b.T);
-                    const omega = Math.sqrt(G * M / (b.r * b.r * b.r));
-                    b.theta += omega * dt * 60;
+                    const omega = Math.sqrt(G * M / Math.max(1, b.r * b.r * b.r));
+                    if (ctx.isPlaying && b !== draggedBody) {
+                        b.theta += omega * dt * 60;
+                    }
                     const x = cx + Math.cos(b.theta) * b.r;
                     const y = cy + Math.sin(b.theta) * b.r;
-                    b.trail.push({ x, y });
-                    if (b.trail.length > trailCap) b.trail.shift();
 
-                    p.noFill();
-                    p.stroke(b.color[0], b.color[1], b.color[2], 90);
-                    p.strokeWeight(1);
-                    p.beginShape();
-                    b.trail.forEach(pt => p.vertex(pt.x, pt.y));
-                    p.endShape();
+                    if (ctx.isPlaying) {
+                        b.trail.push({ x, y });
+                        if (b.trail.length > trailCap) b.trail.shift();
+                    }
 
-                    p.noStroke();
-                    p.fill(b.color[0], b.color[1], b.color[2]);
-                    p.circle(x, y, 8);
+                    // Orbital mechanical energy E = -G*M*m / (2*r)
+                    const eOrb = - (G * M * b.mass) / (2 * Math.max(10, b.r));
+                    totalEnergy += eOrb;
+
+                    // 1. Fading trail
+                    VisualKit.drawFadingTrail(p, b.trail, b.color, {
+                        exponent: 1.6,
+                        maxAlpha: 180,
+                        minWeight: 1.0,
+                        maxWeight: 2.2
+                    });
+
+                    // 2. Glow body
+                    VisualKit.drawGlowBody(p, x, y, b.radius, b.color, {
+                        outerMult: 1.7,
+                        innerMult: 1.25,
+                        outerAlpha: 32,
+                        innerAlpha: 75,
+                        specularAlpha: 55
+                    });
+
+                    // 3. Force and Velocity vectors
+                    if (showV) {
+                        const vMag = Math.min(b.r * omega * 0.4, 38);
+                        // Tangential velocity (white)
+                        VisualKit.drawArrow(p, x, y,
+                            x - Math.sin(b.theta) * vMag,
+                            y + Math.cos(b.theta) * vMag,
+                            [241, 245, 249], 210, 1.8, 6);
+
+                        // Centripetal gravitational pull (sky blue)
+                        const fMag = Math.min((G * M / (b.r * b.r)) * 140, 42);
+                        VisualKit.drawArrow(p, x, y,
+                            x - Math.cos(b.theta) * fMag,
+                            y - Math.sin(b.theta) * fMag,
+                            [56, 189, 248], 190, 1.5, 6);
+                    }
                 });
+
+                if (ctx.isPlaying) {
+                    energyHistory.push(totalEnergy);
+                    if (energyHistory.length > 180) energyHistory.shift();
+                }
+
+                // Inset Panel: Orbital Energy Sparkline
+                if (p.width > 480) {
+                    VisualKit.drawSparkline(p, p.width - 188, 12, 180, 60, energyHistory, [251, 191, 36], {
+                        label: 'Total Orbital Energy',
+                        cornerRadius: 6
+                    });
+                }
 
                 if (oscs.length && window.VisiqAudio && VisiqAudio.context && !VisiqAudio.muted) {
                     const Tref = periods[periods.length - 1];
@@ -172,16 +242,65 @@ window.initSketch = function(config) {
                     'Inner period': `${periods[0].toFixed(2)} s (sim)`,
                     'Outer period': `${periods[periods.length - 1].toFixed(2)} s (sim)`,
                     'Resonance': lastResonance,
-                    'Mass M': `${M}`,
+                    'Orbital Energy': `${totalEnergy.toFixed(1)} J`,
+                    'Mass M': `${M}`
                 };
                 ctx.updateTelemetry();
 
-                p.fill(148, 163, 184, 180);
+                // Standard legend & interaction caption
                 p.noStroke();
+                p.fill(65, 85, 120);
+                p.textSize(11);
                 p.textAlign(p.LEFT, p.BOTTOM);
-                p.textSize(12);
-                p.text('Circular Kepler orbits (not GR). Sound maps period → pitch.', 16, p.height - 14);
+                p.text('White = velocity  |  Blue = gravity (GM/r²)  |  Drag bobs to fling into new orbits', 14, p.height - 10);
             };
+
+            function ptr() {
+                return p.touches && p.touches.length > 0
+                    ? { x: p.touches[0].x, y: p.touches[0].y }
+                    : { x: p.mouseX, y: p.mouseY };
+            }
+
+            p.mousePressed = function() {
+                const pos = ptr();
+                const cx = p.width / 2;
+                const cy = p.height / 2;
+                for (let i = bodies.length - 1; i >= 0; i--) {
+                    const b = bodies[i];
+                    const bx = cx + Math.cos(b.theta) * b.r;
+                    const by = cy + Math.sin(b.theta) * b.r;
+                    if (Math.hypot(pos.x - bx, pos.y - by) <= b.radius + 14) {
+                        draggedBody = b;
+                        dragTracker.startAngle(b.theta);
+                        return false;
+                    }
+                }
+            };
+
+            p.mouseDragged = function() {
+                if (!draggedBody) return;
+                const pos = ptr();
+                const cx = p.width / 2;
+                const cy = p.height / 2;
+                const newR = p.constrain(Math.hypot(pos.x - cx, pos.y - cy), 45, Math.min(p.width, p.height) * 0.46);
+                draggedBody.r = newR;
+                const newTheta = Math.atan2(pos.y - cy, pos.x - cx);
+                dragTracker.dragAngle(newTheta);
+                draggedBody.theta = newTheta;
+                draggedBody.trail = [];
+                return false;
+            };
+
+            p.mouseReleased = function() {
+                if (!draggedBody) return;
+                const dOmega = dragTracker.releaseAngle(1.5, 4);
+                draggedBody.theta += dOmega * 0.1;
+                draggedBody = null;
+            };
+
+            p.touchStarted = p.mousePressed;
+            p.touchMoved   = p.mouseDragged;
+            p.touchEnded   = p.mouseReleased;
         }
     });
 
