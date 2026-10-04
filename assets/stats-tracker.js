@@ -25,6 +25,8 @@ class StatsTracker {
             favoriteCount: 0,
             sessionsCompleted: 1,
             totalInteractions: 0,
+            predictions: [],
+            correctPredictions: 0,
             history: [] // [{ id, title, category, timestamp, duration }]
         };
 
@@ -57,6 +59,18 @@ class StatsTracker {
     trackInteraction(type = 'general') {
         this.sessionInteractions++;
         this.stats.totalInteractions = (this.stats.totalInteractions || 0) + 1;
+        this.saveStats();
+        if (this.isDrawerOpen) {
+            this.updateDrawerMetrics();
+        }
+    }
+
+    trackPrediction(simId, guess, isCorrect) {
+        if (!this.stats.predictions) this.stats.predictions = [];
+        this.stats.predictions.push({ simId, guess, isCorrect, timestamp: Date.now() });
+        if (isCorrect) {
+            this.stats.correctPredictions = (this.stats.correctPredictions || 0) + 1;
+        }
         this.saveStats();
         if (this.isDrawerOpen) {
             this.updateDrawerMetrics();
