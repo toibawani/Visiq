@@ -36,6 +36,63 @@
         }
     }
 
+    /**
+     * Draw a two-layer glow halo + core disc + specular highlight on a body or bob.
+     * @param {object} p - p5 instance
+     * @param {number} x - Center X
+     * @param {number} y - Center Y
+     * @param {number} radius - Body core radius
+     * @param {Array<number>} rgb - [r, g, b] color array
+     * @param {object} [options]
+     * @param {number} [options.outerMult=1.8] - Multiplier on diameter for outer glow
+     * @param {number} [options.innerMult=1.25] - Multiplier on diameter for inner glow
+     * @param {number} [options.outerOffset] - Additive offset for outer halo radius (takes precedence if given)
+     * @param {number} [options.innerOffset] - Additive offset for inner halo radius (takes precedence if given)
+     * @param {number} [options.outerAlpha=30] - Outer halo alpha
+     * @param {number} [options.innerAlpha=75] - Inner halo alpha
+     * @param {boolean} [options.specular=true] - Whether to draw top-left specular highlight
+     * @param {number} [options.specularAlpha=52] - Specular highlight alpha
+     * @param {number} [options.strokeWidth=2] - Body boundary stroke weight
+     * @param {Array<number>} [options.strokeColor=[7,9,15]] - Body boundary stroke RGB
+     */
+    function drawGlowBody(p, x, y, radius, [r, g, b], options = {}) {
+        const outerAlpha = options.outerAlpha !== undefined ? options.outerAlpha : 30;
+        const innerAlpha = options.innerAlpha !== undefined ? options.innerAlpha : 75;
+        const outerDiam = options.outerOffset !== undefined
+            ? (radius + options.outerOffset) * 2
+            : radius * 2 * (options.outerMult !== undefined ? options.outerMult : 1.8);
+        const innerDiam = options.innerOffset !== undefined
+            ? (radius + options.innerOffset) * 2
+            : radius * 2 * (options.innerMult !== undefined ? options.innerMult : 1.25);
+        const specular = options.specular !== false;
+        const specularAlpha = options.specularAlpha !== undefined ? options.specularAlpha : 52;
+        const strokeWidth = options.strokeWidth !== undefined ? options.strokeWidth : 2;
+        const sc = options.strokeColor || [7, 9, 15];
+
+        // Outer glow
+        p.noStroke();
+        p.fill(r, g, b, outerAlpha);
+        p.circle(x, y, outerDiam);
+
+        // Inner glow
+        p.fill(r, g, b, innerAlpha);
+        p.circle(x, y, innerDiam);
+
+        // Core disc
+        p.fill(r, g, b);
+        p.stroke(sc[0], sc[1], sc[2]);
+        p.strokeWeight(strokeWidth);
+        p.circle(x, y, radius * 2);
+
+        // Specular highlight
+        if (specular) {
+            p.noStroke();
+            p.fill(255, 255, 255, specularAlpha);
+            p.circle(x - radius * 0.28, y - radius * 0.28, radius * 0.52);
+        }
+    }
+
     VisualKit.drawFadingTrail = drawFadingTrail;
+    VisualKit.drawGlowBody = drawGlowBody;
     window.VisualKit = VisualKit;
 })();
