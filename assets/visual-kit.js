@@ -198,6 +198,75 @@
         p.pop();
     }
 
+    /**
+     * Draw a sparkline telemetry graph inside an inset panel.
+     * @param {object} p - p5 instance
+     * @param {number} x - Top-left X
+     * @param {number} y - Top-left Y
+     * @param {number} w - Panel width
+     * @param {number} h - Panel height
+     * @param {Array<number>} history - Historic scalar values
+     * @param {Array<number>} rgb - [r, g, b] sparkline color
+     * @param {object} [options]
+     * @param {string} [options.label] - Title label
+     * @param {boolean} [options.drawChrome=true] - Whether to render panel background & border
+     * @param {number} [options.baseline] - Optional dashed reference line value
+     * @param {boolean} [options.zeroFloor=false] - If true, minimum value is clamped to 0
+     * @param {number} [options.cornerRadius=6] - Corner radius of panel
+     */
+    function drawSparkline(p, x, y, w, h, history, [r, g, b], options = {}) {
+        if (!history || history.length < 2) return;
+        const label = options.label;
+        const baseline = options.baseline;
+        const zeroFloor = options.zeroFloor === true;
+        const minVal = zeroFloor ? 0 : Math.min(...history);
+        const maxVal = Math.max(...history, minVal + 0.001);
+        const range = Math.max(maxVal - minVal, 0.001);
+
+        p.push();
+        if (options.drawChrome !== false) {
+            drawInsetPanel(p, x, y, w, h, label || '', {
+                align: options.align || 'left',
+                cornerRadius: options.cornerRadius !== undefined ? options.cornerRadius : 6,
+                textSize: options.textSize || 8.5
+            });
+        }
+
+        const padX = 5;
+        const padTop = label ? 18 : 6;
+        const padBottom = 7;
+        const plotW = w - padX * 2;
+        const plotH = h - padTop - padBottom;
+
+        p.noFill();
+        p.stroke(r, g, b, 190);
+        p.strokeWeight(1.5);
+        p.beginShape();
+        const len = history.length;
+        for (let i = 0; i < len; i++) {
+            const vx = x + padX + (i / (len - 1)) * plotW;
+            const norm = (history[i] - minVal) / range;
+            const vy = y + h - padBottom - norm * plotH;
+            p.vertex(vx, vy);
+        }
+        p.endShape();
+
+        if (baseline !== null && baseline !== undefined) {
+            const normBase = p.constrain((baseline - minVal) / range, 0, 1);
+            const ry = y + h - padBottom - normBase * plotH;
+            if (p.drawingContext && p.drawingContext.setLineDash) {
+                p.drawingContext.setLineDash([3, 4]);
+            }
+            p.stroke(255, 255, 255, 28);
+            p.strokeWeight(1);
+            p.line(x + padX, ry, x + w - padX, ry);
+            if (p.drawingContext && p.drawingContext.setLineDash) {
+                p.drawingContext.setLineDash([]);
+            }
+        }
+        p.pop();
+    }
+
     VisualKit.drawFadingTrail = drawFadingTrail;
     VisualKit.drawGlowBody = drawGlowBody;
     VisualKit.drawArrow = drawArrow;
@@ -205,5 +274,6 @@
     VisualKit.createCollisionFlash = createCollisionFlash;
     VisualKit.updateCollisionFlashes = updateCollisionFlashes;
     VisualKit.drawInsetPanel = drawInsetPanel;
+    VisualKit.drawSparkline = drawSparkline;
     window.VisualKit = VisualKit;
 })();
