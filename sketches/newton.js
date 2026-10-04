@@ -80,38 +80,7 @@ window.initSketch = function(config) {
                 });
             };
 
-            // Arrow primitive: from (x1,y1) to (x2,y2)
-            function arrow(x1, y1, x2, y2, r, g, b, a, wt, hl) {
-                const dx = x2-x1, dy = y2-y1;
-                if (Math.sqrt(dx*dx+dy*dy) < 3) return;
-                p.stroke(r, g, b, a); p.strokeWeight(wt);
-                p.line(x1, y1, x2, y2);
-                const ang = Math.atan2(dy, dx);
-                const h = hl || 8;
-                p.line(x2, y2, x2 - h*Math.cos(ang-0.45), y2 - h*Math.sin(ang-0.45));
-                p.line(x2, y2, x2 - h*Math.cos(ang+0.45), y2 - h*Math.sin(ang+0.45));
-            }
-
-            // Energy sparkline inset
-            function drawSparkline(px, py, pw, ph, hist) {
-                p.push();
-                p.noStroke(); p.fill(8, 12, 22, 215); p.rect(px, py, pw, ph, 5);
-                p.stroke(35, 45, 65); p.strokeWeight(1); p.noFill(); p.rect(px, py, pw, ph, 5);
-                p.noStroke(); p.fill(68, 88, 128); p.textSize(9);
-                p.textAlign(p.LEFT, p.TOP); p.text('Total KE', px+5, py+4);
-                if (hist.length > 2) {
-                    const maxE = Math.max(...hist, 1);
-                    p.noFill(); p.stroke(45, 212, 191, 180); p.strokeWeight(1.5);
-                    p.beginShape();
-                    for (let i = 0; i < hist.length; i++) {
-                        const x = px+5 + (i/(hist.length-1))*(pw-10);
-                        const y = py+ph-6 - (hist[i]/maxE)*(ph-16);
-                        p.vertex(x, y);
-                    }
-                    p.endShape();
-                }
-                p.pop();
-            }
+            const dragTracker = VisualKit.createDragTracker({ multiplier: 0.85, maxSpeed: 24 });
 
             p.draw = function() {
                 p.background(7, 9, 15);
@@ -178,40 +147,21 @@ window.initSketch = function(config) {
                                     b.vx += imp*a.mass*nx; b.vy += imp*a.mass*ny;
                                     collisionCount++;
                                     const fcx = (a.x+b.x)*0.5, fcy = (a.y+b.y)*0.5;
-                                    flashes.push({x:fcx, y:fcy, r:minD*0.75, age:0, maxAge:24});
+                                    flashes.push(VisualKit.createCollisionFlash(fcx, fcy, minD*0.75, 24));
                                 }
                             }
                         }
                     }
 
-                    flashes = flashes.filter(f => f.age < f.maxAge);
-                    for (const f of flashes) f.age++;
+                    flashes = VisualKit.updateCollisionFlashes(p, flashes);
                 }
 
                 // ── Fading trails ───────────────────────────────────────
                 for (const b of bodies) {
-                    if (b.trail.length < 2) continue;
-                    // Cache RGB
-                    if (!b.trailRGB) b.trailRGB = { r:b.fill[0], g:b.fill[1], bv:b.fill[2] };
-                    const { r, g, bv } = b.trailRGB;
-                    p.noFill();
-                    for (let i = 1; i < b.trail.length; i++) {
-                        const t = i / b.trail.length;
-                        p.stroke(r, g, bv, Math.pow(t, 1.8)*115);
-                        p.strokeWeight(1 + t*1.6);
-                        p.line(b.trail[i-1].x, b.trail[i-1].y, b.trail[i].x, b.trail[i].y);
-                    }
+                    VisualKit.drawFadingTrail(p, b.trail, b.fill, { exponent: 1.8, maxAlpha: 115, minWeight: 1.0, maxWeight: 2.6 });
                 }
 
-                // ── Collision flashes ────────────────────────────────────
-                p.noFill();
-                for (const f of flashes) {
-                    const t = 1 - f.age/f.maxAge;
-                    p.stroke(255, 240, 200, t*t*170); p.strokeWeight(2.5*t);
-                    p.circle(f.x, f.y, f.r*(1 + (1-t)*1.4)*2);
-                    p.stroke(255, 240, 200, t*t*55);  p.strokeWeight(9*t);
-                    p.circle(f.x, f.y, f.r*2*0.55);
-                }
+                // ── Collision flashes (rendered by updateCollisionFlashes) ─
 
                 // ── Bodies ───────────────────────────────────────────────
                 for (const b of bodies) {
@@ -221,21 +171,14 @@ window.initSketch = function(config) {
                     totalPy  += b.mass*b.vy;
                     if (spd > maxSpd) maxSpd = spd;
 
-                    const [fr, fg, fb] = b.fill;
-                    const [gr, gg, gb, ga] = b.glow;
-
-                    // Glow layers
-                    p.noStroke();
-                    p.fill(gr, gg, gb, ga * 1.2);   p.circle(b.x, b.y, b.radius*3.6);
-                    p.fill(gr, gg, gb, ga * 3.0);   p.circle(b.x, b.y, b.radius*2.4);
-
-                    // Body disc
-                    p.fill(fr, fg, fb); p.stroke(7, 9, 15); p.strokeWeight(2);
-                    p.circle(b.x, b.y, b.radius*2);
-
-                    // Specular highlight
-                    p.noStroke(); p.fill(255, 255, 255, 52);
-                    p.circle(b.x - b.radius*0.28, b.y - b.radius*0.28, b.radius*0.5);
+                    const ga = b.glow[3];
+                    VisualKit.drawGlowBody(p, b.x, b.y, b.radius, b.fill, {
+                        outerMult: 1.8,
+                        innerMult: 1.2,
+                        outerAlpha: ga * 1.2,
+                        innerAlpha: ga * 3.0,
+                        specularAlpha: 52
+                    });
 
                     // Mass label
                     p.fill(8, 12, 20); p.textAlign(p.CENTER, p.CENTER); p.textSize(11);
@@ -244,23 +187,23 @@ window.initSketch = function(config) {
                     if (showF && b !== draggedBody) {
                         // Velocity arrow (white)
                         if (spd > 0.2) {
-                            arrow(b.x, b.y, b.x+b.vx*5, b.y+b.vy*5, 241, 245, 249, 215, 2, 7);
+                            VisualKit.drawArrow(p, b.x, b.y, b.x+b.vx*5, b.y+b.vy*5, [241, 245, 249], 215, 2, 7);
                         }
                         // Gravity arrow (sky blue, downward)
                         const gF = b.mass * grav;
                         if (gF > 0.15) {
                             const gLen = Math.min(gF*3.5, 52);
-                            arrow(b.x-b.radius-7, b.y,
+                            VisualKit.drawArrow(p, b.x-b.radius-7, b.y,
                                   b.x-b.radius-7, b.y+gLen,
-                                  56, 189, 248, 200, 1.5, 6);
+                                  [56, 189, 248], 200, 1.5, 6);
                         }
                         // Normal force (emerald green, upward) when resting on floor
                         const onFloor = b.y+b.radius > p.height-8 && Math.abs(b.vy) < 2.5;
                         if (onFloor) {
                             const nLen = Math.min(gF*3.5, 52);
-                            arrow(b.x+b.radius+7, b.y,
+                            VisualKit.drawArrow(p, b.x+b.radius+7, b.y,
                                   b.x+b.radius+7, b.y-nLen,
-                                  52, 211, 153, 200, 1.5, 6);
+                                  [52, 211, 153], 200, 1.5, 6);
                         }
                     }
                 }
@@ -271,7 +214,11 @@ window.initSketch = function(config) {
                     if (energyHistory.length > 180) energyHistory.shift();
                 }
                 if (p.width > 480) {
-                    drawSparkline(p.width - 185, 12, 182, 60, energyHistory);
+                    VisualKit.drawSparkline(p, p.width - 185, 12, 182, 60, energyHistory, [45, 212, 191], {
+                        label: 'Total KE',
+                        zeroFloor: true,
+                        cornerRadius: 5
+                    });
                 }
 
                 // ── Telemetry ────────────────────────────────────────────
@@ -308,7 +255,7 @@ window.initSketch = function(config) {
                         draggedBody    = b;
                         dragOffset.x   = b.x - pos.x;
                         dragOffset.y   = b.y - pos.y;
-                        lastMPos       = { ...pos };
+                        dragTracker.start(pos.x, pos.y);
                         b.vx = 0; b.vy = 0;
                         return false;
                     }
@@ -326,17 +273,17 @@ window.initSketch = function(config) {
                 const pos = ptr();
                 draggedBody.x  = p.constrain(pos.x+dragOffset.x, draggedBody.radius, p.width -draggedBody.radius);
                 draggedBody.y  = p.constrain(pos.y+dragOffset.y, draggedBody.radius, p.height-draggedBody.radius);
-                draggedBody.vx = (pos.x - lastMPos.x) * 0.85;
-                draggedBody.vy = (pos.y - lastMPos.y) * 0.85;
-                lastMPos = { ...pos };
+                const vel = dragTracker.drag(pos.x, pos.y);
+                draggedBody.vx = vel.vx;
+                draggedBody.vy = vel.vy;
                 return false;
             };
 
             p.mouseReleased = function() {
                 if (!draggedBody) return;
-                const maxV = 24;
-                draggedBody.vx = p.constrain(draggedBody.vx, -maxV, maxV);
-                draggedBody.vy = p.constrain(draggedBody.vy, -maxV, maxV);
+                const vel = dragTracker.release();
+                draggedBody.vx = vel.vx;
+                draggedBody.vy = vel.vy;
                 draggedBody = null;
             };
 
