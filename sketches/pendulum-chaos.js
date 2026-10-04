@@ -84,17 +84,7 @@ window.initSketch = function(config) {
             ctx.onReset  = resetState;
             ctx.onResize = resetState;
 
-            // Per-segment fading polyline
-            function fadingTrail(trail, r, g, b) {
-                if (trail.length < 2) return;
-                p.noFill();
-                for (let i = 1; i < trail.length; i++) {
-                    const t = i / trail.length;
-                    p.stroke(r, g, b, Math.pow(t, 1.6) * 220);
-                    p.strokeWeight(1.2 + t*1.2);
-                    p.line(trail[i-1].x, trail[i-1].y, trail[i].x, trail[i].y);
-                }
-            }
+            const dragTracker = VisualKit.createDragTracker({ maxSpeed: 20 });
 
             // Arc arrow showing angular velocity
             function angularVelocityArc(cx, cy, omega, bobR, r, g, b) {
@@ -122,14 +112,10 @@ window.initSketch = function(config) {
             // Phase portrait inset
             function drawPhasePortrait(px, py, pw, ph) {
                 p.push();
-                p.noStroke(); p.fill(8, 12, 22, 215); p.rect(px, py, pw, ph, 7);
-                p.stroke(35, 48, 70); p.strokeWeight(1); p.noFill(); p.rect(px, py, pw, ph, 7);
+                VisualKit.drawInsetPanel(p, px, py, pw, ph, 'phase space (t1 vs t2)', { align: 'center', cornerRadius: 7 });
                 const cx = px+pw*0.5, cy = py+ph*0.5;
                 p.stroke(28, 38, 58); p.strokeWeight(1);
                 p.line(px+5, cy, px+pw-5, cy); p.line(cx, py+5, cx, py+ph-5);
-                p.noStroke(); p.fill(65, 85, 120); p.textSize(8.5);
-                p.textAlign(p.CENTER, p.TOP);
-                p.text('phase space (t1 vs t2)', px+pw*0.5, py+4);
                 const W = Math.PI;
                 const scale = Math.min(pw, ph) / (2*W*1.25);
                 const wrap = v => ((v+W)%(2*W)+2*W)%(2*W) - W;
@@ -161,32 +147,11 @@ window.initSketch = function(config) {
 
             // Energy sparkline inset
             function drawEnergySparkline(px, py, pw, ph) {
-                p.push();
-                p.noStroke(); p.fill(8, 12, 22, 215); p.rect(px, py, pw, ph, 7);
-                p.stroke(35, 48, 70); p.strokeWeight(1); p.noFill(); p.rect(px, py, pw, ph, 7);
-                p.noStroke(); p.fill(65, 85, 120); p.textSize(8.5);
-                p.textAlign(p.LEFT, p.TOP); p.text('Energy (RK4 drift)', px+5, py+4);
-                if (energyHistory.length > 2) {
-                    const mn = Math.min(...energyHistory);
-                    const mx = Math.max(...energyHistory);
-                    const range = Math.max(Math.abs(mx-mn), 0.01);
-                    p.noFill(); p.stroke(45, 212, 191, 190); p.strokeWeight(1.5);
-                    p.beginShape();
-                    for (let i = 0; i < energyHistory.length; i++) {
-                        const x = px+5 + (i/(energyHistory.length-1))*(pw-10);
-                        const y = py+ph-7 - ((energyHistory[i]-mn)/range)*(ph-18);
-                        p.vertex(x, y);
-                    }
-                    p.endShape();
-                    if (baseEnergy !== null) {
-                        const ry = py+ph-7 - ((baseEnergy-mn)/range)*(ph-18);
-                        p.drawingContext.setLineDash([3, 4]);
-                        p.stroke(255, 255, 255, 28); p.strokeWeight(1);
-                        p.line(px+5, ry, px+pw-5, ry);
-                        p.drawingContext.setLineDash([]);
-                    }
-                }
-                p.pop();
+                VisualKit.drawSparkline(p, px, py, pw, ph, energyHistory, [45, 212, 191], {
+                    label: 'Energy (RK4 drift)',
+                    baseline: baseEnergy,
+                    cornerRadius: 7
+                });
             }
 
             // Vertical chaos-divergence bar
@@ -197,12 +162,10 @@ window.initSketch = function(config) {
                 const cg = Math.round(p.lerp(212,  80, norm));
                 const cb = Math.round(p.lerp(191,  76, norm));
                 p.push();
-                p.noStroke(); p.fill(8, 12, 22, 215); p.rect(px, py, pw, ph, 5);
+                VisualKit.drawInsetPanel(p, px, py, pw, ph, 'Dt', { align: 'center', cornerRadius: 5, textSize: 8 });
                 const barH = (ph-22)*norm;
+                p.noStroke();
                 p.fill(cr, cg, cb, 190); p.rect(px+4, py+ph-11-barH, pw-8, barH, 3);
-                p.stroke(35, 48, 70); p.strokeWeight(1); p.noFill(); p.rect(px, py, pw, ph, 5);
-                p.noStroke(); p.fill(65, 85, 120); p.textSize(8);
-                p.textAlign(p.CENTER, p.TOP); p.text('Dt', px+pw*0.5, py+4);
                 p.fill(cr, cg, cb); p.textSize(8);
                 p.textAlign(p.CENTER, p.BOTTOM);
                 p.text(div < 0.01 ? div.toExponential(0) : div.toFixed(3), px+pw*0.5, py+ph-2);
@@ -247,8 +210,8 @@ window.initSketch = function(config) {
                 }
 
                 // 1. Fading trails
-                fadingTrail(trailB, 124, 106, 247);
-                fadingTrail(trailA, 232, 160, 76);
+                VisualKit.drawFadingTrail(p, trailB, [124, 106, 247], { exponent: 1.6, maxAlpha: 220, minWeight: 1.2, maxWeight: 2.4 });
+                VisualKit.drawFadingTrail(p, trailA, [232, 160, 76], { exponent: 1.6, maxAlpha: 220, minWeight: 1.2, maxWeight: 2.4 });
 
                 // 2. Ghost shadow rods
                 p.stroke(124, 106, 247, 40); p.strokeWeight(1.2); p.noFill();
@@ -273,21 +236,11 @@ window.initSketch = function(config) {
 
                 // 5. Upper bob (teal)
                 const r1 = Math.max(10, 10 + ctx.params.bobMass1*0.28);
-                p.noStroke(); p.fill(45, 212, 191, 30); p.circle(x1A, y1A, (r1+12)*2);
-                p.fill(45, 212, 191, 75); p.circle(x1A, y1A, (r1+5)*2);
-                p.fill(45, 212, 191); p.stroke(7, 9, 15); p.strokeWeight(2);
-                p.circle(x1A, y1A, r1*2);
-                p.noStroke(); p.fill(255, 255, 255, 50);
-                p.circle(x1A - r1*0.28, y1A - r1*0.28, r1*0.52);
+                VisualKit.drawGlowBody(p, x1A, y1A, r1, [45, 212, 191], { outerOffset: 12, innerOffset: 5, outerAlpha: 30, innerAlpha: 75, specularAlpha: 50 });
 
                 // 6. Lower bob (amber)
                 const r2 = Math.max(12, 12 + ctx.params.bobMass2*0.28);
-                p.noStroke(); p.fill(232, 160, 76, 30); p.circle(x2A, y2A, (r2+14)*2);
-                p.fill(232, 160, 76, 75); p.circle(x2A, y2A, (r2+6)*2);
-                p.fill(232, 160, 76); p.stroke(7, 9, 15); p.strokeWeight(2);
-                p.circle(x2A, y2A, r2*2);
-                p.noStroke(); p.fill(255, 255, 255, 50);
-                p.circle(x2A - r2*0.28, y2A - r2*0.28, r2*0.52);
+                VisualKit.drawGlowBody(p, x2A, y2A, r2, [232, 160, 76], { outerOffset: 14, innerOffset: 6, outerAlpha: 30, innerAlpha: 75, specularAlpha: 50 });
 
                 // 7. Angular velocity arcs
                 if (!draggedBob) {
@@ -337,9 +290,9 @@ window.initSketch = function(config) {
                 const x2 = x1 + l2v*Math.sin(stateA[1]);
                 const y2 = y1 + l2v*Math.cos(stateA[1]);
                 if (Math.hypot(pos.x-x2, pos.y-y2) < r2+16) {
-                    draggedBob=2; prevDragAngle=stateA[1]; lastDragDelta=0; return false;
+                    draggedBob=2; dragTracker.startAngle(stateA[1]); return false;
                 } else if (Math.hypot(pos.x-x1, pos.y-y1) < r1+14) {
-                    draggedBob=1; prevDragAngle=stateA[0]; lastDragDelta=0; return false;
+                    draggedBob=1; dragTracker.startAngle(stateA[0]); return false;
                 }
             };
 
@@ -350,16 +303,14 @@ window.initSketch = function(config) {
                 const l1v = ctx.params.rodLength1;
                 if (draggedBob === 1) {
                     const angle = Math.atan2(pos.x-oX, pos.y-oY);
-                    lastDragDelta = angle - prevDragAngle;
-                    prevDragAngle = angle;
+                    dragTracker.dragAngle(angle);
                     stateA[0]=angle; stateA[2]=0;
                     stateB[0]=angle+0.001; stateB[2]=0;
                 } else {
                     const x1 = oX + l1v*Math.sin(stateA[0]);
                     const y1 = oY + l1v*Math.cos(stateA[0]);
                     const angle = Math.atan2(pos.x-x1, pos.y-y1);
-                    lastDragDelta = angle - prevDragAngle;
-                    prevDragAngle = angle;
+                    dragTracker.dragAngle(angle);
                     stateA[1]=angle; stateA[3]=0;
                     stateB[1]=angle; stateB[3]=0;
                 }
@@ -369,7 +320,7 @@ window.initSketch = function(config) {
 
             p.mouseReleased = function() {
                 if (!draggedBob) return;
-                const omega = p.constrain(lastDragDelta * 14, -20, 20);
+                const omega = dragTracker.releaseAngle(14, 20);
                 if (draggedBob===1) { stateA[2]=omega; stateB[2]=omega; }
                 else                { stateA[3]=omega; stateB[3]=omega; }
                 draggedBob = null;
