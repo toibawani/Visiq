@@ -117,8 +117,52 @@
         p.line(x2, y2, x2 - hl * Math.cos(ang + 0.45), y2 - hl * Math.sin(ang + 0.45));
     }
 
+    /**
+     * Draw a dual-ring expanding collision flash burst.
+     * @param {object} p - p5 instance
+     * @param {object} flash - Flash event object {x, y, r, age, maxAge}
+     */
+    function drawCollisionFlash(p, flash) {
+        const t = 1 - flash.age / flash.maxAge;
+        if (t <= 0) return;
+        p.noFill();
+        p.stroke(255, 240, 200, t * t * 170);
+        p.strokeWeight(2.5 * t);
+        p.circle(flash.x, flash.y, flash.r * (1 + (1 - t) * 1.4) * 2);
+
+        p.stroke(255, 240, 200, t * t * 55);
+        p.strokeWeight(9 * t);
+        p.circle(flash.x, flash.y, flash.r * 2 * 0.55);
+    }
+
+    /**
+     * Create a standard collision flash object.
+     */
+    function createCollisionFlash(x, y, radius, maxAge = 24) {
+        return { x, y, r: radius, age: 0, maxAge };
+    }
+
+    /**
+     * Age, render, and filter an array of collision flashes.
+     * @param {object} p - p5 instance
+     * @param {Array<object>} flashes - Array of flash objects
+     * @returns {Array<object>} Filtered array of surviving flashes
+     */
+    function updateCollisionFlashes(p, flashes) {
+        if (!flashes || flashes.length === 0) return [];
+        p.noFill();
+        for (let i = 0; i < flashes.length; i++) {
+            drawCollisionFlash(p, flashes[i]);
+            flashes[i].age++;
+        }
+        return flashes.filter(f => f.age < f.maxAge);
+    }
+
     VisualKit.drawFadingTrail = drawFadingTrail;
     VisualKit.drawGlowBody = drawGlowBody;
     VisualKit.drawArrow = drawArrow;
+    VisualKit.drawCollisionFlash = drawCollisionFlash;
+    VisualKit.createCollisionFlash = createCollisionFlash;
+    VisualKit.updateCollisionFlashes = updateCollisionFlashes;
     window.VisualKit = VisualKit;
 })();
