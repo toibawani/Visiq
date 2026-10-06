@@ -23,6 +23,8 @@ class SimBase {
      * @param {function(any, SimBase): void} config.setup Custom p5 setup and simulation logic
      * @param {function(SimBase): Record<string, string|number>} [config.getReadouts] Callback returning live computed values
      * @param {number} [config.targetFps=60] Target frame rate (60 or intentional 30)
+     * @param {{unit: string, pxPerUnit: number}} [config.scale] Optional canvas scale so
+     *        measurement tools can report real units (e.g. { unit: 'm', pxPerUnit: 100 })
      */
     constructor(config) {
         this.id = config.id;
@@ -32,6 +34,7 @@ class SimBase {
         this.setupFn = config.setup;
         this.getReadoutsFn = config.getReadouts || null;
         this.targetFps = config.targetFps || 60;
+        this.scale = config.scale || null;
 
         // Runtime state
         this.params = {};
@@ -49,6 +52,7 @@ class SimBase {
         this.timeouts = [];
         this._readoutSpans = {};
         this._isDestroyed = false;
+        this._postDrawHooks = [];
 
         this.initParameters();
     }
@@ -130,6 +134,9 @@ class SimBase {
                 if (typeof self.setupFn === 'function') {
                     self.setupFn(p, self);
                 }
+
+                // Shared layers (annotation overlay) paint after the sketch's own draw
+                self._installPostDrawHook(p);
             };
         };
 
@@ -147,7 +154,56 @@ class SimBase {
         // Setup keyboard shortcuts
         this.setupKeyboardShortcuts();
 
+        // Let shared layers (instrument overlay, notebook capture) attach to this sim
+        document.dispatchEvent(new CustomEvent('visiq:sim-mounted', { detail: { sim: this } }));
+
         return this.p5Instance;
+    }
+
+    /**
+     * Register a callback that runs after the sketch's own p.draw(), once per frame.
+     * This is how shared overlays draw without every sketch opting in.
+     * @param {(sim: SimBase, p: any) => void} fn
+     * @returns {Function} the same function, for easy removal
+     */
+    addPostDraw(fn) {
+        if (typeof fn === 'function' && this._postDrawHooks.indexOf(fn) === -1) {
+            this._postDrawHooks.push(fn);
+        }
+        return fn;
+    }
+
+    /**
+     * Remove a previously registered post-draw callback.
+     */
+    removePostDraw(fn) {
+        const idx = this._postDrawHooks.indexOf(fn);
+        if (idx !== -1) this._postDrawHooks.splice(idx, 1);
+    }
+
+    /**
+     * Wrap the sketch's draw once so post-draw hooks run after it, in the same frame.
+     * No second draw loop is started and the sketch is never edited for this.
+     */
+    _installPostDrawHook(p) {
+        if (!p || p._visiqPostDrawWrapped) return;
+        const sketchDraw = p.draw;
+        const self = this;
+
+        p.draw = function visiqPostDrawWrapper(...args) {
+            if (typeof sketchDraw === 'function') sketchDraw.apply(this, args);
+            if (self._isDestroyed || self._postDrawHooks.length === 0) return;
+            for (let i = 0; i < self._postDrawHooks.length; i++) {
+                try {
+                    self._postDrawHooks[i](self, p);
+                } catch (e) {
+                    // A broken overlay must not take the sketch down or spam every frame.
+                    console.warn('[SimBase] removing failing post-draw hook:', e);
+                    self._postDrawHooks.splice(i--, 1);
+                }
+            }
+        };
+        p._visiqPostDrawWrapped = true;
     }
 
     /**
@@ -541,6 +597,10 @@ class SimBase {
      */
     destroy() {
         this._isDestroyed = true;
+
+        // Shared layers detach before anything is torn down
+        document.dispatchEvent(new CustomEvent('visiq:sim-destroyed', { detail: { sim: this } }));
+        this._postDrawHooks = [];
 
         // Worker / extra teardown (galaxy, ocean, gravity-tree). Must run before p5.remove().
         if (typeof this.onDestroy === 'function') {
