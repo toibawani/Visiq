@@ -1,0 +1,234 @@
+[
+  {
+    "simId": "newton",
+    "avgDelta": 16.26,
+    "fps": 60,
+    "minDelta": 2.6,
+    "maxDelta": 18.2,
+    "holds60": true
+  },
+  {
+    "simId": "black-hole",
+    "avgDelta": 16.39,
+    "fps": 60,
+    "minDelta": 6.7,
+    "maxDelta": 20.7,
+    "holds60": true
+  },
+  {
+    "simId": "wave-interference",
+    "avgDelta": 31.97,
+    "fps": 31,
+    "minDelta": 25.5,
+    "maxDelta": 43.5,
+    "holds60": false
+  },
+  {
+    "simId": "quantum-tunnel",
+    "avgDelta": 16.33,
+    "fps": 60,
+    "minDelta": 4.5,
+    "maxDelta": 18.1,
+    "holds60": true
+  },
+  {
+    "simId": "pendulum-chaos",
+    "avgDelta": 16.33,
+    "fps": 60,
+    "minDelta": 5.1,
+    "maxDelta": 19.3,
+    "holds60": true
+  },
+  {
+    "simId": "magnetic-field",
+    "avgDelta": 16.24,
+    "fps": 60,
+    "minDelta": 2.1,
+    "maxDelta": 17.7,
+    "holds60": true
+  },
+  {
+    "simId": "doppler-effect",
+    "avgDelta": 16.59,
+    "fps": 60,
+    "minDelta": 11.9,
+    "maxDelta": 21.7,
+    "holds60": true
+  },
+  {
+    "simId": "pressure-temperature",
+    "avgDelta": 16.45,
+    "fps": 60,
+    "minDelta": 9.1,
+    "maxDelta": 17.5,
+    "holds60": true
+  },
+  {
+    "simId": "mitosis",
+    "avgDelta": 16.33,
+    "fps": 60,
+    "minDelta": 5.1,
+    "maxDelta": 18,
+    "holds60": true
+  },
+  {
+    "simId": "meiosis",
+    "avgDelta": 16.37,
+    "fps": 60,
+    "minDelta": 11.4,
+    "maxDelta": 19.8,
+    "holds60": true
+  },
+  {
+    "simId": "dna-replication",
+    "avgDelta": 16.31,
+    "fps": 60,
+    "minDelta": 2.4,
+    "maxDelta": 17.8,
+    "holds60": true
+  },
+  {
+    "simId": "protein-folding",
+    "avgDelta": 16.14,
+    "fps": 60,
+    "minDelta": 2.7,
+    "maxDelta": 17.8,
+    "holds60": true
+  },
+  {
+    "simId": "enzyme-kinetics",
+    "avgDelta": 16.25,
+    "fps": 60,
+    "minDelta": 3.9,
+    "maxDelta": 19.1,
+    "holds60": true
+  },
+  {
+    "simId": "neuron-firing",
+    "avgDelta": 16.49,
+    "fps": 60,
+    "minDelta": 10.1,
+    "maxDelta": 18.6,
+    "holds60": true
+  },
+  {
+    "simId": "population-genetics",
+    "avgDelta": 16.29,
+    "fps": 60,
+    "minDelta": 4.2,
+    "maxDelta": 18.2,
+    "holds60": true
+  },
+  {
+    "simId": "virus-spreading",
+    "avgDelta": 16.43,
+    "fps": 60,
+    "minDelta": 7.3,
+    "maxDelta": 18.5,
+    "holds60": true
+  },
+  {
+    "simId": "plate-tectonics",
+    "avgDelta": 16.41,
+    "fps": 60,
+    "minDelta": 10.2,
+    "maxDelta": 19,
+    "holds60": true
+  },
+  {
+    "simId": "ocean-currents",
+    "avgDelta": 16.59,
+    "fps": 60,
+    "minDelta": 13.1,
+    "maxDelta": 17.9,
+    "holds60": true
+  },
+  {
+    "simId": "hurricane-formation",
+    "avgDelta": 16.61,
+    "fps": 60,
+    "minDelta": 14.3,
+    "maxDelta": 18.5,
+    "holds60": true
+  },
+  {
+    "simId": "erosion-weathering",
+    "avgDelta": 16.45,
+    "fps": 60,
+    "minDelta": 8.4,
+    "maxDelta": 19.8,
+    "holds60": true
+  },
+  {
+    "simId": "water-cycle",
+    "avgDelta": 16.27,
+    "fps": 60,
+    "minDelta": 2.5,
+    "maxDelta": 18,
+    "holds60": true
+  },
+  {
+    "simId": "earthquake-waves",
+    "avgDelta": 16.6,
+    "fps": 60,
+    "minDelta": 14.8,
+    "maxDelta": 19.1,
+    "holds60": true
+  },
+  {
+    "simId": "volcanic-eruption",
+    "avgDelta": 16.34,
+    "fps": 60,
+    "minDelta": 5.9,
+    "maxDelta": 18.6,
+    "holds60": true
+  },
+  {
+    "simId": "black-hole-orbit",
+    "avgDelta": 16.44,
+    "fps": 60,
+    "minDelta": 9.6,
+    "maxDelta": 17.9,
+    "holds60": true
+  },
+  {
+    "simId": "galaxy-collision",
+    "avgDelta": 16.5,
+    "fps": 60,
+    "minDelta": 11,
+    "maxDelta": 18.4,
+    "holds60": true
+  },
+  {
+    "simId": "star-lifecycle",
+    "avgDelta": 16.28,
+    "fps": 60,
+    "minDelta": 3.6,
+    "maxDelta": 17.7,
+    "holds60": true
+  },
+  {
+    "simId": "exoplanet-detection",
+    "avgDelta": 16.49,
+    "fps": 60,
+    "minDelta": 9,
+    "maxDelta": 18.3,
+    "holds60": true
+  },
+  {
+    "simId": "neutron-star",
+    "avgDelta": 16.51,
+    "fps": 60,
+    "minDelta": 10.2,
+    "maxDelta": 18.5,
+    "holds60": true
+  },
+  {
+    "simId": "cosmic-expansion",
+    "avgDelta": 16.33,
+    "fps": 60,
+    "minDelta": 4,
+    "maxDelta": 18.2,
+    "holds60": true
+  }
+]
