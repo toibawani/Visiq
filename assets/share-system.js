@@ -128,9 +128,25 @@ class ShareSystem {
     }
     
     generateShareLink(simName) {
-        const baseUrl = window.location.origin + window.location.pathname;
-        const simSlug = simName.toLowerCase().replace(/\s+/g, '-');
-        return `${baseUrl}?sim=${simSlug}`;
+        const url = new URL(window.location.origin + window.location.pathname);
+        const sim = (typeof SIMULATIONS !== 'undefined')
+            ? SIMULATIONS.find(s => s.id === simName || s.title === simName)
+            : null;
+
+        if (sim) {
+            // Use the catalog id, not a slugified title, and carry the live parameters
+            // so the link reproduces this exact setup (same mechanism SimBase syncs).
+            url.searchParams.set('sim', sim.id);
+            const ctrl = window.gallery && window.gallery._currentSimController;
+            if (ctrl && ctrl.params) {
+                for (const [key, val] of Object.entries(ctrl.params)) {
+                    url.searchParams.set(key, typeof val === 'number' ? Number(val.toFixed(3)).toString() : String(val));
+                }
+            }
+        } else {
+            url.searchParams.set('sim', String(simName).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''));
+        }
+        return url.toString();
     }
     
     copyLink(simName) {
