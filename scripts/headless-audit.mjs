@@ -7,6 +7,7 @@
 //   node scripts/headless-audit.mjs fps <simId> [throttle]   measure rAF fps (optional CPU throttle rate)
 //   node scripts/headless-audit.mjs compare <idA> <idB> [throttle]
 //   node scripts/headless-audit.mjs shot <urlPath> <out.png>
+//   node scripts/headless-audit.mjs click <simId> <selector> ['js after click']
 //   node scripts/headless-audit.mjs eval <urlPath> <js file | 'js-expr'>
 
 import { spawn } from 'node:child_process';
@@ -248,6 +249,25 @@ async function main() {
             const fps = await evaluate(cdp, FPS_SNIPPET(parseInt(process.env.MEASURE_MS || '4000', 10)), true);
             const extra = await evaluate(cdp, `JSON.stringify([...document.querySelectorAll('canvas')].map(c => c.width + 'x' + c.height))`);
             console.log(JSON.stringify({ cmd, args, throttle, fps, canvases: extra, errors: errors.slice(0, 8) }, null, 2));
+        } else if (cmd === 'click') {
+            // Trusted (user-gesture) click via CDP, then evaluate an expression.
+            const [simId, selector, jsAfter] = args;
+            await goto(cdp, `${base}/index.html?sim=${simId}`);
+            await waitFor(cdp, `!!document.querySelector(${JSON.stringify(selector)})`, 20000);
+            await sleep(parseInt(process.env.WAIT_MS || '1500', 10));
+            await evaluate(cdp, `document.querySelector(${JSON.stringify(selector)}).scrollIntoView({ block: 'center' }) || true`);
+            await sleep(700);
+            const rect = JSON.parse(await evaluate(cdp, `JSON.stringify((() => {
+                const r = document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();
+                return { x: r.x + r.width / 2, y: r.y + r.height / 2, w: r.width, h: r.height };
+            })())`));
+            if (!rect.w || !rect.h) throw new Error('target has zero size: ' + JSON.stringify(rect));
+            await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: rect.x, y: rect.y });
+            await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: rect.x, y: rect.y, button: 'left', clickCount: 1 });
+            await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: rect.x, y: rect.y, button: 'left', clickCount: 1 });
+            await sleep(700);
+            if (jsAfter) console.log(await evaluate(cdp, jsAfter, true));
+            else console.log('clicked', selector, JSON.stringify(rect));
         } else if (cmd === 'eval') {
             const [urlPath, jsArg] = args;
             await goto(cdp, base + urlPath);
