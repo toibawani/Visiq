@@ -139,6 +139,28 @@ async function waitFor(cdp, expr, timeout = 15000) {
     throw new Error('waitFor timed out: ' + expr);
 }
 
+// The app sits behind a local auth gate: without a session, #main-app is display:none
+// and canvases get the 600x400 fallback box. Seed a session and reload so every
+// measurement runs against a fully shown application.
+async function goto(cdp, url) {
+    await cdp.send('Page.navigate', { url });
+    await sleep(500);
+    for (let i = 0; i < 3; i++) {
+        let gated = true;
+        try {
+            gated = await evaluate(cdp, `getComputedStyle(document.getElementById('main-app')).display === 'none'`);
+        } catch (e) { /* page still loading */ }
+        if (!gated) return;
+        await evaluate(cdp, `(() => {
+            localStorage.setItem('visiq_session', JSON.stringify({ email: 'audit@visiq.test', loginTime: Date.now() }));
+            localStorage.setItem('visiq_user_email', 'audit@visiq.test');
+            return true;
+        })()`);
+        await cdp.send('Page.navigate', { url });
+        await sleep(1800);
+    }
+}
+
 const FPS_SNIPPET = (ms) => `new Promise(res => {
     const d = []; let last = performance.now(); const t0 = last;
     function step(t) { d.push(t - last); last = t;
@@ -181,14 +203,14 @@ async function main() {
     try {
         if (cmd === 'shot') {
             const [urlPath, out] = args;
-            await cdp.send('Page.navigate', { url: base + urlPath });
+            await goto(cdp, base + urlPath);
             await sleep(parseInt(process.env.WAIT_MS || '4000', 10));
             const { data } = await cdp.send('Page.captureScreenshot', { format: 'png' });
             await writeFile(out, Buffer.from(data, 'base64'));
             console.log('wrote', out);
         } else if (cmd === 'smoke') {
             const [simId] = args;
-            await cdp.send('Page.navigate', { url: `${base}/index.html?sim=${simId}` });
+            await goto(cdp, `${base}/index.html?sim=${simId}`);
             await sleep(400);
             await waitFor(cdp, `document.querySelector('#simulation-view.active') === true`, 20000).catch(() => {});
             await sleep(parseInt(process.env.WAIT_MS || '5000', 10));
@@ -212,7 +234,7 @@ async function main() {
             const urlPath = cmd === 'fps'
                 ? `/index.html?sim=${args[0]}`
                 : `/index.html?compare=${args[0]},${args[1]}`;
-            await cdp.send('Page.navigate', { url: base + urlPath });
+            await goto(cdp, base + urlPath);
             await sleep(500);
             await waitFor(cdp, `document.querySelectorAll('#simulation-canvas canvas, .compare-canvas canvas').length > 0`, 25000);
             if (cmd === 'compare') {
@@ -228,7 +250,7 @@ async function main() {
             console.log(JSON.stringify({ cmd, args, throttle, fps, canvases: extra, errors: errors.slice(0, 8) }, null, 2));
         } else if (cmd === 'eval') {
             const [urlPath, jsArg] = args;
-            await cdp.send('Page.navigate', { url: base + urlPath });
+            await goto(cdp, base + urlPath);
             await sleep(parseInt(process.env.WAIT_MS || '4000', 10));
             let js = jsArg;
             if (existsSync(jsArg)) js = await readFile(jsArg, 'utf8');
