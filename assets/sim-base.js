@@ -278,6 +278,17 @@ class SimBase {
         resetBtn.onclick = () => this.reset();
         toolbar.appendChild(resetBtn);
 
+        // Copy link to this setup (URL already carries sim + params via syncUrlParams)
+        const linkBtn = document.createElement('button');
+        linkBtn.type = 'button';
+        linkBtn.className = 'btn-control btn-copy-link';
+        linkBtn.setAttribute('aria-label', 'Copy link to this setup');
+        linkBtn.setAttribute('title', 'Copy link to this setup');
+        linkBtn.innerHTML = `<span class="icon" aria-hidden="true">🔗</span> <span class="label">Copy link</span>`;
+        linkBtn.onclick = () => this.copySetupLink(linkBtn);
+        toolbar.appendChild(linkBtn);
+        this._linkBtn = linkBtn;
+
         // Speed control selector
         const speedGroup = document.createElement('div');
         speedGroup.className = 'speed-control-group';
@@ -417,6 +428,52 @@ class SimBase {
                 }
             }
         }
+    }
+
+    /**
+     * Copy a link that reopens this exact setup (sim id + current parameters).
+     * Falls back to a hidden textarea when the async Clipboard API is unavailable
+     * (non-secure contexts / denied permission).
+     * @param {HTMLButtonElement} [button] Optional button whose label confirms the copy.
+     */
+    async copySetupLink(button) {
+        this.syncUrlParams();
+        const url = window.location.href;
+        const label = button ? button.querySelector('.label') : null;
+        const original = label ? label.textContent : null;
+        let copied = false;
+
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(url);
+                copied = true;
+            }
+        } catch (e) {
+            copied = false;
+        }
+
+        if (!copied) {
+            // Fallback for denied permission / non-secure contexts / older browsers.
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = url;
+                ta.setAttribute('readonly', '');
+                ta.style.cssText = 'position:fixed; top:-1000px; opacity:0;';
+                document.body.appendChild(ta);
+                ta.select();
+                copied = document.execCommand('copy');
+                ta.remove();
+            } catch (e) {
+                copied = false;
+            }
+        }
+
+        if (label) {
+            label.textContent = copied ? 'Link copied' : 'Copy failed';
+            this.setTimeout(() => { if (label.textContent !== original) label.textContent = original; }, 1800);
+        }
+        if (!copied) console.warn('[SimBase] copy link failed');
+        return copied;
     }
 
     /**
