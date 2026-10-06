@@ -326,6 +326,11 @@ class Gallery {
         
         console.log('[GALLERY] Loading sketch:', sketchId);
         
+        // Clear any previously registered initSketch so a sketch file that never
+        // defines one (hurricane-formation, star-lifecycle) can't silently remount
+        // the previous simulation under the new title.
+        delete window.initSketch;
+        
         const existingScript = document.querySelector(`script[data-sketch="${sketchId}"]`);
         if (existingScript) existingScript.remove();
 
@@ -356,6 +361,18 @@ class Gallery {
                     } else {
                         this._p5Instance = window.__lastP5Instance || null;
                     }
+                } else {
+                    // Sketch file loaded but never registered window.initSketch
+                    // (or died before it could). Say so instead of leaving a blank frame.
+                    console.error('[GALLERY] Sketch did not register window.initSketch:', sketchId);
+                    container.innerHTML = `
+                        <div class="sim-error">
+                            <span class="sim-error-icon">⚠️</span>
+                            <p>This simulation isn't on the shared sim engine yet.</p>
+                            <p class="sim-error-hint">It can't mount here, so nothing was drawn. Pick another module.</p>
+                            <button class="btn-retry-sketch" onclick="window.gallery.backToGallery()">Back to Gallery</button>
+                        </div>
+                    `;
                 }
             });
         };
