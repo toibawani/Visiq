@@ -711,14 +711,10 @@ class Gallery {
         this._compareSpeed = 1.0;
         document.title = `Compare · ${panes[0].title} vs ${panes[1].title} — VISIQ`;
 
-        // Sample every sample tick unless the tab is hidden — redrawing while
-        // hidden wastes frames and would leave time gaps in the history.
-        const tick = () => {
-            if (document.hidden) return;
-            this._updateSparklines();
-        };
+        // One sample per visible tick; skipped while the tab is hidden so no
+        // gaps or wasted redraws accumulate in the rolling history.
         clearInterval(this._sparklineTimer);
-        this._sparklineTimer = setInterval(tick, this._reduceMotion ? 1000 : 250);
+        this._sparklineTimer = setInterval(() => this._updateSparklines(), this._reduceMotion ? 1000 : 250);
 
         const backBtn = view.querySelector('.btn-back');
         if (backBtn) {
@@ -803,7 +799,7 @@ class Gallery {
 
     _updateSparklines() {
         const wrap = document.getElementById('compare-sparkline-wrap');
-        if (!wrap || !this._compareSims || this._compareSims.length !== 2) return;
+        if (!wrap || document.hidden || !this._compareSims || this._compareSims.length !== 2) return;
         if (!this._sparklineHistory) this._sparklineHistory = [[], []];
         const HISTORY_CAP = 60; // ~15s of samples at the 250ms tick
 
