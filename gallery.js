@@ -694,6 +694,7 @@ class Gallery {
         this._renderSparklineCells(panes);
         this._sparklineHistory = [[], []];
         this._compareSpeed = 1.0;
+        document.title = `Compare · ${panes[0].title} vs ${panes[1].title} — VISIQ`;
 
         // Sparklines were previously rendered only once when each script
         // loaded; sample them on an interval so they track live energy.
@@ -879,6 +880,7 @@ class Gallery {
         // Empty the view
         view.innerHTML = '';
         view.classList.remove('compare-mode');
+        document.title = 'VISIQ – Interactive Science Learning';
         // Restore the gallery view (mirrors backToGallery)
         const galleryView = document.getElementById('gallery-view');
         if (galleryView) galleryView.classList.add('active');
