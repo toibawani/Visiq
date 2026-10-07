@@ -665,16 +665,19 @@ class Gallery {
         const playBtn = document.getElementById('compare-play-pause');
         const resetBtn = document.getElementById('compare-reset');
         const speedSelect = document.getElementById('compare-speed');
-        if (playBtn && this._compareSims.length === 2) {
-            playBtn.onclick = () => { this._compareSims.forEach(s => s.togglePlay()); };
+        // Entries can be null when a sketch failed to load — operate only on
+        // controllers that actually exist, and never throw on a failed pane.
+        const loadedSims = () => (this._compareSims || []).filter(s => s != null);
+        if (playBtn) {
+            playBtn.onclick = () => { loadedSims().forEach(s => s.togglePlay && s.togglePlay()); };
         }
-        if (resetBtn && this._compareSims.length === 2) {
-            resetBtn.onclick = () => { this._compareSims.forEach(s => s.reset()); };
+        if (resetBtn) {
+            resetBtn.onclick = () => { loadedSims().forEach(s => s.reset && s.reset()); };
         }
-        if (speedSelect && this._compareSims.length === 2) {
+        if (speedSelect) {
             speedSelect.onchange = (e) => {
                 const speed = parseFloat(e.target.value) || 1.0;
-                this._compareSims.forEach(s => { s.speed = speed; });
+                loadedSims().forEach(s => { s.speed = speed; });
             };
         }
     }
