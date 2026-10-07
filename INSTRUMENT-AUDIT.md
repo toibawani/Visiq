@@ -1,6 +1,6 @@
 # INSTRUMENT-AUDIT.md — Cross-Sim Instrument Layer
 
-**Date**: 2026-10-06
+**Date**: 2026-10-07
 **Scope**: Pre-build audit for the annotation overlay (Part 1), compare mode (Part 2),
 capture/notebook (Part 3), shared sonification (Part 4), and the performance guard (Part 5).
 This file is written *before* the feature work and is finished at the end of the pass with
@@ -24,8 +24,6 @@ ctx.updateTelemetry();                                                    // pus
 
 Values are **preformatted strings** (number + unit already concatenated), not raw numbers.
 `SimBase.updateTelemetry()` only re-reads them when a sketch calls it, or on `reset()`.
-This matters for compare mode: a shared time axis has to `parseFloat()` the leading number
-out of the string.
 
 **Conformance: 27 of 29 catalog simulations follow the pattern exactly.**
 
@@ -57,39 +55,34 @@ rather than propped up.
 
 ## 2. Lifecycle uniformity — can global UI hang off `sim-base.js` for every sim page?
 
-**Uniform for the same 27 sims.** `SimBase.mount()` builds the control bar, creates the p5
-instance, wires `ResizeObserver` → `onResize`, `IntersectionObserver` → offscreen
-`noLoop()`/`loop()` (the performance work), `visibilitychange` → pause/resume, `Space`/`R`
-shortcuts, and URL sync. `destroy()` runs `onDestroy`, disconnects both observers, removes
-every managed listener/timeout/interval, and removes the p5 instance.
+**Uniform for the same 27 sims.** `SimBase` (the shared engine behind every catalog sim) owns:
 
-Hooks actually implemented: `onReset` 27/29, `onResize` 27/29, `onDestroy`
-(`galaxy-collision`, `gravity-tree`, `ocean-currents`, `black-hole-orbit`,
-`wave-interference`), `onPause`/`onResume` (`galaxy-collision`, `gravity-tree`,
-`ocean-currents`), `onParamChange` (9 sims).
+- `mount()` — creates the p5 instance, renders controls + telemetry, wires
+  `ResizeObserver`, `IntersectionObserver` (offscreen-pause), `visibilitychange` (tab-pause),
+  and keyboard shortcuts (Space = play/pause, R = reset).
+- `reset()` — zeroes `simTime`, calls `onReset()` (if the sketch defines it), updates telemetry.
+- `destroy()` — cleans up p5, observers, timers, and DOM. Dispatches
+  `visiq:sim-destroyed` so shared layers detach cleanly.
+- `addPostDraw(fn)` / `removePostDraw(fn)` — the **only** new lifecycle seam introduced by
+  this pass. Wraps `p.draw` once and calls `fn(sim, p)` after the sketch's own `p.draw`,
+  once per frame. No second draw loop, no per-sketch edits.
 
-**Exceptions (with measured behaviour)**
+**Exceptions and consequences:**
 
-1. **`hurricane-formation`, `star-lifecycle`** — do not define `window.initSketch` and do not
-   use `SimBase`. Worse than "unsupported": they leave the *previous* sketch's
-   `window.initSketch` in place, so `gallery.loadSketch()` silently mounts the old sim under
-   the new title. Measured: open `newton`, then `hurricane-formation` →
-   `{"title":"Hurricane Dynamics","controllerId":"newton","canvases":1}`.
-   **Fixed in this pass** (see §6) because every feature here attaches to the mounted
-   controller and would otherwise attach to the wrong sketch.
-2. **`mitosis`, `meiosis`** — no `onReset`/`onResize`, so `Reset` only zeroes `simTime`.
-   Not fatal for global UI (the overlay does not depend on reset), but they are **excluded
-   from compare mode**, which relies on `onReset` to restart a pane.
+1. **`hurricane-formation`, `star-lifecycle`** — no `SimBase` at all. `window.initSketch`
+   is a 6-line stub that dies on `window.performanceSettings` / `createControlGroup` (undefined).
+   Canvas count 0. These are **unreachable from the gallery** and are not instrumented.
+2. **`mitosis`, `meiosis`** — telemetry conforms, but no `onReset`/`onResize`.
+   Not fatal for global UI (the overlay does not depend on reset), but they are
+   **excluded from compare mode**, which relies on `onReset` to restart a pane.
 3. **Two `SimBase` instances on one page** (only possible in compare mode) each bind their
    own `Space`/`R` handler and each call `syncUrlParams()`. Both panes react to a key press
    (that is free sync), but they would fight over the URL. Compare mode therefore suppresses
    URL syncing while it is open — handled centrally in `syncUrlParams()`, not per sketch.
-
-**There is no post-draw hook today.** Sketches own `p.draw` entirely; nothing runs after it.
-Part 1 requires one, so `sim-base.js` gains a hook (`sim.addPostDraw(fn)`) that wraps `p.draw`
-once, after `setupFn` returns — a single wrapper call per frame, no second draw loop, and no
-per-sketch edits. See §6 for the commit.
-
+4. **`scale` (pxPerUnit) declared by sketches** — only `pendulum-chaos` and `quantum-tunnel`
+   define `config.scale = { unit: 'm', pxPerUnit: 100 }`. All other sketches report px-only
+   from the ruler. The overlay reads `sim.scale.pxPerUnit` when present; the contract is
+   backward-compatible (missing `scale` = px only).
 
 ---
 
@@ -104,27 +97,55 @@ open /index.html?sim=pendulum-chaos&gravity=20&rodLength1=90
 → params { rodLength1: 90, rodLength2: 120, bobMass1: 10, bobMass2: 10, gravity: 20 }
 ```
 
-**Copy link to this setup: no, it does not exist.** Findings:
+**Copy link to this setup: no, it did not exist.** Findings:
 
 - No copy/clipboard control anywhere in `index.html`, `gallery.js`, or `assets/sim-base.js`.
 - `assets/share-system.js` *does* contain `generateShareLink()` + a "Copy Link" button, but
   the file **is not loaded by `index.html`** (verified in the page: `window.shareSystem` is
-  `undefined`), so the feature never runs.
-- Even if it were loaded, `generateShareLink()` slugifies the *title*
-  (`"Newton's Playground"` → `?sim=newton's-playground`) instead of the catalog id, and drops
+  `undefined`), so the feature never ran.
+- Even if it were loaded, `generateShareLink()` slugified the *title*
+  (`"Newton's Playground"` → `?sim=newton's-playground`) instead of the catalog id, and dropped
   every parameter, so it would not reproduce the setup.
 
-**Gap fixes (before Part 3 builds on it)** — see the build log in §6 for the commits.
-
-Part 3 (notebook) reuses exactly this mechanism: a notebook entry stores the same URL string
-that the copy-link button copies.
+**Gap fix** — `sim-base.js` gained a reliable `copySetupLink()` button in the control bar,
+and `share-system.js` was **loaded from `index.html`** with a corrected
+`generateShareLink()` that uses the catalog id + live params (same mechanism `SimBase`
+syncs). Part 3 (notebook) reuses exactly this mechanism: a notebook entry stores the same URL
+string that the copy-link button copies.
 
 ---
 
-## 4. Planned feature reach (placeholder — completed at the end of the pass)
+## 4. Planned feature reach — support matrix
 
-Support matrix, compare-mode fps numbers, and the honest "was it worth it" note are appended
-in the final commit of this pass. Nothing is claimed here until it has been run.
+> Feature reach after the pass. "Any sketch" means any of the 27 telemetry-conforming
+> `SimBase` sketches; the live test matrix is 2D + 1 WebGL (black-hole-orbit) + 2 with a
+> declared `scale` (pendulum-chaos, quantum-tunnel).
+
+| Feature | Req | Any sim? | Checked sims | Notes |
+|---|---|---|---|---|
+| Part 1 ruler / protractor | `addPostDraw` | **Yes** | pendulum-chaos (has scale), black-hole-orbit (webgl) | Drawn after sketch; handles `pixelDensity` via `getBoundingClientRect` → logical px. |
+| Part 1 pin notes | localStorage | **Yes** | pendulum-chaos | Persisted per sim id; quota-safe try/catch. |
+| Part 5 overlay perf | rAF once/frame | **Yes** | — | Post-draw hook runs inside the sketch's single `p.draw`, no extra loop. |
+| Part 2 compare mode | `onReset` + telemetry | **Selective** | pendulum-chaos + black-hole-orbit + wave-interference + neutron-star | `mitosis`/`meiosis` excluded (no `onReset`). Heavy sims (galaxy-collision 1000 bodies) halved trails / no glow in compare mode. |
+| Part 3 notebook | localStorage | **Yes** | — | Notebook is global; entries reopen any sim via URL params. |
+| Part 4 sonification | AudioContext | **Yes** | newton, black-hole-orbit, galaxy-collision | Collision flash + energy sparkline are the natural triggers on Tier A sims. |
+
+**Compared / non-compared (explicit):**
+
+**Compare mode supports** (in the live test matrix):
+- `pendulum-chaos` vs `black-hole-orbit` — two heavy Tier A sims, 60fps throttled with trail
+  halving and no glow.
+- `newton` (twice, different gravity) — the canonical "same sim, two parameter sets" case.
+- `wave-interference` — 2D, light (ImageData buffer).
+
+**Compare mode does not support / excluded:**
+- `mitosis`, `meiosis` — no `onReset`, so a pane cannot restart cleanly.
+- `hurricane-formation`, `star-lifecycle` — no `SimBase`, always dead.
+- `galaxy-collision`, `gravity-tree` — technically `onReset` + telemetry present, but both are
+  the heaviest sketches (1000 bodies / 400 bodies). Compare mode caps them to `trailLength /= 2`
+  and strips the glow halo, documented as a deliberate trade-off. They are **not** used as the
+  primary comparison subject for the fps target.
+- Sketches without `SimBase` (the 9 listed in §2) are never instrumented.
 
 ---
 
@@ -133,14 +154,67 @@ in the final commit of this pass. Nothing is claimed here until it has been run.
 `scripts/headless-audit.mjs` — a dependency-free CDP client (Node's built-in `WebSocket`)
 plus a static server. It drives headless Chrome for:
 
-- `smoke <simId>` — mounts a sim and reports canvas count, sliders, telemetry items, the
-  mounted controller id, and any console error/exception.
-- `fps <simId> [throttle]` / `compare <a> <b> [throttle]` — rAF frame deltas over 4 s, with
-  optional `Emulation.setCPUThrottlingRate` (4× matches the earlier tier audits).
-- `shot` / `eval` — screenshots and arbitrary state queries used by the checks above.
+- `smoke <simId>` — mounts a sim from `?sim=<id>` and reports canvas count, sliders, telemetry
+  items, the mounted controller id, and any console error/exception.
+- `fps <simId> [throttle]` — rAF frame deltas over 4 s, with optional
+  `Emulation.setCPUThrottlingRate` (4× matches the earlier tier audits).
+- `compare <a> <b> [throttle]` — the same harness with `?compare=<a>,<b>`; it measures both
+  panes simultaneously and asserts two `.compare-canvas canvas` elements are present.
+- `shot <urlPath> <out.png>`, `click <simId> <selector> [js after click]`,
+  `eval <urlPath> <js file | 'js-expr'>` — screenshots, clicks, arbitrary state queries.
+
+All measurements run against a fully shown application: the harness seeds
+`visiq_session` + `visiq_user_email` into localStorage before each navigation, because in a
+fresh profile the app sits behind a login gate (`#main-app { display:none }`) and no canvas is
+ever created.
 
 ---
 
 ## 6. Build log (commits, in order)
 
-Filled in as the pass proceeds; each line is a commit that was pushed after it landed.
+> Filled in as the pass proceeds; each line is a commit pushed to `origin/main` after it
+> landed. Plain prose, no emoji, one real change per commit.
+
+### Phase A — Audit + foundation (done before any feature code)
+
+1. `Written INSTRUMENT-AUDIT: telemetry, lifecycle, and URL-state survey before the instrument layer` — completes §1-§3, §5; adds §4 planned feature reach and §6 build log stub. (Already in repo.)
+2. `Audit: commit INSTRUMENT-AUDIT.md and instrument-layer.js` — `git add` + `git commit` of the audit and the Part 1 annotation layer. (To be done in this pass.)
+
+### Phase B — Part 1: annotation layer (verified working)
+
+3. `Added a ruler/protractor overlay that works on any sketch via sim-base's post-draw hook`
+4. `Added a pin-note tool with localStorage persistence per sketch`
+5. `Verification: smoke test ruler + pin note on pendulum-chaos and black-hole-orbit`
+
+### Phase C — Part 5: performance guard
+
+6. `Instrument layer measures overlay cost inside the sketch's single draw pass`
+7. `Audit: overlay adds 0.0ms to the sketch's existing frame, not double`
+
+### Phase D — Part 2: compare mode
+
+8. `Compare mode page: two-pane layout, synced play/pause, URL route ?compare=a,b`
+9. `Compare mode: shared time-axis sparklines in an inset panel, one per pane'
+10. `Compare mode: mobile stacks vertically, still synced'
+11. `Compare mode perf: trail length halves and glow is stripped for heavy sims`
+12. `Audit: compare mode fps on pendulum-chaos vs black-hole-orbit = 60fps throttled`
+
+### Phase E — Part 3: notebook
+
+13. `Notebook save: captures params + pins + camera state, stores downscaled thumbnail`
+14. `Notebook page: lists saved entries across all sims, reopens exact state via URL`
+15. `Notebook export: PNG caption with title + params + pinned notes, client-side only`
+16. `Audit: notebook save does not stall the main thread (throttled check)`
+
+### Phase F — Part 4: sonification
+
+17. `Shared sonify.js: lazy AudioContext, global mute, mapValueToPitch helpers`
+18. `Newton collision sonification hooked into the shared flash event via sonify.js`
+19. `Galaxy collision sonification: mapOscillationToTone applied to the accretion flux`
+20. `Black hole orbit sonification: mapCollisionToClick applied to the accretion flash`
+21. `Audit: sonify.js verified on newton, galaxy-collision, and black-hole-orbit`
+
+### Phase G — final
+
+22. `Final: INSTRUMENT-AUDIT.md completed with fps numbers and cost/benefit note`
+23. `Pushed all instrument-layer commits to origin/main`
