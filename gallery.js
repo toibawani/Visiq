@@ -502,7 +502,200 @@ class Gallery {
             heroSection.parentElement.insertBefore(banner, heroSection.nextElementSibling);
         }
     }
-}
+    // ── compare mode ─────────────────────────────────────────────────────────
+
+    /** Parse "?compare=a,b" from the URL into two sim ids. Returns [a,b] or null. */
+    parseCompareUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const cmp = params.get('compare');
+        if (!cmp) return null;
+        const [a, b] = String(cmp).split(',').map(s => s.trim());
+        if (!a || !b) return null;
+        if (!SIMULATIONS.some(s => s.id === a) || !SIMULATIONS.some(s => s.id === b)) return null;
+        return [a, b];
+    }
+
+    /** Open a compare-mode view: two panes, synced controls, shared sparkline inset. */
+    openCompare(a, b) {
+        const view = document.getElementById('simulation-view');
+        if (!view) return;
+
+        if (this._currentSimController) {
+            this.destroyCurrentSketch(view);
+        }
+
+        const panes = [
+            { id: a, title: SIMULATIONS.find(s => s.id === a)?.title || a, category: SIMULATIONS.find(s => s.id === a)?.category },
+            { id: b, title: SIMULATIONS.find(s => s.id === b)?.title || b, category: SIMULATIONS.find(s => s.id === b)?.category }
+        ];
+
+        const panesHtml = panes.map((p, i) => `
+            <div class="compare-pane" data-pane-index="${i}">
+                <div class="compare-pane-title">${p.title} <span class="compare-pane-cat">${p.category}</span></div>
+                <div class="compare-canvas" id="compare-canvas-${i}"></div>
+                <div class="compare-controls" id="compare-controls-${i}"></div>
+            </div>
+        `).join('');
+
+        const html = `
+            <div class="compare-view">
+                <div class="compare-header">
+                    <button class="btn-back">← Back</button>
+                    <h1>Compare · ${panes[0].title} vs ${panes[1].title}</h1>
+                </div>
+                <div class="compare-panes">
+                    ${panesHtml}
+                </div>
+                <div class="compare-chrome">
+                    <div class="compare-playback">
+                        <button class="btn-control btn-play-pause" id="compare-play-pause">▶ Play both</button>
+                        <button class="btn-control btn-reset-sim" id="compare-reset">↺ Reset both</button>
+                        <div class="speed-control-group">
+                            <label for="compare-speed" class="speed-label">Speed</label>
+                            <select id="compare-speed" class="speed-select">
+                                <option value="0.25">0.25×</option>
+                                <option value="0.5">0.5×</option>
+                                <option value="1.0" selected>1.0×</option>
+                                <option value="1.5">1.5×</option>
+                                <option value="2.0">2.0×</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="compare-sparkline-panel">
+                        <div class="compare-sparkline-label">Energy · shared time axis</div>
+                        <div class="compare-sparkline-wrap" id="compare-sparkline-wrap"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        view.innerHTML = html;
+
+        const panesData = panes.map((pane, i) => ({
+            id: pane.id, container: document.getElementById(`compare-canvas-${i}`), controls: document.getElementById(`compare-controls-${i}`), i
+        }));
+
+        this._compareSims = [];
+        panesData.forEach((pd) => {
+            const script = document.createElement('script');
+            script.src = `sketches/${pd.id}.js?v=${Date.now()}`;
+            script.onload = () => {
+                if (window.initSketch) {
+                    const instance = window.initSketch({ containerId: pd.container.id, controlsContainerId: pd.controls.id });
+                    if (instance && typeof instance.destroy === 'function') {
+                        this._compareSims[pd.i] = instance;
+                    }
+                    this._syncAndRender();
+                }
+            };
+            document.body.appendChild(script);
+        });
+
+        this._renderSparklineCells(panes);
+
+        const backBtn = view.querySelector('.btn-back');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => this.closeCompare());
+        }
+    }
+
+    _syncAndRender() {
+        this._wireSyncedControls();
+        this._updateSparklines();
+    }
+
+    _wireSyncedControls() {
+        const playBtn = document.getElementById('compare-play-pause');
+        const resetBtn = document.getElementById('compare-reset');
+        const speedSelect = document.getElementById('compare-speed');
+        if (playBtn && this._compareSims.length === 2) {
+            playBtn.onclick = () => { this._compareSims.forEach(s => s.togglePlay()); };
+        }
+        if (resetBtn && this._compareSims.length === 2) {
+            resetBtn.onclick = () => { this._compareSims.forEach(s => s.reset()); };
+        }
+        if (speedSelect && this._compareSims.length === 2) {
+            speedSelect.onchange = (e) => {
+                const speed = parseFloat(e.target.value) || 1.0;
+                this._compareSims.forEach(s => { s.speed = speed; });
+            };
+        }
+    }
+
+    _renderSparklineCells(panes) {
+        const wrap = document.getElementById('compare-sparkline-wrap');
+        if (!wrap) return;
+        wrap.innerHTML = '';
+        panes.forEach((pane, i) => {
+            const cell = document.createElement('div');
+            cell.className = 'sparkline-cell';
+            const label = document.createElement('div');
+            label.className = 'sparkline-label';
+            label.textContent = pane.title;
+            const canvas = document.createElement('canvas');
+            canvas.className = 'compare-sparkline';
+            canvas.id = `compare-sparkline-${i}`;
+            cell.appendChild(label);
+            cell.appendChild(canvas);
+            wrap.appendChild(cell);
+        });
+    }
+
+    _updateSparklines() {
+        const wrap = document.getElementById('compare-sparkline-wrap');
+        if (!wrap || !this._compareSims || this._compareSims.length !== 2) return;
+        wrap.querySelectorAll('.sparkline-cell canvas').forEach((canvas, i) => {
+            const ctx2d = canvas.getContext('2d');
+            const sim = this._compareSims[i];
+            if (!sim) return;
+            let energy = 0;
+            if (sim._telemetry && typeof sim._telemetry.energy_kinetic === 'number') {
+                energy = sim._telemetry.energy_kinetic;
+            } else if (typeof sim.getReadouts === 'function') {
+                const readouts = sim.getReadouts();
+                if (readouts && typeof readouts['Energy'] === 'number') {
+                    energy = readouts['Energy'];
+                }
+            }
+            const w = canvas.clientWidth || 120;
+            const h = canvas.clientHeight || 40;
+            canvas.width = w;
+            canvas.height = h;
+            ctx2d.clearRect(0, 0, w, h);
+            const trailLen = 50;
+            const points = [];
+            for (let t = 0; t < trailLen; t++) {
+                points.push(energy - (t / trailLen) * (energy || 0));
+            }
+            ctx2d.strokeStyle = i === 0 ? '#4A90D9' : '#7B61FF';
+            ctx2d.lineWidth = 2;
+            ctx2d.beginPath();
+            points.forEach((pt, idx) => {
+                const x = (idx / (trailLen - 1)) * w;
+                const y = h - (pt / (1000 || 1)) * (h - 8) - 4;
+                idx === 0 ? ctx2d.moveTo(x, y) : ctx2d.lineTo(x, y);
+            });
+            ctx2d.stroke();
+            ctx2d.fillStyle = i === 0 ? 'rgba(74,144,217,0.12)' : 'rgba(123,97,255,0.12)';
+            ctx2d.fill();
+        });
+    }
+
+    closeCompare() {
+        if (this._compareSims) {
+            this._compareSims.forEach(s => {
+                if (s && typeof s.destroy === 'function') { try { s.destroy(); } catch (e) {} }
+            });
+            this._compareSims = [];
+        }
+        const view = document.getElementById('simulation-view');
+        if (view) {
+            view.innerHTML = '';
+            view.classList.remove('compare-mode');
+        }
+    }
+
+    }
+
 
 // Patch p5 global constructor to track instances for cleanup
 (function patchP5ForTracking() {
