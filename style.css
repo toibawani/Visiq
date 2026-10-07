@@ -2946,7 +2946,139 @@ kbd {
         flex-direction: column;
         gap: 10px;
     }
+} /* end @media (max-width: 480px) */
+
+/* ── INSTRUMENT LAYER: RULER + PIN NOTES ───────────── */
+.sim-master-toolbar .btn-control.is-active {
+    background: rgba(45, 212, 191, 0.12);
+    border-color: rgba(45, 212, 191, 0.55);
+    color: var(--accent-primary);
 }
+
+.instrument-notes-panel {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 236px;
+    max-width: calc(100% - 24px);
+    background: rgba(8, 12, 22, 0.93);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    z-index: 5;
+    pointer-events: none;
+    font-family: var(--font-sans);
+}
+
+.instrument-notes-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.instrument-notes-clear,
+.instrument-note-del {
+    pointer-events: auto;
+    background: none;
+    border: 1px solid var(--border-default);
+    color: var(--text-muted);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    cursor: pointer;
+    padding: 3px 7px;
+    min-height: 24px;
+}
+
+.instrument-notes-clear:hover,
+.instrument-note-del:hover {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+}
+
+.instrument-notes-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    max-height: 190px;
+    overflow-y: auto;
+}
+
+.instrument-notes-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+.instrument-note-num {
+    flex: 0 0 auto;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: var(--accent-physics);
+    color: #04121a;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+}
+
+.instrument-note-text {
+    flex: 1 1 auto;
+    word-break: break-word;
+}
+
+.instrument-note-del {
+    margin-left: auto;
+    flex: 0 0 auto;
+}
+
+.instrument-note-editor {
+    position: fixed;
+    z-index: 9500;
+    background: rgba(8, 12, 22, 0.97);
+    border: 1px solid rgba(45, 212, 191, 0.45);
+    border-radius: var(--radius-md);
+    padding: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.instrument-note-editor input {
+    width: 232px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    padding: 8px 10px;
+    min-height: 36px;
+}
+
+.instrument-note-editor input:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 1px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPARE MODE (Part 2)
+   ═══════════════════════════════════════════════════════════════ */
+
 .compare-view {
     display: flex;
     flex-direction: column;
