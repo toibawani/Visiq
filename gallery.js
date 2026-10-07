@@ -12,6 +12,7 @@ class Gallery {
         this._compareKeydownHandler = null;
         this._sparklineDebounceTimer = null;
         this._sparklineTimer = null;
+        this._sparklineHistory = null;
         this._cardObserver = null;
         this.loadingMessages = [
             'Preparing physical force calculations...',
@@ -672,6 +673,7 @@ class Gallery {
         });
 
         this._renderSparklineCells(panes);
+        this._sparklineHistory = [[], []];
 
         // Sparklines were previously rendered only once when each script
         // loaded; sample them on an interval so they track live energy.
@@ -763,38 +765,71 @@ class Gallery {
     _updateSparklines() {
         const wrap = document.getElementById('compare-sparkline-wrap');
         if (!wrap || !this._compareSims || this._compareSims.length !== 2) return;
-        wrap.querySelectorAll('.sparkline-cell canvas').forEach((canvas, i) => {
-            const ctx2d = canvas.getContext('2d');
-            const sim = this._compareSims[i];
-            if (!sim) return;
-            let energy = 0;
+        if (!this._sparklineHistory) this._sparklineHistory = [[], []];
+        const HISTORY_CAP = 60; // ~15s of samples at the 250ms tick
+
+        const readEnergy = (sim) => {
+            if (!sim) return null;
             if (sim._telemetry && typeof sim._telemetry.energy_kinetic === 'number') {
-                energy = sim._telemetry.energy_kinetic;
-            } else if (typeof sim.getReadouts === 'function') {
+                return sim._telemetry.energy_kinetic;
+            }
+            if (typeof sim.getReadouts === 'function') {
                 const readouts = sim.getReadouts();
                 if (readouts && typeof readouts['Energy'] === 'number') {
-                    energy = readouts['Energy'];
+                    return readouts['Energy'];
                 }
             }
+            return null;
+        };
+
+        // Record this tick for each pane (failed panes have no history)
+        this._compareSims.forEach((sim, i) => {
+            const energy = readEnergy(sim);
+            if (energy == null) return;
+            const hist = this._sparklineHistory[i];
+            hist.push(energy);
+            if (hist.length > HISTORY_CAP) hist.shift();
+        });
+
+        // Shared scale across both series so the panes are comparable
+        const all = this._sparklineHistory[0].concat(this._sparklineHistory[1]);
+        if (all.length < 2) return;
+        let min = Math.min(...all);
+        let max = Math.max(...all);
+        if (max - min < 1e-9) max = min + 1;
+        const pad = (max - min) * 0.08;
+        min -= pad;
+        max += pad;
+
+        wrap.querySelectorAll('.sparkline-cell canvas').forEach((canvas, i) => {
+            const hist = this._sparklineHistory[i];
             const w = canvas.clientWidth || 120;
             const h = canvas.clientHeight || 40;
-            canvas.width = w;
-            canvas.height = h;
+            if (canvas.width !== w) canvas.width = w;
+            if (canvas.height !== h) canvas.height = h;
+            const ctx2d = canvas.getContext('2d');
             ctx2d.clearRect(0, 0, w, h);
-            const trailLen = 50;
-            const points = [];
-            for (let t = 0; t < trailLen; t++) {
-                points.push(energy - (t / trailLen) * (energy || 0));
-            }
+            if (hist.length < 2) return;
+
+            const toY = (v) => h - 4 - ((v - min) / (max - min)) * (h - 8);
+            // Sample-index alignment: sample k of pane A and sample k of pane B
+            // share the same x, giving a true shared time axis.
+            const toX = (idx) => (idx / (HISTORY_CAP - 1)) * w;
+
             ctx2d.strokeStyle = i === 0 ? '#4A90D9' : '#7B61FF';
             ctx2d.lineWidth = 2;
             ctx2d.beginPath();
-            points.forEach((pt, idx) => {
-                const x = (idx / (trailLen - 1)) * w;
-                const y = h - (pt / (1000 || 1)) * (h - 8) - 4;
+            hist.forEach((v, idx) => {
+                const x = toX(idx);
+                const y = toY(v);
                 idx === 0 ? ctx2d.moveTo(x, y) : ctx2d.lineTo(x, y);
             });
             ctx2d.stroke();
+
+            // Fill under the curve
+            ctx2d.lineTo(toX(hist.length - 1), h - 2);
+            ctx2d.lineTo(0, h - 2);
+            ctx2d.closePath();
             ctx2d.fillStyle = i === 0 ? 'rgba(74,144,217,0.12)' : 'rgba(123,97,255,0.12)';
             ctx2d.fill();
         });
@@ -834,6 +869,7 @@ class Gallery {
         this._sparklineTimer = null;
         clearTimeout(this._sparklineDebounceTimer);
         this._sparklineDebounceTimer = null;
+        this._sparklineHistory = null;
         this._renderSparklineCells([]);
     }
     /**
