@@ -19,7 +19,9 @@ import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const PORT = 8123 + Math.floor(Math.random() * 400);
+// Fixed port: localStorage is keyed by origin (host+port), so the harness must
+// serve from the same origin every run for persistence checks to mean anything.
+const PORT = parseInt(process.env.VISIQ_PORT || '8123', 10);
 const DEBUG_PORT = 9333 + Math.floor(Math.random() * 400);
 const CHROME = process.env.CHROME_BIN || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
@@ -176,12 +178,22 @@ const FPS_SNIPPET = (ms) => `new Promise(res => {
     requestAnimationFrame(step);
 })`;
 
+// Optional screenshot after a command: SHOT=/path/out.png
+async function maybeShot(cdp) {
+    if (!process.env.SHOT) return;
+    const { data } = await cdp.send('Page.captureScreenshot', { format: 'png' });
+    await writeFile(process.env.SHOT, Buffer.from(data, 'base64'));
+    console.log('shot ->', process.env.SHOT);
+}
+
 async function main() {
     const [, , cmd, ...args] = process.argv;
     if (!cmd) { console.log('see header for usage'); return; }
 
     const server = await startServer();
-    const profileDir = await mkdtemp(join(tmpdir(), 'visiq-cdp-'));
+    // PROFILE=/path reuses a profile between runs (localStorage survives), which is
+    // how persistence across reloads gets tested.
+    const profileDir = process.env.PROFILE || await mkdtemp(join(tmpdir(), 'visiq-cdp-'));
     const { proc, page } = await launchChrome(profileDir);
     const cdp = new CDP(page.webSocketDebuggerUrl);
     await cdp.open();
@@ -268,6 +280,8 @@ async function main() {
             await sleep(700);
             if (jsAfter) console.log(await evaluate(cdp, jsAfter, true));
             else console.log('clicked', selector, JSON.stringify(rect));
+            await sleep(600);
+            await maybeShot(cdp);
         } else if (cmd === 'eval') {
             const [urlPath, jsArg] = args;
             await goto(cdp, base + urlPath);
@@ -276,6 +290,7 @@ async function main() {
             if (existsSync(jsArg)) js = await readFile(jsArg, 'utf8');
             const val = await evaluate(cdp, js, true);
             console.log(typeof val === 'string' ? val : JSON.stringify(val, null, 2));
+            await maybeShot(cdp);
         } else {
             console.log('unknown command:', cmd);
             exitCode = 1;
@@ -286,9 +301,16 @@ async function main() {
         exitCode = 1;
     } finally {
         cdp.close();
+        try {
+            // Graceful close flushes localStorage/cookies to disk; SIGKILL loses them.
+            await fetch(`http://127.0.0.1:${DEBUG_PORT}/json/close/${page.id}`).catch(() => {});
+            await sleep(1500);
+        } catch (e) {}
         try { proc.kill('SIGKILL'); } catch (e) {}
         server.close();
-        await rm(profileDir, { recursive: true, force: true }).catch(() => {});
+        if (!process.env.PROFILE) {
+            await rm(profileDir, { recursive: true, force: true }).catch(() => {});
+        }
     }
     process.exit(exitCode);
 }
