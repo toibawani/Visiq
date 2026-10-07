@@ -568,7 +568,8 @@ class Gallery {
         if (galleryView) galleryView.classList.remove('active');
         view.classList.add('active');
         view.classList.add('compare-mode');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+        window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
 
         // Tear down a solo sim if one is running, and any stale compare
         // session left behind (e.g. a forward-navigation double-open).
