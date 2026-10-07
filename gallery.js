@@ -170,7 +170,20 @@ class Gallery {
         // Compare mode takes precedence over ?sim=
         const compare = this.parseCompareUrl();
         if (compare) {
-            setTimeout(() => this.openCompare(compare[0], compare[1]), 100);
+            setTimeout(() => {
+                // Give compare its own history entry: the current entry
+                // becomes the plain gallery URL, so browser Back closes
+                // compare mode (routed via the popstate listener).
+                try {
+                    const galleryUrl = new URL(window.location.href);
+                    galleryUrl.search = '';
+                    window.history.replaceState({}, '', galleryUrl.toString());
+                    const compareUrl = new URL(window.location.href);
+                    compareUrl.search = `compare=${compare[0]},${compare[1]}`;
+                    window.history.pushState({}, '', compareUrl.toString());
+                } catch (e) {}
+                this.openCompare(compare[0], compare[1]);
+            }, 100);
             return;
         }
 
@@ -210,6 +223,18 @@ class Gallery {
             }
         };
         document.addEventListener('keydown', this._keydownHandler);
+
+        // Browser Back/Forward drives compare mode: derive state from the URL
+        // and open/close the compare view to match the history entry.
+        window.addEventListener('popstate', () => {
+            const compare = this.parseCompareUrl();
+            const compareOpen = !!document.querySelector('.compare-view');
+            if (compare && !compareOpen) {
+                this.openCompare(compare[0], compare[1]);
+            } else if (!compare && compareOpen) {
+                this.closeCompare();
+            }
+        });
     }
     
     loadUserData() {
