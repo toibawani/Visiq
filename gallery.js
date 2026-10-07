@@ -672,7 +672,10 @@ class Gallery {
         // controllers that actually exist, and never throw on a failed pane.
         const loadedSims = () => (this._compareSims || []).filter(s => s != null);
         if (playBtn) {
-            playBtn.onclick = () => { loadedSims().forEach(s => s.togglePlay && s.togglePlay()); };
+            playBtn.onclick = () => {
+                loadedSims().forEach(s => s.togglePlay && s.togglePlay());
+                this._updatePlayBothLabel();
+            };
         }
         if (resetBtn) {
             resetBtn.onclick = () => { loadedSims().forEach(s => s.reset && s.reset()); };
@@ -683,6 +686,19 @@ class Gallery {
                 loadedSims().forEach(s => { s.speed = speed; });
             };
         }
+        this._updatePlayBothLabel();
+    }
+
+    /** Keep the shared Play/Pause button label in sync with pane state. */
+    _updatePlayBothLabel() {
+        const playBtn = document.getElementById('compare-play-pause');
+        if (!playBtn) return;
+        const sims = (this._compareSims || []).filter(s => s != null);
+        const playing = sims.length > 0 && sims.every(s => s.isPlaying);
+        playBtn.innerHTML = playing
+            ? '<span aria-hidden="true">⏸</span> Pause both'
+            : '<span aria-hidden="true">▶</span> Play both';
+        playBtn.setAttribute('aria-pressed', String(playing));
     }
 
     _renderSparklineCells(panes) {
