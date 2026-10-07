@@ -9,7 +9,6 @@ class Gallery {
         this._currentSimController = null;
         this._p5Instance = null;
         this._keydownHandler = null;
-        this._compareKeydownHandler = null;
         this._sparklineTimer = null;
         this._sparklineHistory = null;
         this._compareSpeed = 1.0;
@@ -623,12 +622,8 @@ class Gallery {
             id: pane.id, container: document.getElementById(`compare-canvas-${i}`), controls: document.getElementById(`compare-controls-${i}`), i
         }));
 
-        // Keyboard: Escape to close (listener is removed in closeCompare so it
-        // cannot leak when the Back button is used instead of Escape)
-        this._compareKeydownHandler = (e) => {
-            if (e.key === 'Escape') this.closeCompare();
-        };
-        document.addEventListener('keydown', this._compareKeydownHandler);
+        // Keyboard: Escape is handled by the global _keydownHandler, which
+        // routes to closeCompare() while .compare-view is open.
 
         // Loading indicator (announced politely to screen readers)
         const loadingEl = document.createElement('div');
@@ -863,10 +858,6 @@ class Gallery {
         const view = document.getElementById('simulation-view');
         // Idempotent: a second call (e.g. Back click + Escape) must be a no-op
         if (!view || !view.querySelector('.compare-view')) return;
-        if (this._compareKeydownHandler) {
-            document.removeEventListener('keydown', this._compareKeydownHandler);
-            this._compareKeydownHandler = null;
-        }
         // Destroy compare two-pane sims
         if (this._compareSims) {
             this._compareSims.forEach(s => {
