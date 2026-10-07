@@ -585,9 +585,10 @@ class Gallery {
         clearInterval(this._sparklineTimer);
         this._sparklineTimer = null;
 
+        const simById = (id) => SIMULATIONS.find(s => s.id === id);
         const panes = [
-            { id: a, title: SIMULATIONS.find(s => s.id === a)?.title || a, category: SIMULATIONS.find(s => s.id === a)?.category },
-            { id: b, title: SIMULATIONS.find(s => s.id === b)?.title || b, category: SIMULATIONS.find(s => s.id === b)?.category }
+            { id: a, title: simById(a)?.title || a, category: simById(a)?.category },
+            { id: b, title: simById(b)?.title || b, category: simById(b)?.category }
         ];
 
         const panesHtml = panes.map((p, i) => `
