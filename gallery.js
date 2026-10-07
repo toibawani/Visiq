@@ -748,6 +748,12 @@ class Gallery {
         const galleryView = document.getElementById('gallery-view');
         if (galleryView) galleryView.classList.add('active');
         view.classList.remove('active');
+        // Clear the compare query parameter so a refresh stays in the gallery
+        try {
+            const url = new URL(window.location.href);
+            url.search = '';
+            window.history.replaceState({}, '', url.toString());
+        } catch (e) {}
         // Clean up UI state
         this._syncControls = null;
         this._renderSparklineCells([]);
