@@ -733,10 +733,18 @@ class Gallery {
         return (this._compareSims || []).filter(s => s != null);
     }
 
+    /** Compare-mode DOM (null when compare view is not rendered). */
+    compareChrome() {
+        return {
+            play: document.getElementById('compare-play-pause'),
+            reset: document.getElementById('compare-reset'),
+            speed: document.getElementById('compare-speed'),
+            sparklineWrap: document.getElementById('compare-sparkline-wrap'),
+        };
+    }
+
     _wireSyncedControls() {
-        const playBtn = document.getElementById('compare-play-pause');
-        const resetBtn = document.getElementById('compare-reset');
-        const speedSelect = document.getElementById('compare-speed');
+        const { play: playBtn, reset: resetBtn, speed: speedSelect } = this.compareChrome();
         if (playBtn) {
             playBtn.onclick = () => {
                 const sims = this.loadedCompareSims();
@@ -768,7 +776,7 @@ class Gallery {
 
     /** Keep the shared Play/Pause button label in sync with pane state. */
     _updatePlayBothLabel() {
-        const playBtn = document.getElementById('compare-play-pause');
+        const { play: playBtn } = this.compareChrome();
         if (!playBtn) return;
         const sims = this.loadedCompareSims();
         const playing = sims.length > 0 && sims.every(s => s.isPlaying);
@@ -779,7 +787,7 @@ class Gallery {
     }
 
     _renderSparklineCells(panes) {
-        const wrap = document.getElementById('compare-sparkline-wrap');
+        const { sparklineWrap: wrap } = this.compareChrome();
         if (!wrap) return;
         wrap.innerHTML = '';
         panes.forEach((pane, i) => {
@@ -798,7 +806,7 @@ class Gallery {
     }
 
     _updateSparklines() {
-        const wrap = document.getElementById('compare-sparkline-wrap');
+        const { sparklineWrap: wrap } = this.compareChrome();
         if (!wrap || document.hidden || !this._compareSims || this._compareSims.length !== 2) return;
         if (!this._sparklineHistory) this._sparklineHistory = [[], []];
         const HISTORY_CAP = 60; // ~15s of samples at the 250ms tick
