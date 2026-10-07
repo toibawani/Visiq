@@ -14,6 +14,9 @@ window.initSketch = function(config) {
             bobMass2:   { value: 10,  min: 2,   max: 30,  step: 1,   label: 'Lower Mass (m2)', unit: 'kg' },
             gravity:    { value: 9.8, min: 0,   max: 25,  step: 0.5, label: 'Gravity (g)',     unit: 'm/s2' }
         },
+        // Rods are drawn at 100 px per metre (physics uses rodLength * 0.01 m),
+        // so the ruler can report real units on this sketch.
+        scale: { unit: 'm', pxPerUnit: 100 },
         getReadouts(ctx) {
             return ctx._telemetry || {
                 'Total Energy': '0.0 J',

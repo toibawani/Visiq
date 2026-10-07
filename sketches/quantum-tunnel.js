@@ -12,6 +12,8 @@ window.initSketch = function(config) {
             barrierHeight:  { value: 5.0, min: 2.0, max: 10.0, step: 0.1, label: 'Barrier Height (V₀)',  unit: 'eV' },
             barrierWidth:   { value: 40,  min: 15,  max: 90,   step: 5,   label: 'Barrier Width (L)',    unit: 'nm' }
         },
+        // The barrier is drawn 1 px per nm (barrierWidth feeds the geometry directly).
+        scale: { unit: 'nm', pxPerUnit: 1 },
         getReadouts(ctx) {
             return ctx._telemetry || {
                 'Transmission (T)': '0.0%',
