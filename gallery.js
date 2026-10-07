@@ -640,6 +640,7 @@ class Gallery {
         // Remove the loading indicator once both scripts have settled
         // (loaded or failed), so it cannot hang forever on a failed load.
         let pendingScripts = panesData.length;
+        const session = (this._compareSession = (this._compareSession || 0) + 1);
         const settleScript = () => {
             pendingScripts -= 1;
             if (pendingScripts <= 0) {
@@ -651,6 +652,14 @@ class Gallery {
             const script = document.createElement('script');
             script.src = `sketches/${pd.id}.js?v=${Date.now()}`;
             script.onload = () => {
+                // Stale callback: either compare mode closed while this script
+                // was in flight, or a newer compare session replaced it —
+                // initializing then would attach a sketch to the wrong (or
+                // detached) container and throw on the cleared sims array.
+                if (session !== this._compareSession || !this._compareSims) {
+                    script.remove();
+                    return;
+                }
                 if (window.initSketch) {
                     const instance = window.initSketch({ containerId: pd.container.id, controlsContainerId: pd.controls.id });
                     if (instance && typeof instance.destroy === 'function') {
@@ -663,10 +672,16 @@ class Gallery {
             };
             script.onerror = () => {
                 console.error(`[GALLERY] Failed to load sketch: sketches/${pd.id}.js`);
+                if (session !== this._compareSession) {
+                    script.remove();
+                    return;
+                }
                 // Skip this pane if script fails to load
-                this._compareSims[pd.i] = null;
-                if (pd.container) {
-                    pd.container.innerHTML = '<div class="compare-empty">Failed to load this sketch.</div>';
+                if (this._compareSims) {
+                    this._compareSims[pd.i] = null;
+                    if (pd.container) {
+                        pd.container.innerHTML = '<div class="compare-empty">Failed to load this sketch.</div>';
+                    }
                 }
                 settleScript();
                 script.remove();
