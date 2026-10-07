@@ -889,7 +889,6 @@ class Gallery {
             window.history.replaceState({}, '', url.toString());
         } catch (e) {}
         // Clean up UI state
-        this._syncControls = null;
         clearInterval(this._sparklineTimer);
         this._sparklineTimer = null;
         clearTimeout(this._sparklineDebounceTimer);
