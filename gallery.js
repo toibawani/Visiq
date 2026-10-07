@@ -566,6 +566,7 @@ class Gallery {
         const galleryView = document.getElementById('gallery-view');
         if (galleryView) galleryView.classList.remove('active');
         view.classList.add('active');
+        view.classList.add('compare-mode');
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         if (this._currentSimController) {
