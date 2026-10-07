@@ -9,6 +9,7 @@ class Gallery {
         this._currentSimController = null;
         this._p5Instance = null;
         this._keydownHandler = null;
+        this._compareKeydownHandler = null;
         this._cardObserver = null;
         this.loadingMessages = [
             'Preparing physical force calculations...',
@@ -574,14 +575,12 @@ class Gallery {
             id: pane.id, container: document.getElementById(`compare-canvas-${i}`), controls: document.getElementById(`compare-controls-${i}`), i
         }));
 
-        // Keyboard: Escape to close
-        const handleKeydown = (e) => {
-            if (e.key === 'Escape') {
-                closeCompare();
-                document.removeEventListener('keydown', handleKeydown);
-            }
+        // Keyboard: Escape to close (listener is removed in closeCompare so it
+        // cannot leak when the Back button is used instead of Escape)
+        this._compareKeydownHandler = (e) => {
+            if (e.key === 'Escape') this.closeCompare();
         };
-        document.addEventListener('keydown', handleKeydown);
+        document.addEventListener('keydown', this._compareKeydownHandler);
 
         // Loading indicator
         const loadingEl = document.createElement('div');
@@ -708,6 +707,13 @@ class Gallery {
     }
 
     closeCompare() {
+        const view = document.getElementById('simulation-view');
+        // Idempotent: a second call (e.g. Back click + Escape) must be a no-op
+        if (!view || !view.querySelector('.compare-view')) return;
+        if (this._compareKeydownHandler) {
+            document.removeEventListener('keydown', this._compareKeydownHandler);
+            this._compareKeydownHandler = null;
+        }
         // Destroy compare two-pane sims
         if (this._compareSims) {
             this._compareSims.forEach(s => {
@@ -715,13 +721,10 @@ class Gallery {
             });
             this._compareSims = null;
         }
-        // Return to gallery view
-        const view = document.getElementById('simulation-view');
-        if (view) {
-            view.innerHTML = '';
-            view.classList.remove('compare-mode');
-        }
-        // Clean up UI
+        // Empty the view
+        view.innerHTML = '';
+        view.classList.remove('compare-mode');
+        // Clean up UI state
         this._syncControls = null;
         this._renderSparklineCells([]);
     }
