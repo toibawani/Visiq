@@ -636,6 +636,9 @@ class Gallery {
                 console.error(`[GALLERY] Failed to load sketch: sketches/${pd.id}.js`);
                 // Skip this pane if script fails to load
                 this._compareSims[pd.i] = null;
+                if (pd.container) {
+                    pd.container.innerHTML = '<div class="compare-empty">Failed to load this sketch.</div>';
+                }
                 settleScript();
             };
             document.body.appendChild(script);
