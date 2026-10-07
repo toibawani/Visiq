@@ -13,6 +13,7 @@ class Gallery {
         this._sparklineDebounceTimer = null;
         this._sparklineTimer = null;
         this._sparklineHistory = null;
+        this._compareSpeed = 1.0;
         this._cardObserver = null;
         this.loadingMessages = [
             'Preparing physical force calculations...',
@@ -665,6 +666,9 @@ class Gallery {
                 if (window.initSketch) {
                     const instance = window.initSketch({ containerId: pd.container.id, controlsContainerId: pd.controls.id });
                     if (instance && typeof instance.destroy === 'function') {
+                        // Sketches load at different times — apply the shared
+                        // speed so a late pane does not start out of sync.
+                        instance.speed = this._compareSpeed;
                         this._compareSims[pd.i] = instance;
                     }
                     this._syncAndRender();
@@ -693,6 +697,7 @@ class Gallery {
 
         this._renderSparklineCells(panes);
         this._sparklineHistory = [[], []];
+        this._compareSpeed = 1.0;
 
         // Sparklines were previously rendered only once when each script
         // loaded; sample them on an interval so they track live energy.
@@ -744,6 +749,7 @@ class Gallery {
         if (speedSelect) {
             speedSelect.onchange = (e) => {
                 const speed = parseFloat(e.target.value) || 1.0;
+                this._compareSpeed = speed;
                 loadedSims().forEach(s => { s.speed = speed; });
             };
         }
@@ -889,6 +895,7 @@ class Gallery {
         clearTimeout(this._sparklineDebounceTimer);
         this._sparklineDebounceTimer = null;
         this._sparklineHistory = null;
+        this._compareSpeed = 1.0;
         this._renderSparklineCells([]);
     }
     /**
