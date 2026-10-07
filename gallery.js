@@ -717,16 +717,18 @@ class Gallery {
         this._updateSparklines();
     }
 
+    /** Compare sketch controllers that actually loaded (failed panes are null). */
+    loadedCompareSims() {
+        return (this._compareSims || []).filter(s => s != null);
+    }
+
     _wireSyncedControls() {
         const playBtn = document.getElementById('compare-play-pause');
         const resetBtn = document.getElementById('compare-reset');
         const speedSelect = document.getElementById('compare-speed');
-        // Entries can be null when a sketch failed to load — operate only on
-        // controllers that actually exist, and never throw on a failed pane.
-        const loadedSims = () => (this._compareSims || []).filter(s => s != null);
         if (playBtn) {
             playBtn.onclick = () => {
-                const sims = loadedSims();
+                const sims = this.loadedCompareSims();
                 // Converge: if panes drifted into mixed states, snap them all
                 // to one target instead of blindly toggling (a blind toggle of
                 // mixed panes just keeps them mixed).
@@ -739,13 +741,13 @@ class Gallery {
             };
         }
         if (resetBtn) {
-            resetBtn.onclick = () => { loadedSims().forEach(s => s.reset && s.reset()); };
+            resetBtn.onclick = () => { this.loadedCompareSims().forEach(s => s.reset && s.reset()); };
         }
         if (speedSelect) {
             speedSelect.onchange = (e) => {
                 const speed = parseFloat(e.target.value) || 1.0;
                 this._compareSpeed = speed;
-                loadedSims().forEach(s => { s.speed = speed; });
+                this.loadedCompareSims().forEach(s => { s.speed = speed; });
             };
         }
         this._updatePlayBothLabel();
@@ -755,7 +757,7 @@ class Gallery {
     _updatePlayBothLabel() {
         const playBtn = document.getElementById('compare-play-pause');
         if (!playBtn) return;
-        const sims = (this._compareSims || []).filter(s => s != null);
+        const sims = this.loadedCompareSims();
         const playing = sims.length > 0 && sims.every(s => s.isPlaying);
         playBtn.innerHTML = playing
             ? '<span aria-hidden="true">⏸</span> Pause both'
