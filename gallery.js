@@ -702,12 +702,6 @@ class Gallery {
         const backBtn = view.querySelector('.btn-back');
         if (backBtn) {
             backBtn.addEventListener('click', () => this.closeCompare());
-            backBtn.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    this.closeCompare();
-                }
-            });
             backBtn.setAttribute('aria-label', 'Back to Gallery (Esc)');
         }
     }
