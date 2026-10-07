@@ -880,9 +880,8 @@ class Gallery {
         this._sparklineTimer = null;
         this._sparklineHistory = null;
         this._compareSpeed = 1.0;
-        this._renderSparklineCells([]);
     }
-    }
+}
 
 (function patchP5ForTracking() {
     const _original = window.p5;
