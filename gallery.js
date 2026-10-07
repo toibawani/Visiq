@@ -673,7 +673,15 @@ class Gallery {
         const loadedSims = () => (this._compareSims || []).filter(s => s != null);
         if (playBtn) {
             playBtn.onclick = () => {
-                loadedSims().forEach(s => s.togglePlay && s.togglePlay());
+                const sims = loadedSims();
+                // Converge: if panes drifted into mixed states, snap them all
+                // to one target instead of blindly toggling (a blind toggle of
+                // mixed panes just keeps them mixed).
+                const target = !(sims.length > 0 && sims.every(s => s.isPlaying));
+                sims.forEach(s => {
+                    if (!s.togglePlay) return;
+                    if (!!s.isPlaying !== target) s.togglePlay();
+                });
                 this._updatePlayBothLabel();
             };
         }
