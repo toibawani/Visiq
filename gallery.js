@@ -570,9 +570,20 @@ class Gallery {
         view.classList.add('compare-mode');
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
+        // Tear down a solo sim if one is running, and any stale compare
+        // session left behind (e.g. a forward-navigation double-open).
         if (this._currentSimController) {
             this.destroyCurrentSketch(view);
+            this._currentSimController = null;
         }
+        if (this._compareSims) {
+            this._compareSims.forEach(s => {
+                if (s && typeof s.destroy === 'function') { try { s.destroy(); } catch (e) {} }
+            });
+            this._compareSims = null;
+        }
+        clearInterval(this._sparklineTimer);
+        this._sparklineTimer = null;
 
         const panes = [
             { id: a, title: SIMULATIONS.find(s => s.id === a)?.title || a, category: SIMULATIONS.find(s => s.id === a)?.category },
