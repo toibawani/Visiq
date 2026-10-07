@@ -10,7 +10,6 @@ class Gallery {
         this._p5Instance = null;
         this._keydownHandler = null;
         this._compareKeydownHandler = null;
-        this._sparklineDebounceTimer = null;
         this._sparklineTimer = null;
         this._sparklineHistory = null;
         this._compareSpeed = 1.0;
@@ -891,21 +890,9 @@ class Gallery {
         // Clean up UI state
         clearInterval(this._sparklineTimer);
         this._sparklineTimer = null;
-        clearTimeout(this._sparklineDebounceTimer);
-        this._sparklineDebounceTimer = null;
         this._sparklineHistory = null;
         this._compareSpeed = 1.0;
         this._renderSparklineCells([]);
-    }
-    /**
-     * Debounced version of _updateSparklines to reduce canvas thrashing
-     * on rapid playback changes.
-     */
-    _debouncedUpdateSparklines() {
-        clearTimeout(this._sparklineDebounceTimer);
-        this._sparklineDebounceTimer = setTimeout(() => {
-            this._updateSparklines();
-        }, 80);
     }
     }
 
