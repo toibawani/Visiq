@@ -553,6 +553,7 @@ class Gallery {
         if (!cmp) return null;
         const [a, b] = String(cmp).split(',').map(s => s.trim());
         if (!a || !b) return null;
+        if (a === b) return null; // comparing a sim with itself is meaningless
         if (!SIMULATIONS.some(s => s.id === a) || !SIMULATIONS.some(s => s.id === b)) return null;
         return [a, b];
     }
