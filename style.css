@@ -3105,6 +3105,7 @@ kbd {
 }
 
 .compare-panes {
+    position: relative;
     display: flex;
     flex: 1;
     min-height: 0;
@@ -3231,6 +3232,36 @@ kbd {
     padding: 20px 0;
 }
 
+/* Loading overlay shown while compare sketches stream in */
+#compare-loading {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(8, 12, 22, 0.78);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: var(--font-sans);
+    pointer-events: none;
+}
+
+.compare-loading-spinner {
+    width: 34px;
+    height: 34px;
+    border: 3px solid rgba(255, 255, 255, 0.12);
+    border-top-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: compareSpin 0.9s linear infinite;
+}
+
+@keyframes compareSpin {
+    to { transform: rotate(360deg); }
+}
+
 /* Mobile: stack vertically */
 @media (max-width: 1024px) {
     .compare-panes {
@@ -3274,5 +3305,8 @@ kbd {
     .compare-pane,
     .compare-sparkline-wrap {
         transition: none !important;
+    }
+    .compare-loading-spinner {
+        animation-duration: 2.4s;
     }
 }
