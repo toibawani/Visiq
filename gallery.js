@@ -574,6 +574,15 @@ class Gallery {
             id: pane.id, container: document.getElementById(`compare-canvas-${i}`), controls: document.getElementById(`compare-controls-${i}`), i
         }));
 
+        // Keyboard: Escape to close
+        const handleKeydown = (e) => {
+            if (e.key === 'Escape') {
+                closeCompare();
+                document.removeEventListener('keydown', handleKeydown);
+            }
+        };
+        document.addEventListener('keydown', handleKeydown);
+
         this._compareSims = [];
         panesData.forEach((pd) => {
             const script = document.createElement('script');
@@ -587,6 +596,11 @@ class Gallery {
                     this._syncAndRender();
                 }
             };
+            script.onerror = () => {
+                console.error(`[GALLERY] Failed to load sketch: sketches/${pd.id}.js`);
+                // Skip this pane if script fails to load
+                this._compareSims[pd.i] = null;
+            };
             document.body.appendChild(script);
         });
 
@@ -595,6 +609,13 @@ class Gallery {
         const backBtn = view.querySelector('.btn-back');
         if (backBtn) {
             backBtn.addEventListener('click', () => this.closeCompare());
+            backBtn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.closeCompare();
+                }
+            });
+            backBtn.setAttribute('aria-label', 'Back to Gallery (Esc)');
         }
     }
 
@@ -681,17 +702,22 @@ class Gallery {
     }
 
     closeCompare() {
+        // Destroy compare two-pane sims
         if (this._compareSims) {
             this._compareSims.forEach(s => {
                 if (s && typeof s.destroy === 'function') { try { s.destroy(); } catch (e) {} }
             });
-            this._compareSims = [];
+            this._compareSims = null;
         }
+        // Return to gallery view
         const view = document.getElementById('simulation-view');
         if (view) {
             view.innerHTML = '';
             view.classList.remove('compare-mode');
         }
+        // Clean up UI
+        this._syncControls = null;
+        this._renderSparklineCells([]);
     }
 
     }
