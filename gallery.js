@@ -200,7 +200,12 @@ class Gallery {
         this._keydownHandler = (e) => {
             const activeSimView = document.getElementById('simulation-view')?.classList.contains('active');
             if (activeSimView && e.key === 'Escape') {
-                this.backToGallery();
+                // Compare mode manages its own teardown and view swap
+                if (document.querySelector('.compare-view')) {
+                    this.closeCompare();
+                } else {
+                    this.backToGallery();
+                }
             }
         };
         document.addEventListener('keydown', this._keydownHandler);
