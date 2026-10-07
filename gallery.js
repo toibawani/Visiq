@@ -609,6 +609,16 @@ class Gallery {
         view.querySelector('.compare-panes').prepend(loadingEl);
 
         this._compareSims = [];
+        // Remove the loading indicator once both scripts have settled
+        // (loaded or failed), so it cannot hang forever on a failed load.
+        let pendingScripts = panesData.length;
+        const settleScript = () => {
+            pendingScripts -= 1;
+            if (pendingScripts <= 0) {
+                const loading = document.getElementById('compare-loading');
+                if (loading) loading.remove();
+            }
+        };
         panesData.forEach((pd) => {
             const script = document.createElement('script');
             script.src = `sketches/${pd.id}.js?v=${Date.now()}`;
@@ -620,11 +630,13 @@ class Gallery {
                     }
                     this._syncAndRender();
                 }
+                settleScript();
             };
             script.onerror = () => {
                 console.error(`[GALLERY] Failed to load sketch: sketches/${pd.id}.js`);
                 // Skip this pane if script fails to load
                 this._compareSims[pd.i] = null;
+                settleScript();
             };
             document.body.appendChild(script);
         });
