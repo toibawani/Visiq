@@ -744,6 +744,8 @@ class Gallery {
                 this._compareSpeed = speed;
                 this.loadedCompareSims().forEach(s => { s.speed = speed; });
             };
+            // Keep the select visually aligned (a reopen resets it to 1.0).
+            speedSelect.value = String(this._compareSpeed);
         }
         this._updatePlayBothLabel();
     }
