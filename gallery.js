@@ -507,6 +507,7 @@ class Gallery {
 
     /** Parse "?compare=a,b" from the URL into two sim ids. Returns [a,b] or null. */
     parseCompareUrl() {
+        if (typeof SIMULATIONS === 'undefined') return null;
         const params = new URLSearchParams(window.location.search);
         const cmp = params.get('compare');
         if (!cmp) return null;
