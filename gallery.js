@@ -10,6 +10,7 @@ class Gallery {
         this._p5Instance = null;
         this._keydownHandler = null;
         this._compareKeydownHandler = null;
+        this._sparklineDebounceTimer = null;
         this._cardObserver = null;
         this.loadingMessages = [
             'Preparing physical force calculations...',
@@ -798,6 +799,8 @@ class Gallery {
         } catch (e) {}
         // Clean up UI state
         this._syncControls = null;
+        clearTimeout(this._sparklineDebounceTimer);
+        this._sparklineDebounceTimer = null;
         this._renderSparklineCells([]);
     }
     /**
