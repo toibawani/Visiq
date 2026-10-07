@@ -11,6 +11,7 @@ class Gallery {
         this._keydownHandler = null;
         this._compareKeydownHandler = null;
         this._sparklineDebounceTimer = null;
+        this._sparklineTimer = null;
         this._cardObserver = null;
         this.loadingMessages = [
             'Preparing physical force calculations...',
@@ -672,6 +673,11 @@ class Gallery {
 
         this._renderSparklineCells(panes);
 
+        // Sparklines were previously rendered only once when each script
+        // loaded; sample them on an interval so they track live energy.
+        clearInterval(this._sparklineTimer);
+        this._sparklineTimer = setInterval(() => this._updateSparklines(), 250);
+
         const backBtn = view.querySelector('.btn-back');
         if (backBtn) {
             backBtn.addEventListener('click', () => this.closeCompare());
@@ -824,6 +830,8 @@ class Gallery {
         } catch (e) {}
         // Clean up UI state
         this._syncControls = null;
+        clearInterval(this._sparklineTimer);
+        this._sparklineTimer = null;
         clearTimeout(this._sparklineDebounceTimer);
         this._sparklineDebounceTimer = null;
         this._renderSparklineCells([]);
