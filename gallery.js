@@ -583,7 +583,13 @@ class Gallery {
         };
         document.addEventListener('keydown', handleKeydown);
 
-        this._compareSims = [];
+        // Loading indicator
+        const loadingEl = document.createElement('div');
+        loadingEl.id = 'compare-loading';
+        loadingEl.innerHTML = '<div class="compare-loading-spinner"></div><p>Loading both simulations...</p>';
+        view.querySelector('.compare-panes').prepend(loadingEl);
+
+        this._compareSims = [];        this._compareSims = [];
         panesData.forEach((pd) => {
             const script = document.createElement('script');
             script.src = `sketches/${pd.id}.js?v=${Date.now()}`;
