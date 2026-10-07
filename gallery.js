@@ -725,11 +725,18 @@ class Gallery {
         this._syncControls = null;
         this._renderSparklineCells([]);
     }
-
+    /**
+     * Debounced version of _updateSparklines to reduce canvas thrashing
+     * on rapid playback changes.
+     */
+    _debouncedUpdateSparklines() {
+        clearTimeout(this._sparklineDebounceTimer);
+        this._sparklineDebounceTimer = setTimeout(() => {
+            this._updateSparklines();
+        }, 80);
+    }
     }
 
-
-// Patch p5 global constructor to track instances for cleanup
 (function patchP5ForTracking() {
     const _original = window.p5;
     if (!_original) return;
