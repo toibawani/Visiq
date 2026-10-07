@@ -521,6 +521,12 @@ class Gallery {
         const view = document.getElementById('simulation-view');
         if (!view) return;
 
+        // Show the sim view, hide the gallery (mirrors openSimulation)
+        const galleryView = document.getElementById('gallery-view');
+        if (galleryView) galleryView.classList.remove('active');
+        view.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
         if (this._currentSimController) {
             this.destroyCurrentSketch(view);
         }
@@ -724,6 +730,10 @@ class Gallery {
         // Empty the view
         view.innerHTML = '';
         view.classList.remove('compare-mode');
+        // Restore the gallery view (mirrors backToGallery)
+        const galleryView = document.getElementById('gallery-view');
+        if (galleryView) galleryView.classList.add('active');
+        view.classList.remove('active');
         // Clean up UI state
         this._syncControls = null;
         this._renderSparklineCells([]);
