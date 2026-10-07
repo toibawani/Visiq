@@ -784,16 +784,27 @@ class Gallery {
         if (!this._sparklineHistory) this._sparklineHistory = [[], []];
         const HISTORY_CAP = 60; // ~15s of samples at the 250ms tick
 
+        // Sims surface energy as formatted telemetry strings ('12.3 J', '62.5%')
+        // under keys like 'Total Energy' — so take the numeric convention
+        // first, then prefer energy-like keys, then any parseable readout.
         const readEnergy = (sim) => {
             if (!sim) return null;
             if (sim._telemetry && typeof sim._telemetry.energy_kinetic === 'number') {
                 return sim._telemetry.energy_kinetic;
             }
-            if (typeof sim.getReadouts === 'function') {
-                const readouts = sim.getReadouts();
-                if (readouts && typeof readouts['Energy'] === 'number') {
-                    return readouts['Energy'];
-                }
+            if (typeof sim.getReadouts !== 'function') return null;
+            let readouts = null;
+            try { readouts = sim.getReadouts(); } catch (e) { return null; }
+            if (!readouts || typeof readouts !== 'object') return null;
+            const entries = Object.entries(readouts).sort(([a], [b]) => {
+                const ea = /energy|kinetic|total/i.test(a) ? 0 : 1;
+                const eb = /energy|kinetic|total/i.test(b) ? 0 : 1;
+                return ea - eb;
+            });
+            for (const [, v] of entries) {
+                if (typeof v === 'number' && Number.isFinite(v)) return v;
+                const n = parseFloat(String(v));
+                if (Number.isFinite(n)) return n;
             }
             return null;
         };
