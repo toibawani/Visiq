@@ -659,6 +659,7 @@ class Gallery {
                     this._syncAndRender();
                 }
                 settleScript();
+                script.remove();
             };
             script.onerror = () => {
                 console.error(`[GALLERY] Failed to load sketch: sketches/${pd.id}.js`);
@@ -668,6 +669,7 @@ class Gallery {
                     pd.container.innerHTML = '<div class="compare-empty">Failed to load this sketch.</div>';
                 }
                 settleScript();
+                script.remove();
             };
             document.body.appendChild(script);
         });
