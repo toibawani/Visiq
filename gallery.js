@@ -579,7 +579,7 @@ class Gallery {
         ];
 
         const panesHtml = panes.map((p, i) => `
-            <div class="compare-pane" data-pane-index="${i}">
+            <div class="compare-pane" data-pane-index="${i}" role="group" aria-label="${p.title} pane">
                 <div class="compare-pane-title">${p.title} <span class="compare-pane-cat">${p.category}</span></div>
                 <div class="compare-canvas" id="compare-canvas-${i}"></div>
                 <div class="compare-controls" id="compare-controls-${i}"></div>
@@ -592,7 +592,7 @@ class Gallery {
                     <button class="btn-back">← Back</button>
                     <h1>Compare · ${panes[0].title} vs ${panes[1].title}</h1>
                 </div>
-                <div class="compare-panes">
+                <div class="compare-panes" role="group" aria-label="Comparison: ${panes[0].title} versus ${panes[1].title}">
                     ${panesHtml}
                 </div>
                 <div class="compare-chrome">
@@ -630,10 +630,12 @@ class Gallery {
         };
         document.addEventListener('keydown', this._compareKeydownHandler);
 
-        // Loading indicator
+        // Loading indicator (announced politely to screen readers)
         const loadingEl = document.createElement('div');
         loadingEl.id = 'compare-loading';
-        loadingEl.innerHTML = '<div class="compare-loading-spinner"></div><p>Loading both simulations...</p>';
+        loadingEl.setAttribute('role', 'status');
+        loadingEl.setAttribute('aria-live', 'polite');
+        loadingEl.innerHTML = '<div class="compare-loading-spinner" aria-hidden="true"></div><p>Loading both simulations...</p>';
         view.querySelector('.compare-panes').prepend(loadingEl);
 
         this._compareSims = [];
