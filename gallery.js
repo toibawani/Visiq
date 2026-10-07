@@ -12,6 +12,7 @@ class Gallery {
         this._sparklineTimer = null;
         this._sparklineHistory = null;
         this._compareSpeed = 1.0;
+        this._reduceMotion = false;
         this._cardObserver = null;
         this.loadingMessages = [
             'Preparing physical force calculations...',
@@ -570,6 +571,7 @@ class Gallery {
         view.classList.add('compare-mode');
         const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
         window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
+        this._reduceMotion = reducedMotion;
 
         // Tear down a solo sim if one is running, and any stale compare
         // session left behind (e.g. a forward-navigation double-open).
@@ -709,10 +711,14 @@ class Gallery {
         this._compareSpeed = 1.0;
         document.title = `Compare · ${panes[0].title} vs ${panes[1].title} — VISIQ`;
 
-        // Sparklines were previously rendered only once when each script
-        // loaded; sample them on an interval so they track live energy.
+        // Sample every sample tick unless the tab is hidden — redrawing while
+        // hidden wastes frames and would leave time gaps in the history.
+        const tick = () => {
+            if (document.hidden) return;
+            this._updateSparklines();
+        };
         clearInterval(this._sparklineTimer);
-        this._sparklineTimer = setInterval(() => this._updateSparklines(), 250);
+        this._sparklineTimer = setInterval(tick, this._reduceMotion ? 1000 : 250);
 
         const backBtn = view.querySelector('.btn-back');
         if (backBtn) {
