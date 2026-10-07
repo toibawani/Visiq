@@ -165,6 +165,14 @@ class Gallery {
 
     checkInitialUrlParam() {
         const urlParams = new URLSearchParams(window.location.search);
+
+        // Compare mode takes precedence over ?sim=
+        const compare = this.parseCompareUrl();
+        if (compare) {
+            setTimeout(() => this.openCompare(compare[0], compare[1]), 100);
+            return;
+        }
+
         const simId = urlParams.get('sim');
         if (simId && typeof SIMULATIONS !== 'undefined') {
             const match = SIMULATIONS.find(s => s.id === simId);
