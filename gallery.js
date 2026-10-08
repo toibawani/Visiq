@@ -226,6 +226,22 @@ class Gallery {
         };
         document.addEventListener('keydown', this._keydownHandler);
 
+        // Compare-mode-specific shortcuts live while the two-pane view is open.
+        this._compareKeyHandler = (e) => {
+            const view = document.getElementById('simulation-view');
+            if (!view?.classList.contains('compare-view')) return;
+            if (e.key === ' ' || e.code === 'Space') {
+                // Pause page scroll; trigger the shared Play/Pause button.
+                e.preventDefault();
+                view.querySelector('#compare-play-pause')?.click();
+            } else if (e.key === 'ArrowLeft') {
+                // Quick exit without touching the header bar.
+                e.preventDefault();
+                this.closeCompare();
+            }
+        };
+        document.addEventListener('keydown', this._compareKeyHandler);
+
         // Browser Back/Forward drives compare mode: derive state from the URL
         // and open/close the compare view to match the history entry.
         window.addEventListener('popstate', () => {
@@ -496,6 +512,12 @@ class Gallery {
             url.search = '';
             window.history.replaceState({}, '', url.toString());
         } catch (e) {}
+
+        // Release the compare-mode shortcut layer when it's no longer needed.
+        if (this._compareKeyHandler) {
+            document.removeEventListener('keydown', this._compareKeyHandler);
+            this._compareKeyHandler = null;
+        }
     }
     
     resetSimulation() {
@@ -919,6 +941,11 @@ class Gallery {
         this._sparklineTimer = null;
         this._sparklineHistory = null;
         this._compareSpeed = 1.0;
+        // Release the compare-mode shortcut layer now that the view is gone.
+        if (this._compareKeyHandler) {
+            document.removeEventListener('keydown', this._compareKeyHandler);
+            this._compareKeyHandler = null;
+        }
     }
 }
 
