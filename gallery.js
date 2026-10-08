@@ -664,18 +664,24 @@ class Gallery {
         loadingEl.id = 'compare-loading';
         loadingEl.setAttribute('role', 'status');
         loadingEl.setAttribute('aria-live', 'polite');
-        loadingEl.innerHTML = '<div class="compare-loading-spinner" aria-hidden="true"></div><p>Loading both simulations...</p>';
+        loadingEl.innerHTML = '<div class="compare-loading-spinner" aria-hidden="true"></div><p>Loading simulations...</p>';
         view.querySelector('.compare-panes').prepend(loadingEl);
 
         this._compareSims = [];
         // Remove the loading indicator once both scripts have settled
         // (loaded or failed), so it cannot hang forever on a failed load.
         let pendingScripts = panesData.length;
+        let loadedCount = 0;
         const session = (this._compareSession = (this._compareSession || 0) + 1);
-        const settleScript = () => {
+        const settleScript = (success) => {
             pendingScripts -= 1;
+            if (success) loadedCount += 1;
+            const loading = document.getElementById('compare-loading');
+            const label = loading?.querySelector('p');
+            if (label) {
+                label.textContent = `Loading ${loadedCount} of ${panesData.length} simulation${panesData.length === 1 ? '' : 's'}...`;
+            }
             if (pendingScripts <= 0) {
-                const loading = document.getElementById('compare-loading');
                 if (loading) loading.remove();
             }
         };
@@ -701,7 +707,7 @@ class Gallery {
                     }
                     this._syncAndRender();
                 }
-                settleScript();
+                settleScript(true);
                 script.remove();
             };
             script.onerror = () => {
@@ -717,7 +723,7 @@ class Gallery {
                         pd.container.innerHTML = '<div class="compare-empty">Failed to load this sketch.</div>';
                     }
                 }
-                settleScript();
+                settleScript(false);
                 script.remove();
             };
             document.body.appendChild(script);
