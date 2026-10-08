@@ -3215,6 +3215,24 @@ kbd {
     margin-bottom: 6px;
 }
 
+/* Pulsing dot that indicates the sparkline is actively sampling. */
+.compare-sparkline-label::after {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    margin-left: 8px;
+    vertical-align: middle;
+    animation: comparePulse 1.4s ease-in-out infinite;
+}
+
+@keyframes comparePulse {
+    0%, 100% { opacity: 0.35; transform: scale(0.85); }
+    50% { opacity: 1; transform: scale(1.15); }
+}
+
 .compare-sparkline-wrap {
     display: flex;
     gap: 12px;
