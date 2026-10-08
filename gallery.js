@@ -174,6 +174,9 @@ class Gallery {
         // Compare mode takes precedence over ?sim=
         const compare = this.parseCompareUrl();
         if (compare) {
+            // Avoid re-opening if compare mode is already visible (e.g. a page
+            // refresh that preserved the compare URL).
+            if (document.querySelector('.compare-view')) return;
             setTimeout(() => {
                 // Give compare its own history entry: the current entry
                 // becomes the plain gallery URL, so browser Back closes
