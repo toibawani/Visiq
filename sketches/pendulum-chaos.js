@@ -36,6 +36,246 @@ window.initSketch = function(config) {
             let draggedBob = null;
             let prevDragAngle = 0, lastDragDelta = 0;
 
+            // --- Integrator selection (Feature: Pick the Integrator) ---
+            const Integrators = window.VisiqIntegrators;
+            const INTEGRATOR_ORDER = Integrators ? Integrators.order : ['rk4'];
+            let currentIntegrator = 'rk4';
+            let activeStep = Integrators ? Integrators.METHODS.rk4.step : rk4;
+
+            // One-sentence explanation shown under the integrator switch.
+            const INTEGRATOR_NOTE = {
+                euler:  'Euler adds a little energy every step, so orbits slowly spiral outward instead of closing.',
+                semi:   'Semi-implicit Euler updates velocity first, so it stays stable and barely drifts.',
+                verlet: 'Verlet averages old and new acceleration, so energy stays nearly flat over long runs.',
+                rk4:    'RK4 samples the slope four times per step, so it tracks the true orbit most faithfully.'
+            };
+
+            // --- Guess mode (Feature: Draw Your Guess) ---
+            let guessMode = false;
+            let guessPoints = [];      // user-drawn freehand polyline (canvas coords)
+            let isDrawingGuess = false;
+            let actualPath = [];       // recorded lower-bob path used for comparison
+            let showOverlay = false;   // draw guess + actual after a compare run
+            let lastPercentOff = null;
+            let compareRunning = false;
+            const GUESS_STORAGE_KEY = 'visiq-pendulum-guess-history';
+
+            function loadGuessHistory() {
+                try {
+                    const raw = localStorage.getItem(GUESS_STORAGE_KEY);
+                    if (!raw) return [];
+                    const parsed = JSON.parse(raw);
+                    return Array.isArray(parsed)
+                        ? parsed.filter(e => e && typeof e.percentOff === 'number')
+                        : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function saveGuessHistory(history) {
+                try {
+                    localStorage.setItem(GUESS_STORAGE_KEY, JSON.stringify(history.slice(-20)));
+                } catch (e) {
+                    // Storage unavailable (private mode / quota) — ignore silently.
+                }
+            }
+
+            let guessHistory = loadGuessHistory();
+
+            // Snapshot of the state a guess is measured from (set when guess mode turns on).
+            let guessInitState = stateA.slice();
+
+            // Resample a polyline to n evenly spaced points by index.
+            function resampleByIndex(pts, n) {
+                if (pts.length === 0) return [];
+                if (pts.length === 1) return new Array(n).fill(pts[0]);
+                const out = [];
+                for (let i = 0; i < n; i++) {
+                    const t = (i / (n - 1)) * (pts.length - 1);
+                    const i0 = Math.floor(t);
+                    const i1 = Math.min(i0 + 1, pts.length - 1);
+                    const frac = t - i0;
+                    out.push({
+                        x: pts[i0].x + (pts[i1].x - pts[i0].x) * frac,
+                        y: pts[i0].y + (pts[i1].y - pts[i0].y) * frac
+                    });
+                }
+                return out;
+            }
+
+            // Percent-off between the drawn guess and the actual path, as a plain number.
+            // Scale is the actual path's bounding-box diagonal (its "swing size"), so the
+            // number reads as average gap relative to how far the bob actually travelled.
+            function computePercentOff(guess, actual) {
+                if (guess.length < 2 || actual.length < 2) return null;
+                const N = 64;
+                const g = resampleByIndex(guess, N);
+                const a = resampleByIndex(actual, N);
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                for (const pt of actual) {
+                    if (pt.x < minX) minX = pt.x;
+                    if (pt.x > maxX) maxX = pt.x;
+                    if (pt.y < minY) minY = pt.y;
+                    if (pt.y > maxY) maxY = pt.y;
+                }
+                const scale = Math.max(1, Math.hypot(maxX - minX, maxY - minY));
+                let sum = 0;
+                for (let i = 0; i < N; i++) sum += Math.hypot(g[i].x - a[i].x, g[i].y - a[i].y);
+                return Math.min(100, (sum / N / scale) * 100);
+            }
+
+            // Run the physics headlessly from the guess snapshot and compare.
+            function runCompare() {
+                if (guessPoints.length < 5) return;
+                let s = guessInitState.slice();
+                actualPath = [];
+                const steps = 400;
+                const sub = 0.04 / 4;
+                const l1v = ctx.params.rodLength1, l2v = ctx.params.rodLength2;
+                const oX = p.width * 0.5, oY = p.height * 0.31;
+                for (let i = 0; i < steps; i++) {
+                    for (let k = 0; k < 4; k++) s = activeStep(s, sub);
+                    const x1 = oX + l1v * Math.sin(s[0]);
+                    const y1 = oY + l1v * Math.cos(s[0]);
+                    actualPath.push({ x: x1 + l2v * Math.sin(s[1]), y: y1 + l2v * Math.cos(s[1]) });
+                }
+                lastPercentOff = computePercentOff(guessPoints, actualPath);
+                if (lastPercentOff !== null) {
+                    guessHistory.push({ percentOff: lastPercentOff, at: Date.now() });
+                    saveGuessHistory(guessHistory);
+                }
+                showOverlay = true;
+                compareRunning = false;
+                updateGuessResultLine();
+            }
+
+            // --- Integrator switch ---
+            let integratorBtns = {};
+            let integratorNoteEl = null;
+            let guessResultEl = null;
+
+            function setIntegrator(id) {
+                if (!Integrators || !Integrators.METHODS[id]) return;
+                currentIntegrator = id;
+                activeStep = Integrators.METHODS[id].step;
+                if (integratorNoteEl) integratorNoteEl.textContent = INTEGRATOR_NOTE[id];
+                Object.keys(integratorBtns).forEach(k => {
+                    const active = k === id;
+                    integratorBtns[k].setAttribute('aria-pressed', active ? 'true' : 'false');
+                    integratorBtns[k].style.background = active ? 'rgba(45,212,191,0.25)' : 'rgba(255,255,255,0.05)';
+                });
+            }
+
+            function updateGuessResultLine() {
+                if (!guessResultEl) return;
+                const best = guessHistory.reduce((m, e) => (e.percentOff < m ? e.percentOff : m), Infinity);
+                const last3 = guessHistory.slice(-3).map(e => `${e.percentOff.toFixed(0)}%`).join(', ');
+                const bestTxt = guessHistory.length ? ` Best so far: ${best.toFixed(0)}%.` : '';
+                const lastTxt = guessHistory.length ? ` Recent: ${last3}.` : '';
+                guessResultEl.textContent = lastPercentOff === null
+                    ? 'Draw a guess, then compare.'
+                    : `Your guess was ${lastPercentOff.toFixed(0)}% off.${bestTxt}${lastTxt}`;
+            }
+
+            function setGuessMode(on) {
+                guessMode = on;
+                if (on) {
+                    resetState();
+                    guessInitState = stateA.slice();
+                    guessPoints = [];
+                    actualPath = [];
+                    showOverlay = false;
+                    lastPercentOff = null;
+                    updateGuessResultLine();
+                }
+            }
+
+            // --- Build control UI (integrator switch + draw-your-guess) ---
+            (function buildControls() {
+                const controls = document.getElementById(ctx.controlsContainerId);
+                if (!controls) return;
+
+                // Integrator switch
+                const intWrap = document.createElement('div');
+                intWrap.className = 'integrator-switch';
+                intWrap.style.cssText = 'margin-top:10px;';
+
+                const intLabel = document.createElement('div');
+                intLabel.textContent = 'Integrator';
+                intLabel.style.cssText = 'font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;opacity:0.65;margin-bottom:6px;';
+                intWrap.appendChild(intLabel);
+
+                const intRow = document.createElement('div');
+                intRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+                INTEGRATOR_ORDER.forEach(id => {
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.textContent = Integrators.METHODS[id].label;
+                    b.setAttribute('aria-pressed', id === currentIntegrator ? 'true' : 'false');
+                    b.style.cssText = 'flex:1 1 auto;padding:6px 8px;cursor:pointer;font-size:0.72rem;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:inherit;';
+                    b.addEventListener('click', () => setIntegrator(id));
+                    integratorBtns[id] = b;
+                    intRow.appendChild(b);
+                });
+                intWrap.appendChild(intRow);
+
+                integratorNoteEl = document.createElement('div');
+                integratorNoteEl.textContent = INTEGRATOR_NOTE[currentIntegrator];
+                integratorNoteEl.style.cssText = 'font-size:0.72rem;opacity:0.7;margin-top:6px;line-height:1.45;';
+                intWrap.appendChild(integratorNoteEl);
+                controls.appendChild(intWrap);
+
+                // Draw-your-guess controls
+                const guessWrap = document.createElement('div');
+                guessWrap.className = 'guess-switch';
+                guessWrap.style.cssText = 'margin-top:12px;';
+
+                const guessLabel = document.createElement('div');
+                guessLabel.textContent = 'Draw Your Guess';
+                guessLabel.style.cssText = 'font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;opacity:0.65;margin-bottom:6px;';
+                guessWrap.appendChild(guessLabel);
+
+                const guessRow = document.createElement('div');
+                guessRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+
+                const guessToggle = document.createElement('button');
+                guessToggle.type = 'button';
+                guessToggle.textContent = 'Start guessing';
+                guessToggle.setAttribute('aria-pressed', 'false');
+                guessToggle.style.cssText = 'flex:1 1 auto;padding:6px 10px;cursor:pointer;font-size:0.75rem;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:inherit;';
+                guessToggle.addEventListener('click', () => {
+                    const next = !guessMode;
+                    setGuessMode(next);
+                    guessToggle.textContent = next ? 'Guessing on' : 'Start guessing';
+                    guessToggle.setAttribute('aria-pressed', next ? 'true' : 'false');
+                    guessToggle.style.background = next ? 'rgba(167,139,250,0.25)' : 'rgba(255,255,255,0.05)';
+                });
+                guessRow.appendChild(guessToggle);
+
+                const compareBtn = document.createElement('button');
+                compareBtn.type = 'button';
+                compareBtn.textContent = 'Compare';
+                compareBtn.style.cssText = 'flex:1 1 auto;padding:6px 10px;cursor:pointer;font-size:0.75rem;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:inherit;';
+                compareBtn.addEventListener('click', () => {
+                    if (guessPoints.length < 5) return;
+                    compareRunning = true;
+                    runCompare();
+                });
+                guessRow.appendChild(compareBtn);
+                guessWrap.appendChild(guessRow);
+
+                guessResultEl = document.createElement('div');
+                guessResultEl.setAttribute('role', 'status');
+                guessResultEl.setAttribute('aria-live', 'polite');
+                guessResultEl.style.cssText = 'font-size:0.75rem;opacity:0.85;margin-top:6px;line-height:1.4;';
+                guessWrap.appendChild(guessResultEl);
+                controls.appendChild(guessWrap);
+
+                updateGuessResultLine();
+            })();
+
+
             function derivatives(s) {
                 const [t1, t2, w1, w2] = s;
                 const l1 = ctx.params.rodLength1 * 0.01;
@@ -151,7 +391,7 @@ window.initSketch = function(config) {
             // Energy sparkline inset
             function drawEnergySparkline(px, py, pw, ph) {
                 VisualKit.drawSparkline(p, px, py, pw, ph, energyHistory, [45, 212, 191], {
-                    label: 'Energy (RK4 drift)',
+                    label: `Energy drift (${currentIntegrator.toUpperCase()})`,
                     baseline: baseEnergy,
                     cornerRadius: 7
                 });
@@ -188,8 +428,8 @@ window.initSketch = function(config) {
 
                 if (ctx.isPlaying && !draggedBob) {
                     for (let s = 0; s < 4; s++) {
-                        stateA = rk4(stateA, dt*0.25);
-                        stateB = rk4(stateB, dt*0.25);
+                        stateA = activeStep(stateA, dt * 0.25);
+                        stateB = activeStep(stateB, dt * 0.25);
                     }
                 }
 
@@ -259,6 +499,47 @@ window.initSketch = function(config) {
                     drawDivergenceBar(p.width - 34, 90, 28, 102, div);
                 }
 
+                // 8b. Draw-your-guess overlay
+                if (showOverlay) {
+                    // Actual path (amber)
+                    if (actualPath.length > 1) {
+                        p.noFill();
+                        p.stroke(232, 160, 76, 230);
+                        p.strokeWeight(2.5);
+                        p.beginShape();
+                        for (const pt of actualPath) p.vertex(pt.x, pt.y);
+                        p.endShape();
+                    }
+                    // Guess path (violet)
+                    if (guessPoints.length > 1) {
+                        p.noFill();
+                        p.stroke(167, 139, 250, 230);
+                        p.strokeWeight(2.5);
+                        p.beginShape();
+                        for (const pt of guessPoints) p.vertex(pt.x, pt.y);
+                        p.endShape();
+                    }
+                    p.noStroke();
+                    p.textSize(11);
+                    p.textAlign(p.LEFT, p.TOP);
+                    p.fill(232, 160, 76);
+                    p.text('Actual', 14, 40);
+                    p.fill(167, 139, 250);
+                    p.text('Your guess', 14, 54);
+                    if (lastPercentOff !== null) {
+                        p.fill(255, 255, 255, 200);
+                        p.text(`${lastPercentOff.toFixed(0)}% off`, 14, 68);
+                    }
+                } else if (guessMode && guessPoints.length > 1) {
+                    // Live freehand guess being drawn
+                    p.noFill();
+                    p.stroke(167, 139, 250, 220);
+                    p.strokeWeight(2.5);
+                    p.beginShape();
+                    for (const pt of guessPoints) p.vertex(pt.x, pt.y);
+                    p.endShape();
+                }
+
                 // 9. Telemetry
                 const E   = totalEnergy(stateA);
                 const div = Math.abs(stateA[1] - stateB[1]) % (2*Math.PI);
@@ -284,6 +565,12 @@ window.initSketch = function(config) {
 
             p.mousePressed = function() {
                 const pos = ptr();
+                if (guessMode) {
+                    isDrawingGuess = true;
+                    guessPoints = [{ x: pos.x, y: pos.y }];
+                    showOverlay = false;
+                    return false;
+                }
                 const oX = p.width*0.5, oY = p.height*0.31;
                 const l1v = ctx.params.rodLength1, l2v = ctx.params.rodLength2;
                 const r1 = Math.max(10, 10+ctx.params.bobMass1*0.28);
@@ -300,6 +587,13 @@ window.initSketch = function(config) {
             };
 
             p.mouseDragged = function() {
+                if (guessMode) {
+                    if (isDrawingGuess) {
+                        const pos = ptr();
+                        guessPoints.push({ x: pos.x, y: pos.y });
+                    }
+                    return false;
+                }
                 if (!draggedBob) return;
                 const pos = ptr();
                 const oX = p.width*0.5, oY = p.height*0.31;
@@ -322,6 +616,10 @@ window.initSketch = function(config) {
             };
 
             p.mouseReleased = function() {
+                if (guessMode) {
+                    isDrawingGuess = false;
+                    return;
+                }
                 if (!draggedBob) return;
                 const omega = dragTracker.releaseAngle(14, 20);
                 if (draggedBob===1) { stateA[2]=omega; stateB[2]=omega; }
