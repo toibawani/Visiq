@@ -628,7 +628,21 @@ class Gallery {
         `).join('');
 
         const html = `
-            <div class="compare-view">
+            <div class="compare-view" role="dialog" aria-modal="true" aria-labelledby="compare-title" aria-describedby="compare-status">
+                <div id="compare-title" class="sr-only">Compare two simulations</div>
+                <div class="compare-header">
+                    <button class="btn-back">← Back</button>
+                    <h1>Compare · ${panes[0].title} vs ${panes[1].title}</h1>
+                    <p class="compare-shortcuts">
+                        <kbd>Space</kbd> play/pause &nbsp;·&nbsp;
+                        <kbd>←</kbd> back &nbsp;·&nbsp;
+                        <kbd>Esc</kbd> close
+                    </p>
+                </div>
+                <div class="compare-panes" role="group" aria-label="Comparison: ${panes[0].title} versus ${panes[1].title}">
+                    ${panesHtml}
+                </div>
+                <div class="compare-chrome">
                 <div class="compare-header">
                     <button class="btn-back">← Back</button>
                     <h1>Compare · ${panes[0].title} vs ${panes[1].title}</h1>
