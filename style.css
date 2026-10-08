@@ -3174,6 +3174,14 @@ kbd {
     border-bottom: 1px solid var(--border-subtle);
 }
 
+.compare-pane-title .compare-pane-cat {
+    color: var(--text-subtle);
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-left: 6px;
+    opacity: 0.85;
+}
+
 .compare-controls {
     display: flex;
     align-items: center;
