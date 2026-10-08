@@ -752,6 +752,7 @@ class Gallery {
         }
     }
 
+    /** Sync the shared controls and kick off the sparkline sampler. */
     _syncAndRender() {
         this._wireSyncedControls();
         this._updateSparklines();
@@ -772,6 +773,7 @@ class Gallery {
         };
     }
 
+    /** Wire up the shared Play/Pause, Reset, and speed controls for both panes. */
     _wireSyncedControls() {
         const { play: playBtn, reset: resetBtn, speed: speedSelect } = this.compareChrome();
         if (playBtn) {
@@ -819,6 +821,7 @@ class Gallery {
         playBtn.setAttribute('aria-pressed', String(playing));
     }
 
+    /** Build the empty sparkline cells in the compare chrome. */
     _renderSparklineCells(panes) {
         const { sparklineWrap: wrap } = this.compareChrome();
         if (!wrap) return;
@@ -838,6 +841,7 @@ class Gallery {
         });
     }
 
+    /** Sample energy per pane and redraw the two sparklines on a shared axis. */
     _updateSparklines() {
         const { sparklineWrap: wrap } = this.compareChrome();
         if (!wrap || document.hidden || !this._compareSims || this._compareSims.length !== 2) return;
