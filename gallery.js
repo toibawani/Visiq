@@ -508,6 +508,9 @@ class Gallery {
         
         this.currentSimulation = null;
 
+        // Reset the document title so the gallery chrome is reflected again.
+        document.title = 'VISIQ – Interactive Science Learning';
+
         // Clear query parameters in URL cleanly
         try {
             const url = new URL(window.location.href);
