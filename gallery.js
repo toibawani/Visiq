@@ -612,9 +612,9 @@ class Gallery {
         ];
 
         const panesHtml = panes.map((p, i) => `
-            <div class="compare-pane" data-pane-index="${i}" role="group" aria-label="${p.title} pane">
+            <div class="compare-pane" data-pane-index="${i}" role="group" aria-label="${p.title} pane" data-sim-id="${p.id}">
                 <div class="compare-pane-title">${p.title} <span class="compare-pane-cat">${p.category}</span></div>
-                <div class="compare-canvas" id="compare-canvas-${i}"></div>
+                <div class="compare-canvas" id="compare-canvas-${i}" data-sim-id="${p.id}"></div>
                 <div class="compare-controls" id="compare-controls-${i}"></div>
             </div>
         `).join('');
@@ -711,6 +711,8 @@ class Gallery {
                 }
             }
         };
+
+        const panesData = this._buildComparePan();
         panesData.forEach((pd, i) => {
             const script = document.createElement('script');
             script.src = `sketches/${pd.id}.js?v=${Date.now()}`;
@@ -787,6 +789,18 @@ class Gallery {
     /** Compare sketch controllers that actually loaded (failed panes are null). */
     loadedCompareSims() {
         return (this._compareSims || []).filter(s => s != null);
+    }
+
+    /** Build the {id, container, controls} records for the two panes. */
+    _buildComparePan() {
+        return [0, 1].map((i) => {
+            const canvas = document.getElementById(`compare-canvas-${i}`);
+            return {
+                id: canvas?.dataset.simId || null,
+                container: canvas,
+                controls: document.getElementById(`compare-controls-${i}`)
+            };
+        });
     }
 
     /** Compare-mode DOM (null when compare view is not rendered). */
