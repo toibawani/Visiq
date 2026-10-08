@@ -1,5 +1,5 @@
 // ===== GALLERY SYSTEM =====
-// Complete simulation gallery with p5 lifecycle management, 29-simulation catalog,
+// Complete simulation gallery with p5 lifecycle management, simulation catalog,
 // IntersectionObserver pause/resume, URL deep-linking, and complete memory leak prevention.
 
 class Gallery {
@@ -35,7 +35,7 @@ class Gallery {
         this.setupOnboarding();
         this.syncFavoriteButtons();
         this.checkInitialUrlParam();
-        console.log('[GALLERY] Ready with 29 simulations');
+        console.log('[GALLERY] Ready with simulations');
     }
 
     renderSimulationsCatalog() {
@@ -133,7 +133,7 @@ class Gallery {
                         if (window.statsTracker) {
                             const cur = window.statsTracker.isFavorite(sim.id);
                             cur ? window.statsTracker.removeFavorite(sim.id) : window.statsTracker.addFavorite(sim.id);
-                            favBtn.textContent = cur ? '🤍' : '❤️';
+                            favBtn.textContent = cur ? 'Favorite' : 'Unfavorite';
                             favBtn.setAttribute('data-tooltip', cur ? 'Add favorite' : 'Remove favorite');
                         }
                     };
@@ -243,6 +243,10 @@ class Gallery {
                 // Quick exit without touching the header bar.
                 e.preventDefault();
                 this.closeCompare();
+            } else if (e.key === 'r' || e.key === 'R') {
+                // Quick reset of both panes.
+                e.preventDefault();
+                view.querySelector('#compare-reset')?.click();
             }
         };
         document.addEventListener('keydown', this._compareKeyHandler);
@@ -278,10 +282,8 @@ class Gallery {
         onboarding.className = 'onboarding-banner';
         onboarding.innerHTML = `
             <div class="onboarding-inner">
-                <span class="onboarding-icon">👋</span>
                 <div class="onboarding-text">
-                    <strong>Welcome to VISIQ</strong>
-                    <p>Pick any simulation below to explore physical principles interactively. Press <kbd>?</kbd> anytime for keyboard shortcuts, and <kbd>Esc</kbd> to return.</p>
+<strong>Explore 29 interactive simulations covering physics, biology, geography, and astronomy. Click any simulation to start experimenting.</strong>
                 </div>
                 <button class="onboarding-dismiss" aria-label="Dismiss welcome hint" title="Dismiss">Got it ✓</button>
             </div>
