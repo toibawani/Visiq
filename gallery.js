@@ -42,7 +42,7 @@ class Gallery {
         const container = document.getElementById('simulations-container');
         if (!container || typeof SIMULATIONS === 'undefined') return;
 
-        // Render all 29 simulations with accessible semantics
+        // Render every simulation in the catalog with accessible semantics
         container.innerHTML = '';
 
         const categories = ['Physics', 'Biology', 'Geography', 'Astronomy'];
@@ -283,9 +283,9 @@ class Gallery {
         onboarding.innerHTML = `
             <div class="onboarding-inner">
                 <div class="onboarding-text">
-<strong>Explore 29 interactive simulations covering physics, biology, geography, and astronomy. Click any simulation to start experimenting.</strong>
+<strong>Explore ${SIMULATIONS.length} interactive simulations covering physics, biology, geography, and astronomy. Click any simulation to start experimenting.</strong>
                 </div>
-                <button class="onboarding-dismiss" aria-label="Dismiss welcome hint" title="Dismiss">Got it ✓</button>
+                <button class="onboarding-dismiss" aria-label="Dismiss welcome hint" title="Dismiss">Got it</button>
             </div>
         `;
 

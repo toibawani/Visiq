@@ -1,4 +1,4 @@
-// ===== VISIQ SIMULATIONS CATALOG (29 CANONICAL SIMULATIONS) =====
+// ===== VISIQ SIMULATIONS CATALOG =====
 // Explanations written plainly for curious people. No marketing buzzwords.
 // Accurate scientific principles with real physical parameters.
 
