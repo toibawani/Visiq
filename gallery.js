@@ -758,7 +758,7 @@ class Gallery {
         });
 
         this._renderSparklineCells(panes);
-        this._sparklineHistory = [[], []];
+        this._resetSparklineHistory();
         // Restore a previously chosen speed so a quick reopen keeps the same cadence.
         try {
             const saved = sessionStorage.getItem('visiq-compare-speed');
@@ -881,6 +881,12 @@ class Gallery {
         });
     }
 
+    /** Clear or reset the sparkline history so closed sessions cannot
+        leak into a fresh compare session. */
+    _resetSparklineHistory() {
+        this._sparklineHistory = [[], []];
+    }
+
     /** Sample energy per pane and redraw the two sparklines on a shared axis. */
     _updateSparklines() {
         const { sparklineWrap: wrap } = this.compareChrome();
@@ -999,7 +1005,7 @@ class Gallery {
         // Clean up UI state
         clearInterval(this._sparklineTimer);
         this._sparklineTimer = null;
-        this._sparklineHistory = null;
+        this._resetSparklineHistory();
         this._compareSpeed = 1.0;
         // Forget the per-session speed when compare mode is closed.
         try { sessionStorage.removeItem('visiq-compare-speed'); } catch (e) {}
