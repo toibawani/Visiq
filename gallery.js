@@ -87,14 +87,16 @@ class Gallery {
 
                 card.innerHTML = `
                     <div class="card-header">
-                        <div class="card-icon" aria-hidden="true">${sim.icon}</div>
+                        <div class="card-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
                         <button class="btn-favorite no-ripple"
                                 id="fav-btn-${sim.id}"
                                 data-sim-id="${sim.id}"
+                                data-fav="${isFav ? 'true' : 'false'}"
+                                aria-pressed="${isFav ? 'true' : 'false'}"
                                 aria-label="${isFav ? 'Remove from favorites' : 'Add to favorites'}"
                                 data-tooltip="${isFav ? 'Remove favorite' : 'Add favorite'}"
                                 type="button">
-                            ${isFav ? '❤️' : '🤍'}
+                            ${isFav ? 'Unfavorite' : 'Favorite'}
                         </button>
                         <div class="card-meta">
                             <div class="card-title">${sim.title}</div>
@@ -108,7 +110,7 @@ class Gallery {
                         </div>
                     </div>
                     <div class="card-footer" role="button" tabindex="0" aria-label="Launch ${sim.title}" style="cursor: pointer;">
-                        <span class="time">⏱ ${sim.estimatedTime}</span>
+                        <span class="time">${sim.estimatedTime}</span>
                         <span class="arrow" aria-hidden="true">→</span>
                     </div>
                 `;
@@ -133,8 +135,12 @@ class Gallery {
                         if (window.statsTracker) {
                             const cur = window.statsTracker.isFavorite(sim.id);
                             cur ? window.statsTracker.removeFavorite(sim.id) : window.statsTracker.addFavorite(sim.id);
-                            favBtn.textContent = cur ? 'Favorite' : 'Unfavorite';
-                            favBtn.setAttribute('data-tooltip', cur ? 'Add favorite' : 'Remove favorite');
+                            const nowFav = !cur;
+                            favBtn.textContent = nowFav ? 'Unfavorite' : 'Favorite';
+                            favBtn.setAttribute('aria-pressed', nowFav ? 'true' : 'false');
+                            favBtn.setAttribute('data-fav', nowFav ? 'true' : 'false');
+                            favBtn.setAttribute('aria-label', nowFav ? 'Remove from favorites' : 'Add to favorites');
+                            favBtn.setAttribute('data-tooltip', nowFav ? 'Remove favorite' : 'Add favorite');
                         }
                     };
                 }
@@ -306,8 +312,11 @@ class Gallery {
             const cardId = card.getAttribute('data-sim-id');
             if (!btn || !cardId) return;
             const isFav = simIds.includes(cardId);
-            btn.textContent = isFav ? '❤️' : '🤍';
+            btn.textContent = isFav ? 'Unfavorite' : 'Favorite';
+            btn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
+            btn.setAttribute('data-fav', isFav ? 'true' : 'false');
             btn.setAttribute('title', isFav ? 'Remove from favorites' : 'Add to favorites');
+            btn.setAttribute('aria-label', isFav ? 'Remove from favorites' : 'Add to favorites');
             btn.setAttribute('data-tooltip', isFav ? 'Remove favorite' : 'Add favorite');
         });
     }

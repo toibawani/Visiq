@@ -157,8 +157,11 @@ class StatsTracker {
             const btn = card.querySelector('.btn-favorite');
             const cardId = this.getCardId(card);
             if (cardId === simId && btn) {
-                btn.textContent = isFav ? '❤️' : '🤍';
+                btn.textContent = isFav ? 'Unfavorite' : 'Favorite';
+                btn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
+                btn.setAttribute('data-fav', isFav ? 'true' : 'false');
                 btn.setAttribute('title', isFav ? 'Remove from favorites' : 'Add to favorites');
+                btn.setAttribute('aria-label', isFav ? 'Remove from favorites' : 'Add to favorites');
                 btn.setAttribute('data-tooltip', isFav ? 'Remove favorite' : 'Add favorite');
             }
         });

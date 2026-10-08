@@ -37,7 +37,7 @@ class FavoritesFilter {
         let visibleCount = 0;
         cards.forEach(card => {
             const favoriteBtn = card.querySelector('.btn-favorite');
-            const isFav = favoriteBtn && favoriteBtn.textContent.includes('❤️');
+            const isFav = favoriteBtn && favoriteBtn.getAttribute('data-fav') === 'true';
             
             if (this.isFavoritesMode) {
                 if (isFav) {
@@ -61,9 +61,8 @@ class FavoritesFilter {
             msg.className = 'no-favorites-msg';
             msg.innerHTML = `
                 <div class="empty-state-card">
-                    <span class="empty-state-emoji">❤️</span>
                     <h3>Your Favorites Deck is Empty</h3>
-                    <p>Tap the heart icon (🤍) on any simulation card to pin your favorite topics here for quick review.</p>
+                    <p>Use the Favorite button on any simulation card to pin your favorite topics here for quick review.</p>
                     <button class="btn-clear-filter" onclick="window.favoritesFilter.toggleFavoritesOnly()">Show All Simulations</button>
                 </div>
             `;
