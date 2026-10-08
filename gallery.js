@@ -579,12 +579,7 @@ class Gallery {
             this.destroyCurrentSketch(view);
             this._currentSimController = null;
         }
-        if (this._compareSims) {
-            this._compareSims.forEach(s => {
-                if (s && typeof s.destroy === 'function') { try { s.destroy(); } catch (e) {} }
-            });
-            this._compareSims = null;
-        }
+        this._destroyCompareSims();
         clearInterval(this._sparklineTimer);
         this._sparklineTimer = null;
 
@@ -889,17 +884,22 @@ class Gallery {
         });
     }
 
-    closeCompare() {
-        const view = document.getElementById('simulation-view');
-        // Idempotent: a second call (e.g. Back click + Escape) must be a no-op
-        if (!view || !view.querySelector('.compare-view')) return;
-        // Destroy compare two-pane sims
+    /** Destroy any running compare-session sketches. Safe to call when none exist. */
+    _destroyCompareSims() {
         if (this._compareSims) {
             this._compareSims.forEach(s => {
                 if (s && typeof s.destroy === 'function') { try { s.destroy(); } catch (e) {} }
             });
             this._compareSims = null;
         }
+    }
+
+    closeCompare() {
+        const view = document.getElementById('simulation-view');
+        // Idempotent: a second call (e.g. Back click + Escape) must be a no-op
+        if (!view || !view.querySelector('.compare-view')) return;
+        // Destroy compare two-pane sims
+        this._destroyCompareSims();
         // Empty the view
         view.innerHTML = '';
         view.classList.remove('compare-mode');
