@@ -725,7 +725,13 @@ class Gallery {
 
         this._renderSparklineCells(panes);
         this._sparklineHistory = [[], []];
-        this._compareSpeed = 1.0;
+        // Restore a previously chosen speed so a quick reopen keeps the same cadence.
+        try {
+            const saved = sessionStorage.getItem('visiq-compare-speed');
+            if (saved) this._compareSpeed = parseFloat(saved) || 1.0;
+        } catch (e) {
+            this._compareSpeed = 1.0;
+        }
         document.title = `Compare · ${panes[0].title} vs ${panes[1].title} — VISIQ`;
 
         // One sample per visible tick; skipped while the tab is hidden so no
@@ -784,8 +790,12 @@ class Gallery {
                 const speed = parseFloat(e.target.value) || 1.0;
                 this._compareSpeed = speed;
                 this.loadedCompareSims().forEach(s => { s.speed = speed; });
+                // Remember the cadence for a quick reopen.
+                try {
+                    sessionStorage.setItem('visiq-compare-speed', String(speed));
+                } catch (e) {}
             };
-            // Keep the select visually aligned (a reopen resets it to 1.0).
+            // Keep the select visually aligned with the restored preference.
             speedSelect.value = String(this._compareSpeed);
         }
         this._updatePlayBothLabel();
@@ -941,6 +951,8 @@ class Gallery {
         this._sparklineTimer = null;
         this._sparklineHistory = null;
         this._compareSpeed = 1.0;
+        // Forget the per-session speed when compare mode is closed.
+        try { sessionStorage.removeItem('visiq-compare-speed'); } catch (e) {}
         // Release the compare-mode shortcut layer now that the view is gone.
         if (this._compareKeyHandler) {
             document.removeEventListener('keydown', this._compareKeyHandler);
