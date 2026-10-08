@@ -749,7 +749,11 @@ class Gallery {
                 if (this._compareSims) {
                     this._compareSims[i] = null;
                     if (pd.container) {
-                        pd.container.innerHTML = '<div class="compare-empty">Failed to load this sketch.</div>';
+                        pd.container.innerHTML =
+                            '<div class="compare-empty" role="status" aria-label="Error">' +
+                            '<span class="compare-empty-icon" aria-hidden="true">⚠</span> ' +
+                            'This simulation could not be loaded.' +
+                            '</div>';
                     }
                 }
                 settleScript(false);

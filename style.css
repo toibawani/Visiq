@@ -3245,10 +3245,19 @@ kbd {
 }
 
 .compare-empty {
-    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent-danger);
     font-size: 13px;
+    font-weight: 500;
     text-align: center;
     padding: 20px 0;
+}
+
+.compare-empty-icon {
+    font-size: 18px;
+    line-height: 1;
 }
 
 /* Loading overlay shown while compare sketches stream in */
