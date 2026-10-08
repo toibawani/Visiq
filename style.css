@@ -3212,6 +3212,20 @@ kbd {
     gap: 6px;
 }
 
+.compare-playback .btn-control:hover {
+    transform: translateY(-1px);
+}
+
+.compare-playback .btn-control:active {
+    transform: translateY(0);
+    opacity: 0.85;
+}
+
+.compare-playback .btn-control:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
 .compare-sparkline-panel {
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
