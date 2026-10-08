@@ -662,7 +662,7 @@ class Gallery {
                 if (loading) loading.remove();
             }
         };
-        panesData.forEach((pd) => {
+        panesData.forEach((pd, i) => {
             const script = document.createElement('script');
             script.src = `sketches/${pd.id}.js?v=${Date.now()}`;
             script.onload = () => {
@@ -680,7 +680,7 @@ class Gallery {
                         // Sketches load at different times — apply the shared
                         // speed so a late pane does not start out of sync.
                         instance.speed = this._compareSpeed;
-                        this._compareSims[pd.i] = instance;
+                        this._compareSims[i] = instance;
                     }
                     this._syncAndRender();
                 }
@@ -695,7 +695,7 @@ class Gallery {
                 }
                 // Skip this pane if script fails to load
                 if (this._compareSims) {
-                    this._compareSims[pd.i] = null;
+                    this._compareSims[i] = null;
                     if (pd.container) {
                         pd.container.innerHTML = '<div class="compare-empty">Failed to load this sketch.</div>';
                     }
