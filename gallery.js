@@ -693,6 +693,9 @@ class Gallery {
         // Move focus to the compare title so keyboard users land in the view.
         view.querySelector('h1')?.focus();
 
+        // Establish a focus trap so keyboard users stay inside the dialog.
+        this._setupCompareFocusTrap(view);
+
         // Keyboard: Escape is handled by the global _keydownHandler, which
         // routes to closeCompare() while .compare-view is open.
 
@@ -885,6 +888,45 @@ class Gallery {
             speedSelect.value = String(this._compareSpeed);
         }
         this._updatePlayBothLabel();
+    }
+
+    /** Set up a focus trap that keeps the Tab key inside the compare
+        dialog, matching its role=dialog/aria-modal semantics. */
+    _setupCompareFocusTrap(view) {
+        const focusable = Array.from(
+            view.querySelectorAll(
+                'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [href][tabindex], [tabindex]:not([tabindex="-1"])'
+            )
+        ).filter((el) => {
+            // Skip sr-only elements and the aria-labelledby dummy.
+            if (el.classList.contains('sr-only')) return false;
+            if (el.id === 'compare-title') return false;
+            return el.offsetParent !== null;
+        });
+        this._compareFocusable = focusable;
+        this._compareFocusTrapHandler = (e) => {
+            if (e.key !== 'Tab') return;
+            if (focusable.length === 0) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        };
+        document.addEventListener('keydown', this._compareFocusTrapHandler);
+    }
+
+    /** Release the compare focus trap. */
+    _releaseCompareFocusTrap() {
+        if (this._compareFocusTrapHandler) {
+            document.removeEventListener('keydown', this._compareFocusTrapHandler);
+            this._compareFocusTrapHandler = null;
+        }
+        this._compareFocusable = null;
     }
 
     /** Keep the shared Play/Pause button label in sync with pane state. */
@@ -1087,6 +1129,8 @@ class Gallery {
             document.removeEventListener('keydown', this._compareKeyHandler);
             this._compareKeyHandler = null;
         }
+        // Release the focus trap so normal tab order resumes.
+        this._releaseCompareFocusTrap();
     }
 }
 
