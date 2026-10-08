@@ -3284,6 +3284,26 @@ kbd {
     line-height: 1;
 }
 
+/* Per-pane play/pause status indicator (populated by _updatePlayBothLabel). */
+.pane-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+}
+
+.pane-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.7;
+}
+
 /* Loading overlay shown while compare sketches stream in */
 #compare-loading {
     position: absolute;

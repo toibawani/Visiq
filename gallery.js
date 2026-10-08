@@ -897,6 +897,16 @@ class Gallery {
             ? '<span aria-hidden="true">⏸</span> Pause both'
             : '<span aria-hidden="true">▶</span> Play both';
         playBtn.setAttribute('aria-pressed', String(playing));
+
+        // Update each pane's per-pane control bar with its individual state.
+        sims.forEach((s, i) => {
+            const controls = document.getElementById(`compare-controls-${i}`);
+            if (controls) {
+                controls.innerHTML = playing
+                    ? '<span class="pane-status" aria-hidden="true">●</span> <span>playing</span>'
+                    : '<span class="pane-status" aria-hidden="true">○</span> <span>paused</span>';
+            }
+        });
     }
 
     /** Build the empty sparkline cells in the compare chrome. */
