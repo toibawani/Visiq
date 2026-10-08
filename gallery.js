@@ -10,6 +10,8 @@ class Gallery {
         this._p5Instance = null;
         this._keydownHandler = null;
         this._sparklineTimer = null;
+        this._sparklineFrameId = null;
+        this._lastSparklineFrameTime = 0;
         this._sparklineHistory = null;
         this._compareSpeed = 1.0;
         this._reduceMotion = false;
@@ -602,8 +604,11 @@ class Gallery {
             this._currentSimController = null;
         }
         this._destroyCompareSims();
-        clearInterval(this._sparklineTimer);
-        this._sparklineTimer = null;
+        if (this._sparklineFrameId != null) {
+            cancelAnimationFrame(this._sparklineFrameId);
+            this._sparklineFrameId = null;
+        }
+        this._lastSparklineFrameTime = 0;
 
         const simById = (id) => SIMULATIONS.find(s => s.id === id);
         const panes = [
@@ -665,10 +670,6 @@ class Gallery {
 
         // Move focus to the compare title so keyboard users land in the view.
         view.querySelector('h1')?.focus();
-
-        const panesData = panes.map((pane, i) => ({
-            id: pane.id, container: document.getElementById(`compare-canvas-${i}`), controls: document.getElementById(`compare-controls-${i}`), i
-        }));
 
         // Keyboard: Escape is handled by the global _keydownHandler, which
         // routes to closeCompare() while .compare-view is open.
@@ -768,10 +769,17 @@ class Gallery {
         }
         document.title = `Compare · ${panes[0].title} vs ${panes[1].title} — VISIQ`;
 
-        // One sample per visible tick; skipped while the tab is hidden so no
-        // gaps or wasted redraws accumulate in the rolling history.
-        clearInterval(this._sparklineTimer);
-        this._sparklineTimer = setInterval(() => this._updateSparklines(), this._reduceMotion ? 1000 : 250);
+        // Draw on the RAF loop (synced to repaint) with a timestamp-based cap:
+        // ~10fps normal, ~2fps with reduced motion. The sampler is kept alive
+        // while the tab is hidden so the chart resumes instantly when it
+        // becomes visible again; background RAF is throttled by the browser,
+        // so this costs almost nothing.
+        this._lastSparklineFrameTime = 0;
+        if (this._sparklineFrameId != null) {
+            cancelAnimationFrame(this._sparklineFrameId);
+            this._sparklineFrameId = null;
+        }
+        this._sparklineFrameId = requestAnimationFrame(() => this._updateSparklines());
 
         const backBtn = view.querySelector('.btn-back');
         if (backBtn) {
@@ -891,12 +899,33 @@ class Gallery {
         this._sparklineHistory = [[], []];
     }
 
-    /** Sample energy per pane and redraw the two sparklines on a shared axis. */
+    /** Sample energy per pane and redraw the two sparklines on a shared axis.
+        RAF-loop entry point; scheduling and cadence capping live here so the
+        sampler can keep ticking (cheaply) while the tab is hidden. */
     _updateSparklines() {
+        const now = performance.now();
         const { sparklineWrap: wrap } = this.compareChrome();
-        if (!wrap || document.hidden || !this._compareSims || this._compareSims.length !== 2) return;
+        if (!wrap || !this._compareSims || this._compareSims.length !== 2) {
+            this._sparklineFrameId = null;
+            return;
+        }
+        if (document.hidden) {
+            // Keep a thin RAF ticker alive while hidden so the chart resumes
+            // instantly on the next visible frame. The browser throttles or
+            // halts background RAF, so this costs almost nothing.
+            this._sparklineFrameId = requestAnimationFrame(() => this._updateSparklines());
+            return;
+        }
+        // Timestamp-based cadence cap so we never redraw faster than the
+        // throttle, regardless of how far behind RAF frames drift.
+        if (now - this._lastSparklineFrameTime < (this._reduceMotion ? 500 : 100)) {
+            this._sparklineFrameId = requestAnimationFrame(() => this._updateSparklines());
+            return;
+        }
+        this._lastSparklineFrameTime = now;
+
         if (!this._sparklineHistory) this._sparklineHistory = [[], []];
-        const HISTORY_CAP = 60; // ~15s of samples at the 250ms tick
+        const HISTORY_CAP = 60; // ~6s of samples at 100ms
 
         // Sims surface energy as formatted telemetry strings ('12.3 J', '62.5%')
         // under keys like 'Total Energy' — so take the numeric convention
@@ -1007,8 +1036,11 @@ class Gallery {
             window.history.replaceState({}, '', url.toString());
         } catch (e) {}
         // Clean up UI state
-        clearInterval(this._sparklineTimer);
-        this._sparklineTimer = null;
+        if (this._sparklineFrameId != null) {
+            cancelAnimationFrame(this._sparklineFrameId);
+            this._sparklineFrameId = null;
+        }
+        this._lastSparklineFrameTime = 0;
         this._resetSparklineHistory();
         this._compareSpeed = 1.0;
         // Forget the per-session speed when compare mode is closed.
