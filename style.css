@@ -3157,6 +3157,12 @@ kbd {
     height: 100% !important;
 }
 
+.compare-pane:focus-visible,
+.compare-canvas:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: -2px;
+}
+
 .compare-pane-title {
     padding: 8px 12px;
     font-size: 12px;
