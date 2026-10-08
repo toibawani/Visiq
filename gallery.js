@@ -837,7 +837,11 @@ class Gallery {
             speedSelect.onchange = (e) => {
                 const speed = parseFloat(e.target.value) || 1.0;
                 this._compareSpeed = speed;
-                this.loadedCompareSims().forEach(s => { s.speed = speed; });
+                this.loadedCompareSims().forEach((s) => {
+                    // Some sketches do not expose a speed setter; only touch
+                    // the ones that do, so the shared control stays useful.
+                    if ('speed' in s) s.speed = speed;
+                });
                 // Remember the cadence for a quick reopen.
                 try {
                     sessionStorage.setItem('visiq-compare-speed', String(speed));
