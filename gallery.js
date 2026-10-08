@@ -736,6 +736,19 @@ class Gallery {
                     }
                 }
             }
+            // Mark the failed pane's sparkline cell with a small error chip
+            // so the chart area reflects the failure as well as the status bar.
+            if (!success) {
+                const cell = document.getElementById(`compare-sparkline-${i}`);
+                if (cell) {
+                    const chip = document.createElement('span');
+                    chip.className = 'sparkline-error';
+                    chip.setAttribute('aria-label', 'No data available');
+                    chip.textContent = '✕';
+                    chip.setAttribute('aria-hidden', 'true');
+                    cell.appendChild(chip);
+                }
+            }
         };
 
         const panesData = this._buildComparePan();

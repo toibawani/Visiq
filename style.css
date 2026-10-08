@@ -3276,6 +3276,16 @@ kbd {
     height: 40px;
 }
 
+/* Error chip shown on a sparkline cell whose sketch failed to load. */
+.compare-sparkline-wrap .sparkline-error {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    color: var(--accent-danger);
+    padding: 8px 0;
+}
+
 .compare-empty {
     display: inline-flex;
     align-items: center;
