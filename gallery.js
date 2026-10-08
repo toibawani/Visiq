@@ -615,6 +615,8 @@ class Gallery {
             this._sparklineFrameId = null;
         }
         this._lastSparklineFrameTime = 0;
+        this._compareSession = null;
+        console.log(`[GALLERY] Compare session started: ${a} vs ${b}`);
 
         const simById = (id) => SIMULATIONS.find(s => s.id === id);
         const panes = [
@@ -1043,6 +1045,7 @@ class Gallery {
         const view = document.getElementById('simulation-view');
         // Idempotent: a second call (e.g. Back click + Escape) must be a no-op
         if (!view || !view.querySelector('.compare-view')) return;
+        console.log('[GALLERY] Compare session ended');
         // Destroy compare two-pane sims
         this._destroyCompareSims();
         // Empty the view
