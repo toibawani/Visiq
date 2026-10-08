@@ -653,9 +653,18 @@ class Gallery {
                         <div class="compare-sparkline-wrap" id="compare-sparkline-wrap"></div>
                     </div>
                 </div>
+                <div
+                    class="sr-only"
+                    id="compare-status"
+                    aria-live="polite"
+                    aria-atomic="true"
+                ></div>
             </div>
         `;
         view.innerHTML = html;
+
+        // Move focus to the compare title so keyboard users land in the view.
+        view.querySelector('h1')?.focus();
 
         const panesData = panes.map((pane, i) => ({
             id: pane.id, container: document.getElementById(`compare-canvas-${i}`), controls: document.getElementById(`compare-controls-${i}`), i
@@ -688,6 +697,18 @@ class Gallery {
             }
             if (pendingScripts <= 0) {
                 if (loading) loading.remove();
+                // Announce the outcome to screen readers and update the status
+                // element that the playback controls reference via aria-label.
+                const status = document.getElementById('compare-status');
+                if (status) {
+                    if (loadedCount === 2) {
+                        status.textContent = `${panes[0].title} and ${panes[1].title} are ready.`;
+                    } else if (loadedCount === 1) {
+                        status.textContent = `${panes[0].title} is ready; ${panes[1].title} failed to load.`;
+                    } else {
+                        status.textContent = `Neither simulation could load.`;
+                    }
+                }
             }
         };
         panesData.forEach((pd, i) => {
