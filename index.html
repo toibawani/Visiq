@@ -96,26 +96,26 @@
                             data-tooltip="Filter Favorites (F)"
                             aria-label="Toggle favorites filter"
                             aria-pressed="false"
-                            onclick="window.favoritesFilter.toggleFavoritesOnly()">❤️</button>
+                            onclick="window.favoritesFilter.toggleFavoritesOnly()">Favorites</button>
 
                     <button class="btn-sort"
                             id="btn-sort"
                             title="Sort Simulations"
                             data-tooltip="Sort Simulations"
                             aria-label="Sort simulations"
-                            onclick="window.sortingSystem.toggleSort()">📊</button>
+                            onclick="window.sortingSystem.toggleSort()">Sort</button>
 
                     <button class="btn-stats"
                             id="btn-stats"
                             title="Session Analytics &amp; History (S)"
                             data-tooltip="Analytics Drawer (S)"
-                            aria-label="Open session analytics and history">📈 Analytics</button>
+                            aria-label="Open session analytics and history">Analytics</button>
 
                     <button class="btn-theme-toggle"
                             id="btn-theme"
                             title="Toggle Theme (T)"
                             data-tooltip="Toggle Theme (T)"
-                            aria-label="Toggle light/dark theme">🌙</button>
+                            aria-label="Toggle light/dark theme">Dark Mode</button>
 
                     <button class="btn-logout"
                             id="btn-logout"
@@ -186,152 +186,6 @@
             <!-- SIMULATIONS SECTION -->
             <section class="simulations-section" aria-label="Simulation library">
                 <div class="simulations-container" id="simulations-container">
-
-                    <!-- Newton's Playground -->
-                    <article class="sim-card-featured" role="article" aria-label="Newton's Playground simulation">
-                        <div class="card-header">
-                            <div class="card-icon" aria-hidden="true">⚛️</div>
-                            <button class="btn-favorite no-ripple"
-                                    id="fav-btn-newton"
-                                    data-sim-id="newton"
-                                    aria-label="Add Newton's Playground to favorites"
-                                    data-tooltip="Add to Favorites"
-                                    onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('newton'); fav ? window.statsTracker.addFavorite('newton') : window.statsTracker.removeFavorite('newton');">🤍</button>
-                            <div class="card-meta">
-                                <div class="card-title">Newton's Playground</div>
-                                <div class="card-category">Physics • Beginner</div>
-                            </div>
-                        </div>
-                        <div class="card-body" onclick="window.gallery.openSimulation('newton')" style="cursor: pointer;">
-                            <p>Drag objects and apply forces. Watch F=ma come alive with real-time physics interactions.</p>
-                            <div class="card-tags">
-                                <span class="tag">forces</span>
-                                <span class="tag">motion</span>
-                                <span class="tag">interactive</span>
-                            </div>
-                        </div>
-                        <div class="card-footer" onclick="window.gallery.openSimulation('newton')" style="cursor: pointer;">
-                            <span class="time">⏱ 5–10 min</span>
-                            <span class="arrow">→</span>
-                        </div>
-                    </article>
-
-                    <!-- Black Hole Orbit -->
-                    <article class="sim-card-featured" role="article" aria-label="Black Hole Orbit simulation">
-                        <div class="card-header">
-                            <div class="card-icon" aria-hidden="true">🌌</div>
-                            <button class="btn-favorite no-ripple"
-                                    id="fav-btn-black-hole-orbit"
-                                    data-sim-id="black-hole-orbit"
-                                    aria-label="Add Black Hole Orbit to favorites"
-                                    data-tooltip="Add to Favorites"
-                                    onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('black-hole-orbit'); fav ? window.statsTracker.addFavorite('black-hole-orbit') : window.statsTracker.removeFavorite('black-hole-orbit');">🤍</button>
-                            <div class="card-meta">
-                                <div class="card-title">Black Hole Orbit</div>
-                                <div class="card-category">Physics • Intermediate</div>
-                            </div>
-                        </div>
-                        <div class="card-body" onclick="window.gallery.openSimulation('black-hole-orbit')" style="cursor: pointer;">
-                            <p>Control orbital velocity and watch particles spiral around a black hole's event horizon.</p>
-                            <div class="card-tags">
-                                <span class="tag">gravity</span>
-                                <span class="tag">orbits</span>
-                                <span class="tag">spacetime</span>
-                            </div>
-                        </div>
-                        <div class="card-footer" onclick="window.gallery.openSimulation('black-hole-orbit')" style="cursor: pointer;">
-                            <span class="time">⏱ 8–12 min</span>
-                            <span class="arrow">→</span>
-                        </div>
-                    </article>
-
-                    <!-- Wave Interference -->
-                    <article class="sim-card-featured" role="article" aria-label="Wave Interference simulation">
-                        <div class="card-header">
-                            <div class="card-icon" aria-hidden="true">〰️</div>
-                            <button class="btn-favorite no-ripple"
-                                    id="fav-btn-wave-interference"
-                                    data-sim-id="wave-interference"
-                                    aria-label="Add Wave Interference to favorites"
-                                    data-tooltip="Add to Favorites"
-                                    onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('wave-interference'); fav ? window.statsTracker.addFavorite('wave-interference') : window.statsTracker.removeFavorite('wave-interference');">🤍</button>
-                            <div class="card-meta">
-                                <div class="card-title">Wave Interference</div>
-                                <div class="card-category">Physics • Intermediate</div>
-                            </div>
-                        </div>
-                        <div class="card-body" onclick="window.gallery.openSimulation('wave-interference')" style="cursor: pointer;">
-                            <p>Change wavelength and watch constructive and destructive interference patterns emerge.</p>
-                            <div class="card-tags">
-                                <span class="tag">waves</span>
-                                <span class="tag">superposition</span>
-                                <span class="tag">patterns</span>
-                            </div>
-                        </div>
-                        <div class="card-footer" onclick="window.gallery.openSimulation('wave-interference')" style="cursor: pointer;">
-                            <span class="time">⏱ 7–10 min</span>
-                            <span class="arrow">→</span>
-                        </div>
-                    </article>
-
-                    <!-- Pendulum Chaos -->
-                    <article class="sim-card-featured" role="article" aria-label="Pendulum Chaos simulation">
-                        <div class="card-header">
-                            <div class="card-icon" aria-hidden="true">🎯</div>
-                            <button class="btn-favorite no-ripple"
-                                    id="fav-btn-pendulum-chaos"
-                                    data-sim-id="pendulum-chaos"
-                                    aria-label="Add Pendulum Chaos to favorites"
-                                    data-tooltip="Add to Favorites"
-                                    onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('pendulum-chaos'); fav ? window.statsTracker.addFavorite('pendulum-chaos') : window.statsTracker.removeFavorite('pendulum-chaos');">🤍</button>
-                            <div class="card-meta">
-                                <div class="card-title">Pendulum Chaos</div>
-                                <div class="card-category">Physics • Advanced</div>
-                            </div>
-                        </div>
-                        <div class="card-body" onclick="window.gallery.openSimulation('pendulum-chaos')" style="cursor: pointer;">
-                            <p>Tiny initial changes create completely different outcomes. Experience chaos theory firsthand.</p>
-                            <div class="card-tags">
-                                <span class="tag">chaos</span>
-                                <span class="tag">butterfly effect</span>
-                                <span class="tag">nonlinear</span>
-                            </div>
-                        </div>
-                        <div class="card-footer" onclick="window.gallery.openSimulation('pendulum-chaos')" style="cursor: pointer;">
-                            <span class="time">⏱ 10–15 min</span>
-                            <span class="arrow">→</span>
-                        </div>
-                    </article>
-
-                    <!-- Galaxy Collision -->
-                    <article class="sim-card-featured" role="article" aria-label="Galaxy Collision simulation">
-                        <div class="card-header">
-                            <div class="card-icon" aria-hidden="true">✨</div>
-                            <button class="btn-favorite no-ripple"
-                                    id="fav-btn-galaxy-collision"
-                                    data-sim-id="galaxy-collision"
-                                    aria-label="Add Galaxy Collision to favorites"
-                                    data-tooltip="Add to Favorites"
-                                    onclick="event.stopPropagation(); const fav = !window.statsTracker.isFavorite('galaxy-collision'); fav ? window.statsTracker.addFavorite('galaxy-collision') : window.statsTracker.removeFavorite('galaxy-collision');">🤍</button>
-                            <div class="card-meta">
-                                <div class="card-title">Galaxy Collision</div>
-                                <div class="card-category">Astronomy • Intermediate</div>
-                            </div>
-                        </div>
-                        <div class="card-body" onclick="window.gallery.openSimulation('galaxy-collision')" style="cursor: pointer;">
-                            <p>Watch two galaxies spiral together and merge into one in a slow cosmic dance driven by gravity.</p>
-                            <div class="card-tags">
-                                <span class="tag">galaxies</span>
-                                <span class="tag">n-body</span>
-                                <span class="tag">gravity</span>
-                            </div>
-                        </div>
-                        <div class="card-footer" onclick="window.gallery.openSimulation('galaxy-collision')" style="cursor: pointer;">
-                            <span class="time">⏱ 8–12 min</span>
-                            <span class="arrow">→</span>
-                        </div>
-                    </article>
-
                 </div><!-- /.simulations-container -->
             </section>
 

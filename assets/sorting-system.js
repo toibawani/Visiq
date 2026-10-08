@@ -37,21 +37,21 @@ class SortingSystem {
         if (this.currentSort === 'used') {
             if (btn) {
                 btn.classList.add('active');
-                btn.textContent = '🔥';
+                btn.textContent = 'Most Used';
                 btn.setAttribute('data-tooltip', 'Sorted: Most Used (click for A-Z)');
             }
             this.sortByMostUsed();
         } else if (this.currentSort === 'alpha') {
             if (btn) {
                 btn.classList.add('active');
-                btn.textContent = '🔤';
+                btn.textContent = 'A-Z';
                 btn.setAttribute('data-tooltip', 'Sorted: Alphabetical (click for Default)');
             }
             this.sortByAlpha();
         } else {
             if (btn) {
                 btn.classList.remove('active');
-                btn.textContent = '📊';
+                btn.textContent = 'Sort';
                 btn.setAttribute('data-tooltip', 'Sorted: Curriculum Default (click to Sort)');
             }
             this.sortDefault();
