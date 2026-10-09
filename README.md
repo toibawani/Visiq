@@ -90,10 +90,34 @@ assets/
   integrators.js       Euler / semi-implicit / Verlet / RK4 (shared, UMD)
   visual-kit.js        Canvas drawing helpers
   ...                  ~60 feature modules (search, theme, stats, audio, …)
+  fonts/                Self-hosted subset .woff2 (Fraunces, IBM Plex Sans, JetBrains Mono)
 sketches/             One file per simulation (p5 sketch)
 tests/                Vitest specs
-scripts/              Dev tooling (font subsetter, thumbnail capture)
+scripts/              Dev tooling (font subsetter, thumbnail capture, image gen)
 ```
+
+## 🔤 Rebuilding the font subsets
+
+The subset `.woff2` files in `assets/fonts/` include the math/Greek symbols the
+app renders (`π √ ⇄ ‰ ≈ →`) **where each font actually has them**. To rebuild:
+
+```bash
+# 1. Download the full source TTFs (cached in scripts/.font-src/, git-ignored)
+mkdir -p scripts/.font-src
+# fetch the exact .ttf URLs from https://fonts.googleapis.com/css2?family=... for
+# Fraunces (200, 800), IBM Plex Sans (400, 600), JetBrains Mono (400, 600)
+
+# 2. Re-subset from the CSS unicode-range + the extra symbols
+python3 scripts/subset-fonts.py --write
+
+# 3. Confirm coverage (what CI runs)
+npx vitest run tests/font-glyphs.test.js
+```
+
+Fraunces (display serif) lacks `π √ ⇄ →`; JetBrains Mono lacks `⇄`. The CSS
+`unicode-range` only lists codepoints each file can actually render, so nothing
+falls back to tofu. `tests/font-glyphs.test.js` enforces this on every run.
+
 
 ## 📄 License
 
