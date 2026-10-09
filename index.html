@@ -319,5 +319,17 @@
     <script src="assets/visiq-audio.js"></script>
     <script src="assets/starfield.js"></script>
     <script src="gallery.js"></script>
+
+    <script>
+        // Register the service worker for app-shell caching + offline support.
+        // Only in secure contexts (https or localhost), which is where SWs run.
+        if ('serviceWorker' in navigator && window.isSecureContext) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('sw.js').catch(function (err) {
+                    console.warn('Service worker registration failed:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
