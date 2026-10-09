@@ -30,3 +30,6 @@ build/
 # Cache
 .cache
 .eslintcache
+
+# Cached upstream font TTFs used by scripts/subset-fonts.py (re-downloadable)
+scripts/.font-src/
