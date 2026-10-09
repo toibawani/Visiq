@@ -18,6 +18,7 @@ class FavoritesFilter {
             };
             btn.setAttribute('data-tooltip', 'Filter Favorites Only (F)');
             btn.setAttribute('title', 'Show favorites only');
+            btn.setAttribute('aria-pressed', String(this.isFavoritesMode));
         }
     }
     
@@ -31,13 +32,14 @@ class FavoritesFilter {
 
         if (btn) {
             btn.classList.toggle('active', this.isFavoritesMode);
+            btn.setAttribute('aria-pressed', String(this.isFavoritesMode));
             btn.setAttribute('data-tooltip', this.isFavoritesMode ? 'Show All Simulations (F)' : 'Filter Favorites Only (F)');
         }
         
         let visibleCount = 0;
         cards.forEach(card => {
             const favoriteBtn = card.querySelector('.btn-favorite');
-            const isFav = favoriteBtn && favoriteBtn.getAttribute('data-fav') === 'true';
+            const isFav = favoriteBtn && favoriteBtn.getAttribute('aria-pressed') === 'true';
             
             if (this.isFavoritesMode) {
                 if (isFav) {

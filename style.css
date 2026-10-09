@@ -930,16 +930,19 @@ html, body {
 
 .btn-favorite {
     position: absolute;
-    top: 14px;
-    right: 14px;
+    top: 10px;
+    right: 10px;
     background: transparent;
-    border: none;
-    font-size: 18px;
+    border: 1px solid var(--border-default);
+    font-size: 11px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: var(--text-secondary);
     cursor: pointer;
-    padding: 4px;
+    padding: 4px 8px;
     border-radius: var(--radius-md);
-    width: 32px;
-    height: 32px;
+    height: auto;
+    min-height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -947,13 +950,21 @@ html, body {
 }
 
 .btn-favorite:hover {
-    transform: scale(1.25);
+    transform: translateY(-1px);
     background: rgba(248, 113, 113, 0.12);
+}
+
+.btn-favorite[aria-pressed="true"] {
+    background: rgba(248, 113, 113, 0.18);
+    border-color: var(--accent-danger);
+    color: var(--accent-danger);
 }
 
 .card-meta {
     flex: 1;
     min-width: 0;
+    /* Reserve room for the absolutely-positioned Favorite button */
+    padding-right: 76px;
 }
 
 .card-title {

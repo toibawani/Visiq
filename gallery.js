@@ -91,12 +91,11 @@ class Gallery {
                         <button class="btn-favorite no-ripple"
                                 id="fav-btn-${sim.id}"
                                 data-sim-id="${sim.id}"
-                                data-fav="${isFav ? 'true' : 'false'}"
                                 aria-pressed="${isFav ? 'true' : 'false'}"
-                                aria-label="${isFav ? 'Remove from favorites' : 'Add to favorites'}"
-                                data-tooltip="${isFav ? 'Remove favorite' : 'Add favorite'}"
+                                data-tooltip="Toggle favorite"
+                                title="Toggle favorite"
                                 type="button">
-                            ${isFav ? 'Unfavorite' : 'Favorite'}
+                            Favorite
                         </button>
                         <div class="card-meta">
                             <div class="card-title">${sim.title}</div>
@@ -135,12 +134,10 @@ class Gallery {
                         if (window.statsTracker) {
                             const cur = window.statsTracker.isFavorite(sim.id);
                             cur ? window.statsTracker.removeFavorite(sim.id) : window.statsTracker.addFavorite(sim.id);
-                            const nowFav = !cur;
-                            favBtn.textContent = nowFav ? 'Unfavorite' : 'Favorite';
-                            favBtn.setAttribute('aria-pressed', nowFav ? 'true' : 'false');
-                            favBtn.setAttribute('data-fav', nowFav ? 'true' : 'false');
-                            favBtn.setAttribute('aria-label', nowFav ? 'Remove from favorites' : 'Add to favorites');
-                            favBtn.setAttribute('data-tooltip', nowFav ? 'Remove favorite' : 'Add favorite');
+                            // Label stays "Favorite"; aria-pressed is re-read from
+                            // the saved state so it always reports the truth.
+                            favBtn.setAttribute('aria-pressed',
+                                String(window.statsTracker.isFavorite(sim.id)));
                         }
                     };
                 }
@@ -312,12 +309,7 @@ class Gallery {
             const cardId = card.getAttribute('data-sim-id');
             if (!btn || !cardId) return;
             const isFav = simIds.includes(cardId);
-            btn.textContent = isFav ? 'Unfavorite' : 'Favorite';
             btn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
-            btn.setAttribute('data-fav', isFav ? 'true' : 'false');
-            btn.setAttribute('title', isFav ? 'Remove from favorites' : 'Add to favorites');
-            btn.setAttribute('aria-label', isFav ? 'Remove from favorites' : 'Add to favorites');
-            btn.setAttribute('data-tooltip', isFav ? 'Remove favorite' : 'Add favorite');
         });
     }
     
