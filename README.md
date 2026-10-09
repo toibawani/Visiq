@@ -1,6 +1,6 @@
 # 🌀 VISIQ
 
-> Interactive Physics Visualizations | Real-time Simulations | Production-Grade Code
+> Interactive Science Visualizations · Real-time simulations · Vanilla JS + p5.js
 
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -9,48 +9,92 @@
 
 ## 🎯 What is VISIQ?
 
-**VISIQ** is an interactive visualization platform featuring 7 real-time physics simulations. Each uses actual physics engines — not animations — with instant user interaction.
+**VISIQ** is a static, dependency-light gallery of **29 interactive science
+simulations** across four categories: **Physics (8)**, **Biology (8)**,
+**Geography (7)**, and **Astronomy (6)**. Each sketch is a real p5.js canvas
+rendering an actual physical / biological / geophysical model — not a canned
+animation — and responds to pointer, keyboard, and on-screen controls in real
+time.
 
-A **production-grade portfolio piece** showcasing:
-- Real-time physics simulation
-- Interactive design excellence  
-- Mathematical visualization
-- Web performance optimization
+The front end is **vanilla HTML, CSS, and ES modules** (no framework, no build
+step). Node is used only for developer tooling: tests (Vitest) and type
+checking (`tsc`).
 
-## 🌍 The 7 Core Simulations
+## 🌍 The Simulations
 
-| # | Simulation | Concept | Interaction | Difficulty |
-|---|-----------|---------|------------|-----------|
-| 1 | **Newton's Playground** | F = ma forces | Drag & sliders | Beginner |
-| 2 | **Lotus Effect** | Surface tension | Tilt surface | Intermediate |
-| 3 | **Plate Tectonics** | Mountain formation | Time scrubber | Intermediate |
-| 4 | **Murmuration** | Boid flocking | Parameter weights | Advanced |
-| 5 | **Ferromagnetism** | Magnetic fields | Click to place | Advanced |
-| 6 | **Fourier Circles** | Signal decomposition | Draw shapes | Expert |
-| 7 | **Gravity Tree** | N-body physics | Watch & interact | Expert |
+Titles are taken from `assets/simulations-data.js` (the single source of truth).
+
+| Category | Simulations |
+|---|---|
+| **Physics (8)** | Double Pendulum Chaos · Wave Interference · Quantum Tunneling · Magnetic Field & Lorentz Force · Doppler Effect · Gas Laws & Molecular Motion · Orbital Mechanics & Escape Velocity · Neutron Star & Pulsar Beams |
+| **Biology (8)** | Mitosis · Meiosis · DNA Replication · Protein Folding · Enzyme Kinetics · Neuron Action Potential · Population Genetics & Selection · Epidemic Spread (SIR Model) |
+| **Geography (7)** | Plate Tectonics & Boundaries · Ocean Currents & Gyres · Hurricane Dynamics · River Erosion & Landforms · The Water Cycle · Earthquake Seismic Waves · Volcanic Eruption Dynamics |
+| **Astronomy (6)** | Black Hole Spacetime · Galaxy Collision & Tidal Stripping · Stellar Evolution & Fusion · Exoplanet Transit Photometry · Cosmic Expansion & Hubble Law |
+
+## ✨ Features
+
+These are the features that actually ship in this repository:
+
+- **Gallery** — responsive card grid rendered from `assets/simulations-data.js`,
+  with live **search**, **category filters**, and **sorting**.
+- **Favorites** — heart any sketch; state is persisted and reflected with a
+  correct label and `aria-pressed`. A "favorites only" filter is included.
+- **Dark / light theme** — toggle persisted to `localStorage`; every control has
+  a stable text label (no emoji-only UI).
+- **Shared integrator layer** (`assets/integrators.js`) — a reusable UMD module
+  exposing Euler, semi-implicit Euler, Verlet, and RK4. Used by the double
+  pendulum and the black-hole orbit sketches.
+- **Double Pendulum Chaos** — pick the integrator, watch a live energy-drift
+  graph, draw your own guess of the path and see a measured "% off", and fork
+  the timeline with a +0.001 rad twin to watch divergence.
+- **Black Hole Spacetime** — the same integrator switch plus an orbital
+  energy-drift readout.
+- **In-page detail modal** for each sketch (long description + controls).
 
 ## 🚀 Quick Start
 
-### Clone & Run
+The site is fully static — serve the folder with any web server.
 
 ```bash
 git clone https://github.com/toibawani/visiq.git
 cd visiq
+npx live-server        # or: npm start
 ```
 
-### Option 1: VS Code Live Server (Recommended)
-- Install "Live Server" extension
-- Right-click `index.html` → "Open with Live Server"
+Then open the printed local URL (default `http://localhost:8000`). Any static
+server works (`python -m http.server`, `npx http-server`, VS Code Live Server).
 
-### Option 2: Python
+## 🧪 Development
+
 ```bash
-python -m http.server 8000
-# Visit: http://localhost:8000
+npm install        # install dev tooling
+npm test           # Vitest: integrator accuracy, orbital drift, font glyph coverage
+npm run typecheck  # tsc --noEmit
 ```
 
-### Option 3: Node.js
-```bash
-npx http-server
-```
+Tests live in `tests/`:
+- `integrators.test.js` — RK4 beats Euler on a harmonic oscillator (drift bounds).
+- `orbit-drift.test.js` — Euler's orbital energy drift exceeds RK4's over N steps.
+- `font-glyphs.test.js` — every `unicode-range` the CSS claims has a real glyph,
+  and required symbols (π √ ≈ → …) route to a font that contains them.
 
 ## 📁 Project Structure
+
+```
+index.html            Landing / auth page + gallery shell
+gallery.js            Renders the simulation grid, search, favorites, filters
+style.css             Design system (self-hosted subset fonts, theming)
+assets/
+  simulations-data.js  The 29 sketches: metadata + descriptions (source of truth)
+  sim-base.js          Base class shared by every sketch
+  integrators.js       Euler / semi-implicit / Verlet / RK4 (shared, UMD)
+  visual-kit.js        Canvas drawing helpers
+  ...                  ~60 feature modules (search, theme, stats, audio, …)
+sketches/             One file per simulation (p5 sketch)
+tests/                Vitest specs
+scripts/              Dev tooling (font subsetter, thumbnail capture)
+```
+
+## 📄 License
+
+MIT — see [LICENSE](LICENSE).
