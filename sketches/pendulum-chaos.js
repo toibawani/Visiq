@@ -51,13 +51,20 @@ window.initSketch = function(config) {
             };
 
             // --- Guess mode (Feature: Draw Your Guess) ---
+            // The guess is drawn on a position-vs-time graph: lower-bob height (m)
+            // on y, time (s) on x. Points are stored normalized to that graph
+            // (x: 0..1 over 0..GUESS_T seconds, y: 0..1 over guessYRange metres).
             let guessMode = false;
-            let guessPoints = [];      // user-drawn freehand polyline (canvas coords)
+            let guessPoints = [];      // drawn curve in normalized graph space
             let isDrawingGuess = false;
-            let actualPath = [];       // recorded lower-bob path used for comparison
-            let showOverlay = false;   // draw guess + actual after a compare run
+            let trueCurve = [];        // true height-vs-time curve, same space
+            let showOverlay = false;   // shade gap + overlay true curve after compare
             let lastPercentOff = null;
             let compareRunning = false;
+            let savedPlayState = true; // play/pause to restore when guess mode ends
+            let guessYRange = { min: -1, max: 1 };
+            const GUESS_T = 6;         // seconds of sim time the graph covers
+            const GUESS_DT = 0.01;     // fixed timestep (s) for the headless compare
             const GUESS_STORAGE_KEY = 'visiq-pendulum-guess-history';
 
             function loadGuessHistory() {
@@ -86,61 +93,88 @@ window.initSketch = function(config) {
             // Snapshot of the state a guess is measured from (set when guess mode turns on).
             let guessInitState = stateA.slice();
 
-            // Resample a polyline to n evenly spaced points by index.
-            function resampleByIndex(pts, n) {
-                if (pts.length === 0) return [];
-                if (pts.length === 1) return new Array(n).fill(pts[0]);
-                const out = [];
-                for (let i = 0; i < n; i++) {
-                    const t = (i / (n - 1)) * (pts.length - 1);
-                    const i0 = Math.floor(t);
-                    const i1 = Math.min(i0 + 1, pts.length - 1);
-                    const frac = t - i0;
-                    out.push({
-                        x: pts[i0].x + (pts[i1].x - pts[i0].x) * frac,
-                        y: pts[i0].y + (pts[i1].y - pts[i0].y) * frac
-                    });
-                }
-                return out;
+            // Graph geometry in canvas pixels: panel the guess is drawn on.
+            function guessGraphRect() {
+                const w = Math.min(p.width * 0.62, 560);
+                const h = Math.min(p.height * 0.52, 320);
+                return { x: (p.width - w) / 2, y: (p.height - h) / 2 + 8, w, h };
             }
 
-            // Percent-off between the drawn guess and the actual path, as a plain number.
-            // Scale is the actual path's bounding-box diagonal (its "swing size"), so the
-            // number reads as average gap relative to how far the bob actually travelled.
-            function computePercentOff(guess, actual) {
-                if (guess.length < 2 || actual.length < 2) return null;
-                const N = 64;
-                const g = resampleByIndex(guess, N);
-                const a = resampleByIndex(actual, N);
-                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-                for (const pt of actual) {
-                    if (pt.x < minX) minX = pt.x;
-                    if (pt.x > maxX) maxX = pt.x;
-                    if (pt.y < minY) minY = pt.y;
-                    if (pt.y > maxY) maxY = pt.y;
+            // Canvas px -> normalized graph coords (0..1, y up).
+            function toGraphNorm(px, py) {
+                const r = guessGraphRect();
+                return {
+                    x: Math.min(1, Math.max(0, (px - r.x) / r.w)),
+                    y: Math.min(1, Math.max(0, 1 - (py - r.y) / r.h))
+                };
+            }
+
+            // Normalized graph coords -> canvas px.
+            function fromGraphNorm(n) {
+                const r = guessGraphRect();
+                return { x: r.x + n.x * r.w, y: r.y + (1 - n.y) * r.h };
+            }
+
+            // True height (m) of the lower bob relative to the pivot at state s.
+            function lowerBobHeight(s) {
+                const l1m = ctx.params.rodLength1 * 0.01;
+                const l2m = ctx.params.rodLength2 * 0.01;
+                return l1m * Math.cos(s[0]) + l2m * Math.cos(s[1]);
+            }
+
+            // Sample a normalized graph curve at normalized x (linear interp, y up).
+            function sampleCurveY(curve, nx) {
+                if (curve.length === 0) return null;
+                if (curve.length === 1) return curve[0].y;
+                if (nx <= curve[0].x) return curve[0].y;
+                if (nx >= curve[curve.length - 1].x) return curve[curve.length - 1].y;
+                for (let i = 1; i < curve.length; i++) {
+                    if (nx <= curve[i].x) {
+                        const x0 = curve[i - 1].x, x1 = curve[i].x;
+                        const span = x1 - x0;
+                        if (span <= 1e-9) return curve[i].y;
+                        const f = (nx - x0) / span;
+                        return curve[i - 1].y + (curve[i].y - curve[i - 1].y) * f;
+                    }
                 }
-                const scale = Math.max(1, Math.hypot(maxX - minX, maxY - minY));
+                return curve[curve.length - 1].y;
+            }
+
+            // Percent off: samples both curves at 96 shared time points and averages
+            // the VERTICAL gap between drawn guess and true curve, expressed as a
+            // percentage of the graph's full height (i.e. of guessYRange metres).
+            // Compares value-vs-value at equal times — not path shapes.
+            function computePercentOff(guess, truth) {
+                if (guess.length < 5 || truth.length < 5) return null;
+                const M = 96;
                 let sum = 0;
-                for (let i = 0; i < N; i++) sum += Math.hypot(g[i].x - a[i].x, g[i].y - a[i].y);
-                return Math.min(100, (sum / N / scale) * 100);
+                let n = 0;
+                for (let i = 0; i < M; i++) {
+                    const nx = i / (M - 1);
+                    const gy = sampleCurveY(guess, nx);
+                    const ty = sampleCurveY(truth, nx);
+                    if (gy === null || ty === null) continue;
+                    sum += Math.abs(gy - ty); // 0..1 of graph height
+                    n++;
+                }
+                if (n === 0) return null;
+                return Math.min(100, (sum / n) * 100);
             }
 
-            // Run the physics headlessly from the guess snapshot and compare.
+            // Run the physics headlessly over GUESS_T seconds at fixed GUESS_DT,
+            // recording the true lower-bob height curve in normalized graph space.
             function runCompare() {
                 if (guessPoints.length < 5) return;
                 let s = guessInitState.slice();
-                actualPath = [];
-                const steps = 400;
-                const sub = 0.04 / 4;
-                const l1v = ctx.params.rodLength1, l2v = ctx.params.rodLength2;
-                const oX = p.width * 0.5, oY = p.height * 0.31;
+                trueCurve = [];
+                const steps = Math.round(GUESS_T / GUESS_DT);
                 for (let i = 0; i < steps; i++) {
-                    for (let k = 0; k < 4; k++) s = activeStep(s, sub);
-                    const x1 = oX + l1v * Math.sin(s[0]);
-                    const y1 = oY + l1v * Math.cos(s[0]);
-                    actualPath.push({ x: x1 + l2v * Math.sin(s[1]), y: y1 + l2v * Math.cos(s[1]) });
+                    s = activeStep(s, GUESS_DT);
+                    const h = lowerBobHeight(s);
+                    const ny = (h - guessYRange.min) / (guessYRange.max - guessYRange.min);
+                    trueCurve.push({ x: (i + 1) / steps, y: ny });
                 }
-                lastPercentOff = computePercentOff(guessPoints, actualPath);
+                lastPercentOff = computePercentOff(guessPoints, trueCurve);
                 if (lastPercentOff !== null) {
                     guessHistory.push({ percentOff: lastPercentOff, at: Date.now() });
                     saveGuessHistory(guessHistory);
@@ -183,11 +217,21 @@ window.initSketch = function(config) {
                 if (on) {
                     resetState();
                     guessInitState = stateA.slice();
+                    // Graph y-range: full reach of the lower bob, in metres.
+                    const reach = (ctx.params.rodLength1 + ctx.params.rodLength2) * 0.01;
+                    guessYRange = { min: -reach, max: reach };
                     guessPoints = [];
-                    actualPath = [];
+                    trueCurve = [];
                     showOverlay = false;
                     lastPercentOff = null;
+                    savedPlayState = ctx.isPlaying;
+                    if (ctx.isPlaying) ctx.togglePlay();
                     updateGuessResultLine();
+                } else {
+                    isDrawingGuess = false;
+                    showOverlay = false;
+                    trueCurve = [];
+                    if (!ctx.isPlaying && savedPlayState) ctx.togglePlay();
                 }
             }
 
@@ -499,45 +543,96 @@ window.initSketch = function(config) {
                     drawDivergenceBar(p.width - 34, 90, 28, 102, div);
                 }
 
-                // 8b. Draw-your-guess overlay
-                if (showOverlay) {
-                    // Actual path (amber)
-                    if (actualPath.length > 1) {
-                        p.noFill();
-                        p.stroke(232, 160, 76, 230);
-                        p.strokeWeight(2.5);
-                        p.beginShape();
-                        for (const pt of actualPath) p.vertex(pt.x, pt.y);
-                        p.endShape();
-                    }
-                    // Guess path (violet)
-                    if (guessPoints.length > 1) {
-                        p.noFill();
-                        p.stroke(167, 139, 250, 230);
-                        p.strokeWeight(2.5);
-                        p.beginShape();
-                        for (const pt of guessPoints) p.vertex(pt.x, pt.y);
-                        p.endShape();
-                    }
+                // 8b. Draw-your-guess graph (position vs time) with gap shading
+                if (guessMode || showOverlay) {
+                    const r = guessGraphRect();
+                    // Panel
+                    p.push();
                     p.noStroke();
-                    p.textSize(11);
+                    p.fill(10, 13, 22, 235);
+                    p.rect(r.x, r.y, r.w, r.h, 8);
+                    p.stroke(40, 52, 76);
+                    p.strokeWeight(1);
+                    p.noFill();
+                    p.rect(r.x, r.y, r.w, r.h, 8);
+
+                    // Axes + gridlines
+                    p.stroke(32, 42, 64, 180);
+                    p.strokeWeight(1);
+                    for (let gi = 1; gi < 6; gi++) {
+                        const gx = r.x + (r.w * gi) / 6;
+                        p.line(gx, r.y, gx, r.y + r.h);
+                    }
+                    for (let gi = 1; gi < 4; gi++) {
+                        const gy = r.y + (r.h * gi) / 4;
+                        p.line(r.x, gy, r.x + r.w, gy);
+                    }
+
+                    // Axis labels
+                    p.noStroke();
+                    p.fill(120, 140, 175);
+                    p.textSize(10);
+                    p.textAlign(p.CENTER, p.TOP);
+                    p.text('time (s)', r.x + r.w / 2, r.y + r.h + 6);
+                    p.push();
+                    p.translate(r.x - 10, r.y + r.h / 2);
+                    p.rotate(-p.HALF_PI);
+                    p.textAlign(p.CENTER, p.BOTTOM);
+                    p.text('lower bob height (m)', 0, 0);
+                    p.pop();
+                    p.textAlign(p.RIGHT, p.TOP);
+                    p.text(GUESS_T.toFixed(0) + ' s', r.x + r.w - 4, r.y + 4);
+                    p.textAlign(p.LEFT, p.TOP);
+                    p.text(guessYRange.max.toFixed(1) + ' m', r.x + 4, r.y + 4);
+                    p.textAlign(p.LEFT, p.BOTTOM);
+                    p.text(guessYRange.min.toFixed(1) + ' m', r.x + 4, r.y + r.h - 4);
+
+                    const drawCurve = (curve, col, weight) => {
+                        if (curve.length < 2) return;
+                        p.noFill();
+                        p.stroke(col[0], col[1], col[2]);
+                        p.strokeWeight(weight);
+                        p.beginShape();
+                        for (const pt of curve) {
+                            const px = r.x + pt.x * r.w;
+                            const py = r.y + (1 - pt.y) * r.h;
+                            p.vertex(p.constrain(px, r.x, r.x + r.w), p.constrain(py, r.y, r.y + r.h));
+                        }
+                        p.endShape();
+                    };
+
+                    if (showOverlay && trueCurve.length > 1) {
+                        // Shaded gap region between guess and truth
+                        if (guessPoints.length > 1) {
+                            p.noStroke();
+                            p.fill(232, 80, 76, 70);
+                            p.beginShape();
+                            for (const pt of guessPoints) {
+                                p.vertex(r.x + pt.x * r.w, r.y + (1 - pt.y) * r.h);
+                            }
+                            for (let i = trueCurve.length - 1; i >= 0; i--) {
+                                const pt = trueCurve[i];
+                                p.vertex(r.x + pt.x * r.w, r.y + (1 - pt.y) * r.h);
+                            }
+                            p.endShape(p.CLOSE);
+                        }
+                        drawCurve(trueCurve, [232, 160, 76], 2.5);
+                    }
+                    drawCurve(guessPoints, [167, 139, 250], 2.5);
+
+                    // Legend
+                    p.noStroke();
+                    p.textSize(10);
                     p.textAlign(p.LEFT, p.TOP);
                     p.fill(232, 160, 76);
-                    p.text('Actual', 14, 40);
+                    p.text('True', r.x + 8, r.y + 8);
                     p.fill(167, 139, 250);
-                    p.text('Your guess', 14, 54);
-                    if (lastPercentOff !== null) {
-                        p.fill(255, 255, 255, 200);
-                        p.text(`${lastPercentOff.toFixed(0)}% off`, 14, 68);
+                    p.text('Your guess', r.x + 8, r.y + 22);
+                    if (showOverlay && lastPercentOff !== null) {
+                        p.fill(235, 240, 250);
+                        p.text(`${lastPercentOff.toFixed(0)}% off`, r.x + 8, r.y + 36);
                     }
-                } else if (guessMode && guessPoints.length > 1) {
-                    // Live freehand guess being drawn
-                    p.noFill();
-                    p.stroke(167, 139, 250, 220);
-                    p.strokeWeight(2.5);
-                    p.beginShape();
-                    for (const pt of guessPoints) p.vertex(pt.x, pt.y);
-                    p.endShape();
+                    p.pop();
                 }
 
                 // 9. Telemetry
@@ -566,8 +661,12 @@ window.initSketch = function(config) {
             p.mousePressed = function() {
                 const pos = ptr();
                 if (guessMode) {
+                    const r = guessGraphRect();
+                    if (pos.x < r.x || pos.x > r.x + r.w || pos.y < r.y || pos.y > r.y + r.h) {
+                        return false; // strokes start inside the graph panel only
+                    }
                     isDrawingGuess = true;
-                    guessPoints = [{ x: pos.x, y: pos.y }];
+                    guessPoints = [toGraphNorm(pos.x, pos.y)];
                     showOverlay = false;
                     return false;
                 }
@@ -590,7 +689,13 @@ window.initSketch = function(config) {
                 if (guessMode) {
                     if (isDrawingGuess) {
                         const pos = ptr();
-                        guessPoints.push({ x: pos.x, y: pos.y });
+                        const n = toGraphNorm(pos.x, pos.y);
+                        const lastPt = guessPoints[guessPoints.length - 1];
+                        // Append only when the point moves forward in time and
+                        // far enough to matter, keeping the curve a function of t.
+                        if (!lastPt || (n.x - lastPt.x) * guessGraphRect().w > 2) {
+                            guessPoints.push(n);
+                        }
                     }
                     return false;
                 }
