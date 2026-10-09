@@ -75,6 +75,14 @@ window.initSketch = function(config) {
             const GUESS_DT = 0.01;     // fixed timestep (s) for the headless compare
             const GUESS_STORAGE_KEY = 'visiq-pendulum-guess-history';
 
+            // --- Feature 3: Fork the Timeline (double pendulum only) ---
+            // Fork captures the live state; the fork then integrates in parallel
+            // from a +0.001 rad perturbation (same convention as the shadow twin),
+            // so chaos makes the two timelines visibly diverge.
+            let forkState = null;      // [t1, t2, w1, w2] or null
+            let forkTrail = [];        // canvas coords of the fork's lower bob
+            let forkSinceFrames = 0;
+
             function loadGuessHistory() {
                 try {
                     const raw = localStorage.getItem(GUESS_STORAGE_KEY);
@@ -247,6 +255,51 @@ window.initSketch = function(config) {
                         }
                     });
                 }
+
+                // --- Fork the Timeline controls (Feature 3, this sketch only) ---
+                const forkWrap = document.createElement('div');
+                forkWrap.className = 'fork-switch';
+                forkWrap.style.cssText = 'margin-top:12px;';
+
+                const forkLabel = document.createElement('div');
+                forkLabel.textContent = 'Fork the Timeline';
+                forkLabel.style.cssText = 'font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;opacity:0.65;margin-bottom:6px;';
+                forkWrap.appendChild(forkLabel);
+
+                const forkRow = document.createElement('div');
+                forkRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+
+                const forkNote = document.createElement('div');
+                forkNote.textContent = 'No fork. Fork snapshots now and lets you watch the timelines diverge.';
+                forkNote.style.cssText = 'font-size:0.72rem;opacity:0.7;margin-top:6px;line-height:1.45;';
+
+                const forkBtn = document.createElement('button');
+                forkBtn.type = 'button';
+                forkBtn.textContent = 'Fork from here';
+                forkBtn.style.cssText = 'flex:1 1 auto;padding:6px 10px;cursor:pointer;font-size:0.75rem;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:inherit;';
+                forkBtn.addEventListener('click', () => {
+                    forkState = stateA.slice();
+                    forkState[0] += 0.001; // +0.001 rad twin, exactly like the shadow twin
+                    forkTrail = trailA.slice();
+                    forkSinceFrames = 0;
+                    forkNote.textContent = 'Forked from now with a +0.001 rad nudge. It integrates on its own from that point — the thin violet arm is the other timeline, drifting away from the amber one. Clear it to drop the fork.';
+                });
+                forkRow.appendChild(forkBtn);
+
+                const clearBtn = document.createElement('button');
+                clearBtn.type = 'button';
+                clearBtn.textContent = 'Clear fork';
+                clearBtn.style.cssText = forkBtn.style.cssText;
+                clearBtn.addEventListener('click', () => {
+                    forkState = null;
+                    forkTrail = [];
+                    forkSinceFrames = 0;
+                    forkNote.textContent = 'No fork. Fork snapshots now and lets you watch the timelines diverge.';
+                });
+                forkRow.appendChild(clearBtn);
+                forkWrap.appendChild(forkRow);
+                forkWrap.appendChild(forkNote);
+                controls.appendChild(forkWrap);
 
                 // Draw-your-guess controls
                 const guessWrap = document.createElement('div');
@@ -452,7 +505,11 @@ window.initSketch = function(config) {
                     for (let s = 0; s < 4; s++) {
                         stateA = activeStep(stateA, dt * 0.25);
                         stateB = activeStep(stateB, dt * 0.25);
+                        if (forkState) {
+                            forkState = activeStep(forkState, dt * 0.25);
+                        }
                     }
+                    if (forkState) forkSinceFrames += 4;
                 }
 
                 const x1A = originX + l1*Math.sin(stateA[0]);
@@ -467,6 +524,12 @@ window.initSketch = function(config) {
                 if (ctx.isPlaying) {
                     trailA.push({x:x2A, y:y2A}); if (trailA.length > TRAIL_MAX) trailA.shift();
                     trailB.push({x:x2B, y:y2B}); if (trailB.length > TRAIL_MAX) trailB.shift();
+                    if (forkState) {
+                        const fx1 = originX + l1*Math.sin(forkState[0]);
+                        const fy1 = originY + l1*Math.cos(forkState[0]);
+                        forkTrail.push({ x: fx1 + l2*Math.sin(forkState[1]), y: fy1 + l2*Math.cos(forkState[1]) });
+                        if (forkTrail.length > TRAIL_MAX) forkTrail.shift();
+                    }
                     phaseHistory.push({t1:stateA[0], t2:stateA[1]});
                     if (phaseHistory.length > 700) phaseHistory.shift();
                     const E = totalEnergy(stateA);
@@ -506,6 +569,27 @@ window.initSketch = function(config) {
                 // 6. Lower bob (amber)
                 const r2 = Math.max(12, 12 + ctx.params.bobMass2*0.28);
                 VisualKit.drawGlowBody(p, x2A, y2A, r2, [232, 160, 76], { outerOffset: 14, innerOffset: 6, outerAlpha: 30, innerAlpha: 75, specularAlpha: 50 });
+
+                // 6b. Fork timeline ghost (violet, thin): frozen past branching off live
+                if (forkState) {
+                    const gx1 = originX + l1*Math.sin(forkState[0]);
+                    const gy1 = originY + l1*Math.cos(forkState[0]);
+                    const gx2 = gx1    + l2*Math.sin(forkState[1]);
+                    const gy2 = gy1    + l2*Math.cos(forkState[1]);
+                    p.noFill();
+                    if (forkTrail.length > 1) {
+                        for (let fi = 1; fi < forkTrail.length; fi++) {
+                            const frac = fi / forkTrail.length;
+                            p.stroke(167, 139, 250, Math.pow(frac, 2) * 190);
+                            p.strokeWeight(1.5);
+                            p.line(forkTrail[fi-1].x, forkTrail[fi-1].y, forkTrail[fi].x, forkTrail[fi].y);
+                        }
+                    }
+                    p.stroke(167, 139, 250, 160); p.strokeWeight(1.5);
+                    p.line(originX, originY, gx1, gy1); p.line(gx1, gy1, gx2, gy2);
+                    p.noStroke(); p.fill(167, 139, 250, 170);
+                    p.circle(gx2, gy2, Math.max(4, r2 * 0.45));
+                }
 
                 // 7. Angular velocity arcs
                 if (!draggedBob) {
@@ -616,9 +700,11 @@ window.initSketch = function(config) {
                 // 9. Telemetry
                 const E   = totalEnergy(stateA);
                 const div = Math.abs(stateA[1] - stateB[1]) % (2*Math.PI);
+                const forkDiv = forkState ? Math.abs(stateA[1] - forkState[1]) % (2*Math.PI) : null;
                 ctx._telemetry = {
                     'Total Energy':   `${E.toFixed(2)} J`,
                     'Lyapunov Delta': `${div.toFixed(4)} rad`,
+                    'Fork Delta': forkState ? `${forkDiv.toFixed(4)} rad (+${(forkSinceFrames/60).toFixed(1)} s of fork)` : 'no fork',
                     'Omega 1': `${stateA[2].toFixed(2)} rad/s`,
                     'Omega 2': `${stateA[3].toFixed(2)} rad/s`
                 };
