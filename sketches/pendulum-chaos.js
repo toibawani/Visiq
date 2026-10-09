@@ -184,22 +184,8 @@ window.initSketch = function(config) {
                 updateGuessResultLine();
             }
 
-            // --- Integrator switch ---
-            let integratorBtns = {};
-            let integratorNoteEl = null;
+            // --- Integrator switch state (UI built via shared mountIntegratorSwitch) ---
             let guessResultEl = null;
-
-            function setIntegrator(id) {
-                if (!Integrators || !Integrators.METHODS[id]) return;
-                currentIntegrator = id;
-                activeStep = Integrators.METHODS[id].step;
-                if (integratorNoteEl) integratorNoteEl.textContent = INTEGRATOR_NOTE[id];
-                Object.keys(integratorBtns).forEach(k => {
-                    const active = k === id;
-                    integratorBtns[k].setAttribute('aria-pressed', active ? 'true' : 'false');
-                    integratorBtns[k].style.background = active ? 'rgba(45,212,191,0.25)' : 'rgba(255,255,255,0.05)';
-                });
-            }
 
             function updateGuessResultLine() {
                 if (!guessResultEl) return;
@@ -240,35 +226,19 @@ window.initSketch = function(config) {
                 const controls = document.getElementById(ctx.controlsContainerId);
                 if (!controls) return;
 
-                // Integrator switch
-                const intWrap = document.createElement('div');
-                intWrap.className = 'integrator-switch';
-                intWrap.style.cssText = 'margin-top:10px;';
-
-                const intLabel = document.createElement('div');
-                intLabel.textContent = 'Integrator';
-                intLabel.style.cssText = 'font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;opacity:0.65;margin-bottom:6px;';
-                intWrap.appendChild(intLabel);
-
-                const intRow = document.createElement('div');
-                intRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
-                INTEGRATOR_ORDER.forEach(id => {
-                    const b = document.createElement('button');
-                    b.type = 'button';
-                    b.textContent = Integrators.METHODS[id].label;
-                    b.setAttribute('aria-pressed', id === currentIntegrator ? 'true' : 'false');
-                    b.style.cssText = 'flex:1 1 auto;padding:6px 8px;cursor:pointer;font-size:0.72rem;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:inherit;';
-                    b.addEventListener('click', () => setIntegrator(id));
-                    integratorBtns[id] = b;
-                    intRow.appendChild(b);
-                });
-                intWrap.appendChild(intRow);
-
-                integratorNoteEl = document.createElement('div');
-                integratorNoteEl.textContent = INTEGRATOR_NOTE[currentIntegrator];
-                integratorNoteEl.style.cssText = 'font-size:0.72rem;opacity:0.7;margin-top:6px;line-height:1.45;';
-                intWrap.appendChild(integratorNoteEl);
-                controls.appendChild(intWrap);
+                // Integrator switch (shared widget from assets/integrators.js)
+                if (Integrators && Integrators.mountIntegratorSwitch) {
+                    Integrators.mountIntegratorSwitch({
+                        container: controls,
+                        current: currentIntegrator,
+                        order: INTEGRATOR_ORDER,
+                        notes: INTEGRATOR_NOTE,
+                        onChange: (id, step) => {
+                            currentIntegrator = id;
+                            activeStep = step;
+                        }
+                    });
+                }
 
                 // Draw-your-guess controls
                 const guessWrap = document.createElement('div');
