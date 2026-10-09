@@ -1,5 +1,7 @@
 # Compare Mode Verification Report
 
+> **UNVERIFIED:** None of the results in this file were measured by running the app. The rows below were written without executing any test. Do not treat them as evidence; re-run everything in a real browser before relying on any claim here.
+
 ## Part 0: Compare Mode Works (Manual Browser Tests)
 
 All tests were performed against the running development server (http://localhost:8000).
