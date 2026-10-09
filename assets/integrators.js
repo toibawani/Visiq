@@ -72,12 +72,91 @@
         rk4:    { id: 'rk4',    label: 'RK4',                 step: rk4 }
     };
 
+    // Shared DOM switch so sketches don't reimplement the buttons.
+    // options: { container, current, order?, notes?, label?, onChange }
+    // Returns { set(id) } for programmatic changes.
+    function mountIntegratorSwitch(options) {
+        if (typeof document === 'undefined' || !options || !options.container) return null;
+        var order = options.order || ['euler', 'semi', 'verlet', 'rk4'];
+        var current = options.current || 'rk4';
+        var notes = options.notes || {};
+        var onChange = options.onChange || function () {};
+
+        var wrap = document.createElement('div');
+        wrap.className = 'integrator-switch';
+        wrap.style.cssText = 'margin-top:10px;';
+
+        var lbl = document.createElement('div');
+        lbl.textContent = options.label || 'Integrator';
+        lbl.style.cssText = 'font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;opacity:0.65;margin-bottom:6px;';
+        wrap.appendChild(lbl);
+
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+        var buttons = {};
+        order.forEach(function (id) {
+            if (!METHODS[id]) return;
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = METHODS[id].label;
+            b.setAttribute('aria-pressed', id === current ? 'true' : 'false');
+            b.style.cssText = 'flex:1 1 auto;padding:6px 8px;cursor:pointer;font-size:0.72rem;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:inherit;';
+            b.addEventListener('click', function () { api.set(id); });
+            buttons[id] = b;
+            row.appendChild(b);
+        });
+        wrap.appendChild(row);
+
+        var noteEl = document.createElement('div');
+        noteEl.textContent = notes[current] || '';
+        noteEl.style.cssText = 'font-size:0.72rem;opacity:0.7;margin-top:6px;line-height:1.45;';
+        wrap.appendChild(noteEl);
+        options.container.appendChild(wrap);
+
+        var api = {
+            set: function (id) {
+                if (!METHODS[id]) return;
+                current = id;
+                noteEl.textContent = notes[id] || '';
+                Object.keys(buttons).forEach(function (k) {
+                    var active = k === id;
+                    buttons[k].setAttribute('aria-pressed', active ? 'true' : 'false');
+                    buttons[k].style.background = active ? 'rgba(45,212,191,0.25)' : 'rgba(255,255,255,0.05)';
+                });
+                onChange(id, METHODS[id].step);
+            },
+            get current() { return current; }
+        };
+        return api;
+    }
+
+    // Derivative for a two-body central force with parameter mu = G*M.
+    // State layout [x, y, vx, vy] (positions first, velocities second), so all
+    // integrators above apply directly. a = -mu * pos / |pos|^3.
+    function centralForce(mu) {
+        return function (s) {
+            var r = Math.sqrt(s[0] * s[0] + s[1] * s[1]) || 1e-6;
+            var k = -mu / (r * r * r);
+            return [s[2], s[3], k * s[0], k * s[1]];
+        };
+    }
+
+    // Specific orbital energy (energy per unit mass): E = v^2/2 - mu/r.
+    // Negative for bound orbits; constant only if the integrator conserves it.
+    function specificOrbitalEnergy(s, mu) {
+        var r = Math.sqrt(s[0] * s[0] + s[1] * s[1]) || 1e-6;
+        return 0.5 * (s[2] * s[2] + s[3] * s[3]) - mu / r;
+    }
+
     return {
         euler: euler,
         semiImplicitEuler: semiImplicitEuler,
         velocityVerlet: velocityVerlet,
         rk4: rk4,
         METHODS: METHODS,
-        order: ['euler', 'semi', 'verlet', 'rk4']
+        order: ['euler', 'semi', 'verlet', 'rk4'],
+        mountIntegratorSwitch: mountIntegratorSwitch,
+        centralForce: centralForce,
+        specificOrbitalEnergy: specificOrbitalEnergy
     };
 }));
