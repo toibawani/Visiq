@@ -40,7 +40,15 @@ window.initSketch = function(config) {
             const Integrators = window.VisiqIntegrators;
             const INTEGRATOR_ORDER = Integrators ? Integrators.order : ['rk4'];
             let currentIntegrator = 'rk4';
-            let activeStep = Integrators ? Integrators.METHODS.rk4.step : rk4;
+            // Shared integrators take the derivative function as the first arg
+            // (step(f, s, dt)); the local fallback rk4 uses (s, dt). bindStep
+            // adapts a shared step to the sketch's (s, dt) convention by
+            // closing over this pendulum's derivatives(), so activeStep(s, dt)
+            // works regardless of which integrator is selected.
+            function bindStep(stepFn) {
+                return (s, dt) => stepFn(derivatives, s, dt);
+            }
+            let activeStep = Integrators ? bindStep(Integrators.METHODS.rk4.step) : rk4;
 
             // One-sentence explanation shown under the integrator switch.
             const INTEGRATOR_NOTE = {
@@ -235,7 +243,7 @@ window.initSketch = function(config) {
                         notes: INTEGRATOR_NOTE,
                         onChange: (id, step) => {
                             currentIntegrator = id;
-                            activeStep = step;
+                            activeStep = bindStep(step);
                         }
                     });
                 }
