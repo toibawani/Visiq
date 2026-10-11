@@ -122,3 +122,14 @@ falls back to tofu. `tests/font-glyphs.test.js` enforces this on every run.
 ## 📄 License
 
 MIT — see [LICENSE](LICENSE).
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read:
+
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Contributing Guide](docs/CONTRIBUTING.md) — branching model, Conventional
+  Commits, how to run tests, and the pull-request / review process.
+
+When you open an issue or pull request, the templates in `.github/` will guide
+you. Questions? Email **toibawani14@gmail.com**.
