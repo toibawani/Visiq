@@ -27,8 +27,8 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install fontTools (font cmap inspection)
-        run: python3 -m pip install --upgrade pip && python3 -m pip install fonttools
+      - name: Install fontTools[woff] (woff2 cmap inspection needs brotli)
+        run: python3 -m pip install --upgrade pip && python3 -m pip install "fonttools[woff]"
 
       - name: Typecheck (tsc --noEmit)
         run: npm run typecheck
