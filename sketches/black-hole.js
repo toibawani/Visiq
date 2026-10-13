@@ -479,13 +479,19 @@
         '',
         '// Blackbody colour, looked up from a table built on the CPU by',
         '// assets/relativity.js blackbodyRGB(), which the unit tests cover. The',
-        '// table is indexed by log10 of temperature, linearly interpolated.',
+        '// table is indexed by log10 of temperature and linearly interpolated. It',
+        '// is stored sRGB-encoded in 8 bits, which keeps about 1 per cent relative',
+        '// precision in the darks and avoids needing a floating point texture (and',
+        '// the capability probe that goes with one) on older mobile GPUs.',
         'const float BB_LOG_MIN = 2.4771213;  // log10(300)',
         'const float BB_LOG_MAX = 9.0;        // log10(1e9)',
+        'vec3 srgbToLinear(vec3 c) {',
+        '    return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));',
+        '}',
         'vec3 blackbody(float temperatureK) {',
         '    float t = clamp(temperatureK, 300.0, 1.0e9);',
         '    float x = (log(t) / 2.302585093 - BB_LOG_MIN) / (BB_LOG_MAX - BB_LOG_MIN);',
-        '    return texture2D(uBlackbody, vec2(clamp(x, 0.0, 1.0), 0.5)).rgb;',
+        '    return srgbToLinear(texture2D(uBlackbody, vec2(clamp(x, 0.0, 1.0), 0.5)).rgb);',
         '}',
         '',
         '// Procedural star field and a faint galactic band. Sampling by direction',
@@ -784,16 +790,23 @@
         var LUT_SIZE = 512;
         var LUT_LOG_MIN = Math.log10(300);
         var LUT_LOG_MAX = 9.0;
-        var lutData = new Float32Array(LUT_SIZE * 4);
+        var lutData = new Uint8Array(LUT_SIZE * 4);
+        // The sRGB transfer function, so the 8-bit table spends its precision
+        // where the eye needs it. The shader applies the inverse.
+        function encodeSrgb(v) {
+            var c = Math.max(0, Math.min(1, v));
+            var s = c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+            return Math.max(0, Math.min(255, Math.round(s * 255)));
+        }
         for (var i = 0; i < LUT_SIZE; i++) {
             var frac = i / (LUT_SIZE - 1);
             var kelvin = Math.pow(10, LUT_LOG_MIN + frac * (LUT_LOG_MAX - LUT_LOG_MIN));
             var rgb = Rel.blackbodyRGB(kelvin);
-            var scale = 1 / Math.max(1e-6, Math.max(rgb[0], Math.max(rgb[1], rgb[2])));
-            lutData[i * 4 + 0] = rgb[0] * scale;
-            lutData[i * 4 + 1] = rgb[1] * scale;
-            lutData[i * 4 + 2] = rgb[2] * scale;
-            lutData[i * 4 + 3] = 1;
+            var peak = Math.max(1e-6, Math.max(rgb[0], Math.max(rgb[1], rgb[2])));
+            lutData[i * 4 + 0] = encodeSrgb(rgb[0] / peak);
+            lutData[i * 4 + 1] = encodeSrgb(rgb[1] / peak);
+            lutData[i * 4 + 2] = encodeSrgb(rgb[2] / peak);
+            lutData[i * 4 + 3] = 255;
         }
 
         // ---- DOM ----
@@ -954,7 +967,11 @@
                 resizeObserver.disconnect();
                 resizeObserver = null;
             }
-            if (container && container.contains(canvas) && renderer) {
+            // Drop the context-lost handler before forcing the loss, or our own
+            // teardown looks like a crash and logs a false warning.
+            canvas.removeEventListener('webglcontextlost', onContextLost, false);
+            window.removeEventListener('resize', onWindowResize);
+            if (renderer) {
                 renderer.forceContextLoss();
             }
             if (geometry) { geometry.dispose(); geometry = null; }
@@ -1273,7 +1290,7 @@
             scene = new three.Scene();
             camera = new three.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-            lutTexture = new three.DataTexture(lutData, LUT_SIZE, 1, three.RGBAFormat, three.FloatType);
+            lutTexture = new three.DataTexture(lutData, LUT_SIZE, 1, three.RGBAFormat, three.UnsignedByteType);
             lutTexture.minFilter = three.LinearFilter;
             lutTexture.magFilter = three.LinearFilter;
             lutTexture.wrapS = three.ClampToEdgeWrapping;

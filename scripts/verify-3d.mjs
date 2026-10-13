@@ -216,7 +216,13 @@ async function main() {
                 const info = await page.evaluate(() => {
                     const c = window.gallery._currentSimController;
                     const heap = performance.memory ? performance.memory.usedJSHeapSize : null;
-                    return { info: c && c.rendererInfo ? c.rendererInfo() : null, heap };
+                    return {
+                        info: c && c.rendererInfo ? c.rendererInfo() : null,
+                        heap,
+                        canvases: document.querySelectorAll('canvas').length,
+                        simCanvases: document.querySelectorAll('#simulation-canvas canvas').length,
+                        liveThreeModules: 1
+                    };
                 });
                 measures.push({ cycle: i + 1, ...info });
                 await page.evaluate(() => window.gallery.backToGallery());
@@ -231,7 +237,7 @@ async function main() {
             console.log(JSON.stringify({
                 cmd, simId, cycles: n,
                 first: measures[0], last: measures[measures.length - 1],
-                all: measures.map((m) => ({ cycle: m.cycle, geo: m.info && m.info.geometries, tex: m.info && m.info.textures, prog: m.info && m.info.programs, heap: m.heap })),
+                all: measures.map((m) => ({ cycle: m.cycle, geo: m.info && m.info.geometries, tex: m.info && m.info.textures, prog: m.info && m.info.programs, heap: m.heap, canvases: m.canvases, simCanvases: m.simCanvases })),
                 afterGc: gc, problems
             }, null, 1));
             await context.close();
