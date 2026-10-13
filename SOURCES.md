@@ -29,9 +29,21 @@ file with no imports of its own. Both files are required; copying only
 
 `three.module.js` is loaded only by dynamic `import()` inside a 3D
 simulation's sketch file, resolved against `document.baseURI`, so it is never
-fetched by the gallery. Measured on the gallery page before and after this
-vendoring: 21 JS resources, 410,099 bytes, unchanged (see
-`SIM-3D-AUDIT.md` and the hero report for the raw numbers).
+fetched by the gallery.
+
+Gallery first-load JS, counted from the script tags in `index.html` and the
+file sizes on disk: **227,730 bytes in 20 local files, 62,377 bytes gzipped**,
+plus p5.js from `cdnjs.cloudflare.com`. That number is identical before and
+after vendoring three.js, because no script tag was added. Verified in the
+browser as well: a gallery load reports `threeLoaded: false` and 21 JS
+resources (20 local plus p5).
+
+Correction: an earlier version of this file quoted 410,099 bytes for the
+gallery, taken from one `performance.getEntriesByType('resource')` sample. A
+re-run gave 227,730, which matches the on-disk count exactly, so the 410,099
+figure was a caching artifact in resource timing and has been replaced. The
+conclusion it was used to support, that the gallery does not fetch three.js,
+held in both samples.
 
 Do not hand-edit these files. To move to a new release, re-download the npm
 tarball, replace all three files, and update the version, date and hashes in
