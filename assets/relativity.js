@@ -139,10 +139,103 @@
         return 2 * rs / b;
     }
 
+    // --- blackbody colour --------------------------------------------------
+
+    // Planck's spectral radiance up to a constant factor (the constants cancel
+    // once the result is normalised to a colour). lambda in nanometres.
+    var H_PLANCK = 6.62607015e-34;
+    var K_B = 1.380649e-23;
+
+    function planckRelative(lambdaNm, temperatureK) {
+        var l = lambdaNm * 1e-9;
+        var exponent = (H_PLANCK * C) / (l * K_B * temperatureK);
+        // exp() overflows to Infinity for cold temperatures at short
+        // wavelengths; 1/Infinity is 0, which is the right answer, and no NaN
+        // is produced.
+        return 1 / Math.pow(l, 5) / (Math.exp(exponent) - 1);
+    }
+
+    // Piecewise Gaussian used by the Wyman/Sloan/Shirley fit below.
+    function lobe(x, mu, s1, s2) {
+        var s = x < mu ? s1 : s2;
+        var t = (x - mu) / s;
+        return Math.exp(-0.5 * t * t);
+    }
+
+    // CIE 1931 2-degree colour matching functions, fitted by
+    // Wyman, Sloan & Shirley (2013), "Simple Analytic Approximations to the CIE
+    // XYZ Color Matching Functions", Journal of Computer Graphics Techniques
+    // 2(2). Multi-lobe Gaussian fit, accurate to a few per cent over the
+    // visible band, which is far below the eye's ability to notice on a glow.
+    function cieX(l) {
+        return 1.056 * lobe(l, 599.8, 37.9, 31.0)
+             + 0.362 * lobe(l, 442.0, 16.0, 26.7)
+             - 0.065 * lobe(l, 501.1, 20.4, 26.2);
+    }
+    function cieY(l) {
+        return 0.821 * lobe(l, 568.8, 46.9, 40.5)
+             + 0.286 * lobe(l, 530.9, 16.3, 31.1);
+    }
+    function cieZ(l) {
+        return 1.217 * lobe(l, 437.0, 11.8, 36.0)
+             + 0.681 * lobe(l, 459.0, 26.0, 13.8);
+    }
+
+    // Integrate a Planck spectrum against the matching functions and convert to
+    // linear sRGB (D65), then normalise so the largest channel is 1. This gives
+    // the chromaticity a camera would record for a blackbody at this
+    // temperature, independent of how bright it is. The shader carries the same
+    // arithmetic so the pixels and these numbers agree.
+    function blackbodyRGB(temperatureK) {
+        var X = 0, Y = 0, Z = 0;
+        for (var l = 380; l <= 730; l += 5) {
+            var B = planckRelative(l, temperatureK);
+            X += cieX(l) * B;
+            Y += cieY(l) * B;
+            Z += cieZ(l) * B;
+        }
+        var r =  3.2404542 * X - 1.5371385 * Y - 0.4985314 * Z;
+        var g = -0.9692660 * X + 1.8760108 * Y + 0.0415560 * Z;
+        var b =  0.0556434 * X - 0.2040259 * Y + 1.0572252 * Z;
+        r = Math.max(0, r);
+        g = Math.max(0, g);
+        b = Math.max(0, b);
+        var m = Math.max(r, Math.max(g, b));
+        if (m > 0) { r /= m; g /= m; b /= m; }
+        return [r, g, b];
+    }
+
+    // Peak temperature of a thin accretion disk around a black hole of the given
+    // mass, in kelvin. Shakura-Sunyaev disks scale as T ~ M^(-1/4) at a fixed
+    // Eddington ratio, anchored on the standard figures: about 1e7 K for a 10
+    // solar-mass hole (soft X-rays) and about 1.8e5 K for a 1e8 solar-mass hole
+    // (ultraviolet). The Eddington assumption is a real simplification and the
+    // simulation says so on screen.
+    function diskPeakTemperature(massSolar) {
+        return 1.0e7 * Math.pow(massSolar / 10, -0.25);
+    }
+
+    // The Shakura-Sunyaev radial profile, normalised so its maximum is 1. The
+    // peak sits at r = (49/36) r_in, a standard result of that model.
+    var DISK_PEAK_R_OVER_RIN = 49 / 36;
+    var DISK_PROFILE_NORM = 1 / (Math.pow(DISK_PEAK_R_OVER_RIN, -0.75) *
+        Math.pow(1 - Math.pow(DISK_PEAK_R_OVER_RIN, -0.5), 0.25));
+
+    function diskProfile(r, rIn) {
+        var x = r / rIn;
+        if (x <= 1) return 0;
+        return DISK_PROFILE_NORM * Math.pow(x, -0.75) * Math.pow(1 - Math.pow(x, -0.5), 0.25);
+    }
+
     return {
         G: G,
         C: C,
         M_SUN: M_SUN,
+        DISK_PEAK_R_OVER_RIN: DISK_PEAK_R_OVER_RIN,
+        planckRelative: planckRelative,
+        blackbodyRGB: blackbodyRGB,
+        diskPeakTemperature: diskPeakTemperature,
+        diskProfile: diskProfile,
         PHOTON_SPHERE_OVER_RS: PHOTON_SPHERE_OVER_RS,
         ISCO_OVER_RS: ISCO_OVER_RS,
         SHADOW_B_OVER_RS: SHADOW_B_OVER_RS,

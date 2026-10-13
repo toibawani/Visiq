@@ -135,6 +135,94 @@ describe('Doppler shift and beaming', () => {
     });
 });
 
+describe('blackbody colour', () => {
+    it('is deep red at 1000 K, with essentially no blue', () => {
+        const [r, g, b] = Rel.blackbodyRGB(1000);
+        expect(r).toBeGreaterThan(0.9);
+        expect(g).toBeLessThan(0.1);
+        expect(b).toBeLessThan(0.01);
+    });
+
+    it('is orange at 3000 K, ordered red > green > blue', () => {
+        const [r, g, b] = Rel.blackbodyRGB(3000);
+        expect(r).toBeGreaterThan(g);
+        expect(g).toBeGreaterThan(b);
+        expect(r / b).toBeGreaterThan(3);
+    });
+
+    it('is close to white at 6500 K, like daylight', () => {
+        const [r, g, b] = Rel.blackbodyRGB(6500);
+        expect(Math.min(r, g, b)).toBeGreaterThan(0.8);
+        expect(Math.max(r, g, b) / Math.min(r, g, b)).toBeLessThan(1.4);
+    });
+
+    it('turns blue-dominant above about 10000 K', () => {
+        const [r1, g1, b1] = Rel.blackbodyRGB(10000);
+        expect(b1).toBeGreaterThan(g1);
+        expect(g1).toBeGreaterThan(r1);
+        const [r2, , b2] = Rel.blackbodyRGB(1e7);
+        expect(b2).toBeGreaterThan(r2);
+        expect(r2 / b2).toBeLessThan(0.5); // the Planckian locus saturates toward blue
+    });
+
+    it('gets bluer monotonically as temperature rises', () => {
+        // The red-to-blue ratio must fall at every step, for physical reasons:
+        // the Planck peak moves toward shorter wavelengths.
+        let previous = Infinity;
+        for (let T = 2000; T <= 20000; T += 500) {
+            const [r, , b] = Rel.blackbodyRGB(T);
+            const ratio = r / Math.max(1e-12, b);
+            expect(ratio).toBeLessThan(previous);
+            previous = ratio;
+        }
+    });
+
+    it('normalises the largest channel to 1 and never returns NaN', () => {
+        for (const T of [100, 300, 1000, 6500, 1e5, 1e9]) {
+            const c = Rel.blackbodyRGB(T);
+            c.forEach((v) => {
+                expect(Number.isFinite(v)).toBe(true);
+                expect(v).toBeGreaterThanOrEqual(0);
+                expect(v).toBeLessThanOrEqual(1);
+            });
+            expect(Math.max(...c)).toBeCloseTo(1, 6);
+        }
+    });
+});
+
+describe('thin-disk temperature profile', () => {
+    it('peaks at r = 49/36 of the inner radius, with value 1', () => {
+        expect(Rel.diskProfile(Rel.DISK_PEAK_R_OVER_RIN, 1)).toBeCloseTo(1, 9);
+        expect(Rel.DISK_PEAK_R_OVER_RIN).toBeCloseTo(49 / 36, 12);
+    });
+
+    it('is zero at and inside the inner radius', () => {
+        expect(Rel.diskProfile(1, 1)).toBe(0);
+        expect(Rel.diskProfile(0.5, 1)).toBe(0);
+    });
+
+    it('falls off outward from the peak', () => {
+        const peak = Rel.DISK_PEAK_R_OVER_RIN;
+        expect(Rel.diskProfile(peak + 0.5, 1)).toBeLessThan(Rel.diskProfile(peak, 1));
+        expect(Rel.diskProfile(4, 1)).toBeLessThan(Rel.diskProfile(2, 1));
+        expect(Rel.diskProfile(10, 1)).toBeLessThan(Rel.diskProfile(4, 1));
+    });
+});
+
+describe('disk peak temperature', () => {
+    it('is about 1e7 K for a 10 solar-mass hole', () => {
+        expect(Rel.diskPeakTemperature(10)).toBeCloseTo(1e7, -4);
+    });
+
+    it('is about 1.8e5 K for a 1e8 solar-mass hole, matching the UV figure', () => {
+        expect(Rel.diskPeakTemperature(1e8) / 1.8e5).toBeCloseTo(1, 1);
+    });
+
+    it('follows the T ~ M^(-1/4) scaling', () => {
+        expect(Rel.diskPeakTemperature(100) / Rel.diskPeakTemperature(10)).toBeCloseTo(Math.pow(10, -0.25), 10);
+    });
+});
+
 describe('accretion efficiency and weak-field deflection', () => {
     it('converts 5.72% of rest mass for a thin disk reaching the ISCO', () => {
         expect(Rel.iscoEfficiency()).toBeCloseTo(0.0571909, 6);
