@@ -177,8 +177,20 @@ describe('blackbody colour', () => {
         }
     });
 
+    it('reports no colour when every sample underflows to zero', () => {
+        // At 1 K the Planck exponentials overflow and every visible sample is
+        // zero, so there is no chromaticity to report. At room temperature the
+        // tail is small but representable, and the clamped colour is a deep
+        // red sitting outside the sRGB gamut, which is the honest answer.
+        expect(Rel.blackbodyRGB(1)).toEqual([0, 0, 0]);
+        const [r, g, b] = Rel.blackbodyRGB(300);
+        expect(r).toBeGreaterThan(0.9);
+        expect(g).toBeLessThan(r);
+        expect(b).toBeLessThan(g);
+    });
+
     it('normalises the largest channel to 1 and never returns NaN', () => {
-        for (const T of [100, 300, 1000, 6500, 1e5, 1e9]) {
+        for (const T of [1000, 3000, 6500, 1e5, 1e9]) {
             const c = Rel.blackbodyRGB(T);
             c.forEach((v) => {
                 expect(Number.isFinite(v)).toBe(true);
@@ -187,6 +199,17 @@ describe('blackbody colour', () => {
             });
             expect(Math.max(...c)).toBeCloseTo(1, 6);
         }
+    });
+
+    it('stays finite at X-ray-hot temperatures after normalisation', () => {
+        // Regression guard: the raw Planck radiance at 1e7 K overflows a 32-bit
+        // float, which is what the shader lookup table stores. Normalising the
+        // spectrum inside the function is what keeps the table usable.
+        const c = Rel.blackbodyRGB(1e7);
+        c.forEach((v) => expect(Number.isFinite(v)).toBe(true));
+        // And the values must survive a round trip through float32.
+        const f32 = new Float32Array(c);
+        f32.forEach((v) => expect(Number.isFinite(v)).toBe(true));
     });
 });
 
@@ -199,6 +222,16 @@ describe('thin-disk temperature profile', () => {
     it('is zero at and inside the inner radius', () => {
         expect(Rel.diskProfile(1, 1)).toBe(0);
         expect(Rel.diskProfile(0.5, 1)).toBe(0);
+    });
+
+    it('has a flux profile that is the fourth power of the temperature profile', () => {
+        // Physics, not a coincidence: radiated power scales as T^4, so the
+        // normalised flux curve must equal the normalised temperature curve
+        // raised to the fourth power at every radius.
+        for (const r of [1.5, 2, 3, 4, 8, 20]) {
+            expect(Rel.diskFlux(r, 1)).toBeCloseTo(Math.pow(Rel.diskProfile(r, 1), 4), 9);
+        }
+        expect(Rel.diskFlux(Rel.DISK_PEAK_R_OVER_RIN, 1)).toBeCloseTo(1, 9);
     });
 
     it('falls off outward from the peak', () => {

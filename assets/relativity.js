@@ -187,9 +187,27 @@
     // temperature, independent of how bright it is. The shader carries the same
     // arithmetic so the pixels and these numbers agree.
     function blackbodyRGB(temperatureK) {
+        // The spectrum is normalised by its own maximum before the matching
+        // functions are applied. Chromaticity is scale-free, and without this
+        // step the raw Planck radiance for an X-ray-hot disk overflows a
+        // 32-bit float (about 3.4e38) even though the colour is well defined.
+        var peak = 0;
+        var l;
+        for (l = 380; l <= 730; l += 5) {
+            var probe = planckRelative(l, temperatureK);
+            if (probe > peak) peak = probe;
+        }
+        // Nothing in the visible band at all. Below roughly 5 K the Boltzmann
+        // exponentials overflow to infinity and every sample underflows to
+        // zero, so there is no chromaticity to report. Note that this is about
+        // whether the sRGB conversion is meaningful, not about brightness: the
+        // result of this function is always normalised to the largest channel,
+        // so it carries colour only and never intensity.
+        if (!(peak > 0)) return [0, 0, 0];
+
         var X = 0, Y = 0, Z = 0;
-        for (var l = 380; l <= 730; l += 5) {
-            var B = planckRelative(l, temperatureK);
+        for (l = 380; l <= 730; l += 5) {
+            var B = planckRelative(l, temperatureK) / peak;
             X += cieX(l) * B;
             Y += cieY(l) * B;
             Z += cieZ(l) * B;
@@ -227,11 +245,28 @@
         return DISK_PROFILE_NORM * Math.pow(x, -0.75) * Math.pow(1 - Math.pow(x, -0.5), 0.25);
     }
 
+    // Radiated flux profile, normalised to its own maximum. Because radiated
+    // power goes as the fourth power of temperature, this is exactly the fourth
+    // power of the profile above, which is the standard r^-3 (1 - r^-1/2)
+    // fall-off of a thin disk. It is what sets the brightness of the rendered
+    // disk, while the profile sets the colour.
+    var DISK_FLUX_NORM = 1 / (Math.pow(DISK_PEAK_R_OVER_RIN, -3) *
+        (1 - Math.pow(DISK_PEAK_R_OVER_RIN, -0.5)));
+
+    function diskFlux(r, rIn) {
+        var x = r / rIn;
+        if (x <= 1) return 0;
+        return DISK_FLUX_NORM * Math.pow(x, -3) * (1 - Math.pow(x, -0.5));
+    }
+
     return {
         G: G,
         C: C,
         M_SUN: M_SUN,
         DISK_PEAK_R_OVER_RIN: DISK_PEAK_R_OVER_RIN,
+        DISK_PROFILE_NORM: DISK_PROFILE_NORM,
+        DISK_FLUX_NORM: DISK_FLUX_NORM,
+        diskFlux: diskFlux,
         planckRelative: planckRelative,
         blackbodyRGB: blackbodyRGB,
         diskPeakTemperature: diskPeakTemperature,
