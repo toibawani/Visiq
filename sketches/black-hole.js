@@ -1495,8 +1495,16 @@
         function govern() {
             var budgetMs = 1000 / 60;
             var over = state.frameMs > budgetMs * 1.25;
-            var under = state.frameMs < budgetMs * 0.82;
+            // A vsync-locked 60 fps sits at 16.7 ms, which is above the old
+            // 0.82 band: any one-time dip (shader compile) used to reduce the
+            // scale and the dead band meant it NEVER came back. 1.06 puts a
+            // steady 60 fps on the "can afford more" side of the hysteresis.
+            var under = state.frameMs < budgetMs * 1.06;
             var changed = false;
+
+            if (over) state.calm = 0;
+            else if (under) state.calm = (state.calm || 0) + 1;
+            else state.calm = 0;
 
             if (state.manualReduced) {
                 var targetScale = 0.6;
@@ -1506,7 +1514,10 @@
             } else if (over) {
                 if (state.autoScale > 0.42) { state.autoScale = Math.max(0.42, state.autoScale * 0.88); changed = true; }
                 else if (state.steps > 140) { state.steps = Math.max(140, state.steps - 24); changed = true; }
-            } else if (under) {
+            } else if (under && state.calm >= 6) {
+                // Six calm govern periods (~2 s at 60 fps) before climbing
+                // again, so a borderline machine settles instead of flapping.
+                state.calm = 0;
                 if (state.steps < 340) { state.steps = Math.min(340, state.steps + 12); changed = true; }
                 else if (state.autoScale < 1) { state.autoScale = Math.min(1, state.autoScale * 1.06); changed = true; }
             }
