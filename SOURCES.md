@@ -68,8 +68,33 @@ file with no imports of its own. Both files are required; copying only
 simulation's sketch file, resolved against `document.baseURI`, so it is never
 fetched by the gallery.
 
+## What the solar system added to the gallery first load
+
+`assets/orbital-elements.js` is loaded from a plain script tag in `index.html`,
+like `assets/relativity.js` before it. Measured on disk, in bytes, by summing
+every local script tag in `index.html`:
+
+| | files | raw | gzip |
+|---|---|---|---|
+| without `orbital-elements.js` | 21 | 243,603 | 68,197 |
+| with it | 22 | 256,609 | 73,090 |
+| difference | +1 | **+13,006** | **+4,893** |
+
+That is the whole cost, and it is charged to every gallery visit. The attempt to
+move it behind a lazy load was abandoned deliberately: `gallery.js` takes the
+value returned by `window.initSketch` as the live controller and calls
+`destroy()` on it during teardown, so an `initSketch` that returned a promise
+while the table loaded would leave the gallery unable to tear the simulation
+down. Paying 4.9 KB gzipped once was judged better than a leak in the teardown
+path that the 20-cycle test exists to catch. Three.js, which is 417 KB gzipped,
+is still behind a dynamic `import()` and is not in any of these numbers.
+
+The planet textures are not in the first load at all: they are fetched by the
+simulation, and they total 958 KB of webp.
+
 Gallery first-load JS, counted from the script tags in `index.html` and the
-file sizes on disk: **227,730 bytes in 20 local files, 62,377 bytes gzipped**,
+file sizes on disk (this is the number as measured before the pass above, kept
+for history): **227,730 bytes in 20 local files, 62,377 bytes gzipped**,
 plus p5.js from `cdnjs.cloudflare.com`. That number is identical before and
 after vendoring three.js, because no script tag was added. Verified in the
 browser as well: a gallery load reports `threeLoaded: false` and 21 JS
