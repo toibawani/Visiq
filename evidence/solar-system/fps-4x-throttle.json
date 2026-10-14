@@ -1,0 +1,27 @@
+{
+ "cmd": "fps",
+ "simId": "solar-system",
+ "seconds": "6",
+ "throttle": "4",
+ "fps": {
+  "frames": 361,
+  "avgMs": 16.67,
+  "fps": 60,
+  "medianMs": 16.7,
+  "worstMs": 16.8,
+  "over25ms": 0
+ },
+ "quality": {
+  "scale": 1,
+  "frameMs": 16.665996019732074,
+  "dtDays": 0.018555555555556366,
+  "physicsLimited": false,
+  "stars": 3000
+ },
+ "problems": [
+  "warning: [.WebGL-0x1140044ec00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x1140044ec00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x1140044ec00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x1140044ec00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

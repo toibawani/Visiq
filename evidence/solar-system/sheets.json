@@ -1,0 +1,322 @@
+{
+ "cmd": "sheets",
+ "simId": "solar-system",
+ "captures": [
+  {
+   "viewport": "1440x900",
+   "theme": "dark",
+   "mark": "t0",
+   "file": "evidence/solar-system/sheets/solar-system-1440x900-dark-t0.png",
+   "elapsedMs": 447,
+   "quality": {
+    "scale": 0.85,
+    "frameMs": 27.828881535928726,
+    "dtDays": 0.018444444444444343,
+    "physicsLimited": false,
+    "stars": 3000
+   },
+   "canvas": {
+    "w": 931,
+    "h": 394
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     11.6,
+     14.3,
+     21.6
+    ],
+    "stdevChannel": [
+     20,
+     19.8,
+     20
+    ],
+    "nonBlackPct": 62.7,
+    "brightPct": 0.9,
+    "blueDominantPct": 50.4,
+    "redDominantPct": 0.5
+   }
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "dark",
+   "mark": "t10",
+   "file": "evidence/solar-system/sheets/solar-system-1440x900-dark-t10.png",
+   "elapsedMs": 10077,
+   "quality": {
+    "scale": 1,
+    "frameMs": 16.665844684982382,
+    "dtDays": 0.018555555555556366,
+    "physicsLimited": false,
+    "stars": 3000
+   },
+   "canvas": {
+    "w": 1096,
+    "h": 464
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     11.3,
+     14.4,
+     22.3
+    ],
+    "stdevChannel": [
+     17.9,
+     19.1,
+     21.5
+    ],
+    "nonBlackPct": 62.6,
+    "brightPct": 0.9,
+    "blueDominantPct": 50.8,
+    "redDominantPct": 0.4
+   }
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "light",
+   "mark": "t0",
+   "file": "evidence/solar-system/sheets/solar-system-1440x900-light-t0.png",
+   "elapsedMs": 255,
+   "quality": {
+    "scale": 0.85,
+    "frameMs": 33.62348300000001,
+    "dtDays": 0.018555555555555606,
+    "physicsLimited": false,
+    "stars": 3000
+   },
+   "canvas": {
+    "w": 931,
+    "h": 394
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     151.3,
+     152.7,
+     155.8
+    ],
+    "stdevChannel": [
+     120.3,
+     119.7,
+     117.2
+    ],
+    "nonBlackPct": 62.7,
+    "brightPct": 60,
+    "blueDominantPct": 1.7,
+    "redDominantPct": 0.3
+   }
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "light",
+   "mark": "t10",
+   "file": "evidence/solar-system/sheets/solar-system-1440x900-light-t10.png",
+   "elapsedMs": 10065,
+   "quality": {
+    "scale": 1,
+    "frameMs": 16.658682183742794,
+    "dtDays": 0.018333333333333333,
+    "physicsLimited": false,
+    "stars": 3000
+   },
+   "canvas": {
+    "w": 1096,
+    "h": 464
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     151.2,
+     152.9,
+     156.4
+    ],
+    "stdevChannel": [
+     120.3,
+     119.5,
+     116.7
+    ],
+    "nonBlackPct": 62.5,
+    "brightPct": 60,
+    "blueDominantPct": 1.8,
+    "redDominantPct": 0.4
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "dark",
+   "mark": "t0",
+   "file": "evidence/solar-system/sheets/solar-system-375x812-dark-t0.png",
+   "elapsedMs": 85,
+   "quality": {
+    "scale": 1,
+    "frameMs": 23.153261090039603,
+    "dtDays": 0.018555555555555606,
+    "physicsLimited": false,
+    "stars": 3000
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     12.3,
+     14.9,
+     22.2
+    ],
+    "stdevChannel": [
+     22.7,
+     23,
+     24.1
+    ],
+    "nonBlackPct": 55.9,
+    "brightPct": 1.3,
+    "blueDominantPct": 43,
+    "redDominantPct": 1.3
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "dark",
+   "mark": "t10",
+   "file": "evidence/solar-system/sheets/solar-system-375x812-dark-t10.png",
+   "elapsedMs": 10051,
+   "quality": {
+    "scale": 1,
+    "frameMs": 16.66843719844049,
+    "dtDays": 0.018555555555554343,
+    "physicsLimited": false,
+    "stars": 3000
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     14.3,
+     17.7,
+     25.8
+    ],
+    "stdevChannel": [
+     26.7,
+     28,
+     29.9
+    ],
+    "nonBlackPct": 59.2,
+    "brightPct": 2,
+    "blueDominantPct": 44.7,
+    "redDominantPct": 1.7
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "light",
+   "mark": "t0",
+   "file": "evidence/solar-system/sheets/solar-system-375x812-light-t0.png",
+   "elapsedMs": 68,
+   "quality": {
+    "scale": 1,
+    "frameMs": 30.944300000000005,
+    "dtDays": 0.018555555555555606,
+    "physicsLimited": false,
+    "stars": 3000
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     132.3,
+     133.7,
+     137.5
+    ],
+    "stdevChannel": [
+     121.7,
+     120.9,
+     118
+    ],
+    "nonBlackPct": 55.8,
+    "brightPct": 52.3,
+    "blueDominantPct": 2.2,
+    "redDominantPct": 0.6
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "light",
+   "mark": "t10",
+   "file": "evidence/solar-system/sheets/solar-system-375x812-light-t10.png",
+   "elapsedMs": 10054,
+   "quality": {
+    "scale": 1,
+    "frameMs": 16.666472062260535,
+    "dtDays": 0.018555555555556366,
+    "physicsLimited": false,
+    "stars": 3000
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     133.9,
+     136,
+     140.6
+    ],
+    "stdevChannel": [
+     120.9,
+     119.6,
+     116.1
+    ],
+    "nonBlackPct": 58.8,
+    "brightPct": 52.9,
+    "blueDominantPct": 4,
+    "redDominantPct": 1
+   }
+  }
+ ],
+ "cells": [
+  {
+   "viewport": "1440x900",
+   "theme": "dark",
+   "problems": [
+    "warning: [.WebGL-0x1140044ce00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "warning: [.WebGL-0x1140044ce00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "warning: [.WebGL-0x1140044ce00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "warning: [.WebGL-0x1140044ce00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+   ]
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "light",
+   "problems": []
+  },
+  {
+   "viewport": "375x812",
+   "theme": "dark",
+   "problems": []
+  },
+  {
+   "viewport": "375x812",
+   "theme": "light",
+   "problems": []
+  }
+ ],
+ "problemCount": 4
+}
