@@ -874,12 +874,17 @@
         var cam = {
             azimuth: 0.6,
             polar: 0,
-            distance: 20,
+            // The disk runs out to 22 rs by default. At distance 20 the camera
+            // sat INSIDE the disk's radial span, 6 degrees above the plane, so
+            // the near disk filled the lower half of the frame like a floor.
+            // 40 rs puts the camera outside the disk: the classic band-across-
+            // the-shadow composition with the lensed far side arcing over.
+            distance: 40,
             velAz: 0,
             velPol: 0
         };
         cam.polar = inclinationToPolar(sim.params.inclination * Math.PI / 180);
-        var CAM_DEFAULT = { azimuth: 0.6, polar: cam.polar, distance: 20 };
+        var CAM_DEFAULT = { azimuth: 0.6, polar: cam.polar, distance: 40 };
 
         var state = {
             steps: 240,
