@@ -7,7 +7,13 @@
 //   node scripts/verify-3d.mjs fps <simId> [seconds] [cpuThrottle]
 //   node scripts/verify-3d.mjs leak <simId> [cycles]
 //   node scripts/verify-3d.mjs console <simId>
+//   node scripts/verify-3d.mjs sheets <simId> [outDir]
 //   node scripts/verify-3d.mjs stats <png>          analyse a screenshot
+//
+// `sheets` is the hero gate: for both themes (dark, light) and both viewports
+// (1440x900 desktop, 375x812 phone) it captures the first frame and the frame
+// 10 seconds later, then prints pixel statistics for every capture plus any
+// console errors/warnings. Output is numbers, not adjectives.
 //
 // The app sits behind a local sign-in gate, so a session is seeded in
 // localStorage before measuring. Screenshots are analysed with sharp so the
@@ -74,11 +80,16 @@ async function makePage(browser, { width = 1440, height = 900, theme = 'dark' } 
     return { context, page, problems };
 }
 
-async function signIn(page) {
-    await page.addInitScript(() => {
+async function signIn(page, theme) {
+    // The site ignores prefers-color-scheme and only reads its own key
+    // (theme-toggle.js: 'visiq-theme' || 'dark'), so emulating colorScheme
+    // alone silently captures dark twice. Seed the real key when a theme is
+    // requested.
+    await page.addInitScript((t) => {
         localStorage.setItem('visiq_session', JSON.stringify({ email: 'verify@visiq.test', loginTime: Date.now() }));
         localStorage.setItem('visiq_user_email', 'verify@visiq.test');
-    });
+        if (t) localStorage.setItem('visiq-theme', t);
+    }, theme || null);
 }
 
 async function openSim(page, simId, { waitMs = 6000 } = {}) {
@@ -134,7 +145,7 @@ async function main() {
             const { context, page, problems } = await makePage(browser, {
                 width: parseInt(w, 10), height: parseInt(h, 10), theme
             });
-            await signIn(page);
+            await signIn(page, theme);
             await openSim(page, simId, { waitMs: parseInt(waitMs, 10) });
             const canvasInfo = await page.evaluate(() => {
                 const c = document.querySelector('#simulation-canvas canvas');
@@ -338,6 +349,59 @@ async function main() {
                 problems
             }, null, 1));
             await context.close();
+        } else if (cmd === 'sheets') {
+            // The hero screenshot gate: first frame and +10s, at 1440x900 and
+            // 375x812, in dark and light. Every capture carries pixel stats and
+            // the sim's own quality-governor state at that moment.
+            const [simId, outDir = `evidence/${simId}`] = args;
+            const sharp = (await import('sharp')).default;
+            const viewports = [
+                { w: 1440, h: 900, label: '1440x900' },
+                { w: 375, h: 812, label: '375x812' }
+            ];
+            const themes = ['dark', 'light'];
+            const captures = [];
+            const cells = [];
+            for (const vp of viewports) {
+                for (const theme of themes) {
+                    const { context, page, problems } = await makePage(browser, {
+                        width: vp.w, height: vp.h, theme
+                    });
+                    await signIn(page, theme);
+                    await page.goto(`${BASE}/index.html?sim=${simId}`, { waitUntil: 'load' });
+                    await page.waitForSelector('#simulation-canvas canvas', { timeout: 20000 }).catch(() => {});
+                    await page.waitForTimeout(600);
+                    const t0 = Date.now();
+                    for (const mark of ['t0', 't10']) {
+                        if (mark === 't10') {
+                            const wait = 10000 - (Date.now() - t0);
+                            if (wait > 0) await page.waitForTimeout(wait);
+                        }
+                        const file = `${outDir}/${simId}-${vp.label}-${theme}-${mark}.png`;
+                        await mkdir(dirname(resolve(ROOT, file)), { recursive: true });
+                        const buf = await page.screenshot();
+                        await writeFile(resolve(ROOT, file), buf);
+                        const state = await page.evaluate(() => {
+                            const ctrl = window.gallery && window.gallery._currentSimController;
+                            const c = document.querySelector('#simulation-canvas canvas');
+                            return {
+                                quality: ctrl && ctrl.quality ? ctrl.quality() : null,
+                                canvas: c ? { w: c.width, h: c.height } : null
+                            };
+                        });
+                        captures.push({
+                            viewport: vp.label, theme, mark, file,
+                            elapsedMs: Date.now() - t0,
+                            ...state,
+                            stats: await imageStats(sharp, buf)
+                        });
+                    }
+                    cells.push({ viewport: vp.label, theme, problems });
+                    await context.close();
+                }
+            }
+            const problemCount = cells.reduce((n, c) => n + c.problems.length, 0);
+            console.log(JSON.stringify({ cmd, simId, captures, cells, problemCount }, null, 1));
         } else {
             console.log('unknown command:', cmd);
             exitCode = 1;
@@ -352,12 +416,12 @@ async function main() {
     process.exit(exitCode);
 }
 
-async function reportImage(sharp, path) {
-    const abs = resolve(ROOT, path);
-    if (!existsSync(abs)) { console.log('missing', abs); return; }
-    const meta = await sharp(abs).metadata();
-    const stats = await sharp(abs).stats();
-    const { data, info } = await sharp(abs).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+// Pixel statistics for a PNG buffer. Kept as a pure function so the same
+// numbers can be attached to every capture the harness makes.
+async function imageStats(sharp, buffer) {
+    const meta = await sharp(buffer).metadata();
+    const stats = await sharp(buffer).stats();
+    const { data, info } = await sharp(buffer).removeAlpha().raw().toBuffer({ resolveWithObject: true });
     const px = info.width * info.height;
     let nonBlack = 0;
     let bright = 0;
@@ -371,8 +435,7 @@ async function reportImage(sharp, path) {
         if (b > r * 1.25 && lum > 12) blueish++;
         if (r > b * 1.25 && lum > 12) reddish++;
     }
-    console.log(JSON.stringify({
-        path,
+    return {
         size: `${meta.width}x${meta.height}`,
         channels: info.channels,
         meanChannel: stats.channels.slice(0, 3).map((c) => Math.round(c.mean * 10) / 10),
@@ -381,7 +444,14 @@ async function reportImage(sharp, path) {
         brightPct: Math.round(bright / px * 1000) / 10,
         blueDominantPct: Math.round(blueish / px * 1000) / 10,
         redDominantPct: Math.round(reddish / px * 1000) / 10
-    }, null, 1));
+    };
+}
+
+async function reportImage(sharp, path) {
+    const abs = resolve(ROOT, path);
+    if (!existsSync(abs)) { console.log('missing', abs); return; }
+    const stats = await imageStats(sharp, abs);
+    console.log(JSON.stringify({ path, ...stats }, null, 1));
 }
 
 main();
