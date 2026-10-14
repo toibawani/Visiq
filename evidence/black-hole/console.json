@@ -1,0 +1,29 @@
+{
+ "cmd": "console",
+ "simId": "black-hole",
+ "state": {
+  "mode": "3d",
+  "quality": {
+   "scale": 0.5588070399999999,
+   "steps": 336,
+   "frameMs": 16.67047388770017
+  },
+  "readouts": [
+   "Mass1.00e+8 M_sun",
+   "Schwarzschild r_s295.40 million km",
+   "Photon sphere 1.5 r_s443.10 million km",
+   "ISCO 3 r_s886.20 million km",
+   "Shadow diameter 5.20 r_s1534.95 million km",
+   "Time dilation sqrt(1 - rs/r)0.9129 at 6.00 r_s",
+   "Disk peak T177.8 kK",
+   "ISCO orbital period12.64 h"
+  ]
+ },
+ "problemCount": 4,
+ "problems": [
+  "warning: [.WebGL-0x13400454c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x13400454c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x13400454c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x13400454c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}
