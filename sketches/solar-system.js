@@ -355,7 +355,7 @@
         // readout gives the true radius in km, the mode is named on screen, and
         // the limits line says what the exaggeration is. True mode is exact.
         var READABLE_RADIUS_GAIN = 1500;
-        var READABLE_SUN_GAIN = 13;
+        var READABLE_SUN_GAIN = 8;
         var READABLE_ORBIT_CAP = 0.08;
 
         function trueRadiusAu(bodyId) {
@@ -407,8 +407,24 @@
         var rafId = null, lastFrameTime = 0, frameCount = 0, lastLiveUpdate = 0;
 
         // ---- camera ----
-        var cam = { azimuth: 0.9, polar: 1.05, distance: 1.8, velAz: 0, velPol: 0, lookAt: [0, 0, 0] };
-        var CAM_DEFAULT = { azimuth: 0.9, polar: 1.05, distance: 1.8 };
+        // The camera frames the body being followed, at a distance proportional
+        // to how big that body is drawn. A fixed distance cannot work across
+        // four orders of magnitude of radius: at 1.8 AU the Earth is a 10 pixel
+        // disc, which is what the first render of this sim actually looked like.
+        // Following the Sun means the system view, not a close-up of the Sun: the
+        // Sun and the Earth are 1 AU apart, so from 0.5 AU away they are 63
+        // degrees apart and cannot both fit in a 45 degree field. The opening
+        // frame is therefore the Sun with the inner planets around it, and the
+        // Earth's own numbers are always on screen whatever is being followed.
+        function frameDistance(id) {
+            if (id === 'sun') return 2.6;
+            var factor = OE.ELEMENTS[id].hasRing ? 11 : 8;
+            return Math.max(0.02, radiusAu(id) * factor);
+        }
+
+        var CAM_DEFAULT_AZIMUTH = 0.9;
+        var CAM_DEFAULT_POLAR = 1.05;
+        var cam = { azimuth: CAM_DEFAULT_AZIMUTH, polar: CAM_DEFAULT_POLAR, distance: 2.6, velAz: 0, velPol: 0, lookAt: [0, 0, 0] };
 
         function clampPolar(p) {
             var lim = Math.PI * 0.5 - 0.02;
@@ -431,9 +447,9 @@
                 sim.destroy();
             },
             reset: function () {
-                cam.azimuth = CAM_DEFAULT.azimuth;
-                cam.polar = CAM_DEFAULT.polar;
-                cam.distance = CAM_DEFAULT.distance;
+                cam.azimuth = CAM_DEFAULT_AZIMUTH;
+                cam.polar = CAM_DEFAULT_POLAR;
+                cam.distance = frameDistance(state.focus);
                 cam.velAz = 0;
                 cam.velPol = 0;
                 state.autoScale = 1;
@@ -494,7 +510,17 @@
         function describeState() {
             var b = bodies[state.focus];
             var label = state.focus === 'sun' ? 'the Sun' : OE.ELEMENTS[state.focus].label;
-            if (!b) return 'Solar system at ' + fmtDate(state.jd) + '.';
+            if (!b) {
+                var e = bodies.embary;
+                if (!e) return 'Solar system at ' + fmtDate(state.jd) + '.';
+                var es = e.state;
+                var er = Math.sqrt(es[0] * es[0] + es[1] * es[1] + es[2] * es[2]);
+                var ev = Math.sqrt(es[3] * es[3] + es[4] * es[4] + es[5] * es[5]);
+                return 'Solar system view on ' + fmtDate(state.jd) + '. The Earth-Moon '
+                    + 'barycentre is ' + fmt(er, 3) + ' AU from the Sun and moving at '
+                    + fmt(ev * KM_PER_AU / 86400, 2) + ' kilometres per second.'
+                    + (sim.isPlaying ? '' : ' Paused.');
+            }
             var s = b.state;
             var r = Math.sqrt(s[0] * s[0] + s[1] * s[1] + s[2] * s[2]);
             var v = Math.sqrt(s[3] * s[3] + s[4] * s[4] + s[5] * s[5]);
@@ -609,7 +635,7 @@
             }
             starGeo.setAttribute('position', new three.BufferAttribute(starPos, 3));
             starPoints = new three.Points(starGeo, new three.PointsMaterial({
-                size: 1.6, sizeAttenuation: false, color: 0xffffff,
+                size: 2.0, sizeAttenuation: false, color: 0xffffff,
                 map: new three.CanvasTexture(makeStarTexture()),
                 transparent: true, depthWrite: false
             }));
@@ -628,7 +654,10 @@
             // would blow the disc out to pure white and hide the map).
             var sunGeo = new three.SphereGeometry(1, 48, 24);
             var sunMat = new three.MeshBasicMaterial({ map: loadTexture('sun') });
-            sunMat.color.setRGB(1.5, 1.35, 1.1);
+            // Pushed above 1 so ACES tone mapping takes the disc toward white
+            // with a warm rim, the way an overexposed star reads, instead of
+            // the flat orange the map alone gives.
+            sunMat.color.setRGB(2.7, 2.3, 1.75);
             sunMesh = new three.Mesh(sunGeo, sunMat);
             sunMesh.name = 'body-sun';
             scene.add(sunMesh);
@@ -697,6 +726,27 @@
                     pivot.add(ring);
                 }
 
+                // Cloud layer: the same cloud map used as an alpha map on a
+                // slightly larger sphere, so the clouds are lit by the Sun like
+                // everything else and hide the surface below them. They turn a
+                // little faster than the surface, which is what the real
+                // atmosphere does (the jet stream outruns the ground).
+                var clouds = null;
+                if (body.nightTexture) {
+                    var cloudGeo = new three.SphereGeometry(1.005, 48, 24);
+                    var cloudMat = new three.MeshStandardMaterial({
+                        // Slightly grey rather than pure white: at full white the
+                        // sub-solar cloud tops clip after tone mapping and read
+                        // as a blown highlight instead of cloud.
+                        color: 0xcfd8e0, alphaMap: loadTexture('earth-clouds'),
+                        transparent: true, opacity: 0.92, depthWrite: false,
+                        roughness: 1, metalness: 0
+                    });
+                    clouds = new three.Mesh(cloudGeo, cloudMat);
+                    clouds.name = 'clouds-' + id;
+                    pivot.add(clouds);
+                }
+
                 var moon = null;
                 if (body.hasMoon) {
                     var moonGeo = new three.SphereGeometry(1, 32, 16);
@@ -718,7 +768,7 @@
                 line.frustumCulled = false;
                 scene.add(line);
 
-                bodies[id] = { state: [0, 0, 0, 0, 0, 0], e0: 0, h0: [0, 0, 0], mesh: mesh, pivot: pivot, ring: ring, moon: moon, orbitLine: line, phase: 0 };
+                bodies[id] = { state: [0, 0, 0, 0, 0, 0], e0: 0, h0: [0, 0, 0], mesh: mesh, pivot: pivot, ring: ring, moon: moon, clouds: clouds, orbitLine: line, phase: 0, cloudPhase: 0 };
             });
         }
 
@@ -758,7 +808,7 @@
         function refreshReadouts() {
             var id = state.focus;
             var b = bodies[id];
-            var label = id === 'sun' ? 'Sun' : OE.ELEMENTS[id].label;
+            var label = id === 'sun' ? 'Sun (system view)' : OE.ELEMENTS[id].label;
             var rows = { 'Date': fmtDate(state.jd), 'Focused body': label };
 
             var daysPerSec = Math.pow(10, sim.params.logDaysPerSec);
@@ -805,6 +855,19 @@
                 rows['Energy drift (RK4)'] = '-';
                 rows['Residual vs element table'] = '-';
                 rows['Sunlight relative to Earth'] = '-';
+            }
+
+            // The Earth's own numbers stay on screen whatever is being followed,
+            // because the Earth is the body the seasons and the perihelion
+            // speed-up are about, and the opening frame follows the Sun.
+            var earth = bodies.embary;
+            if (earth && id !== 'embary') {
+                var es = earth.state;
+                var er = Math.sqrt(es[0] * es[0] + es[1] * es[1] + es[2] * es[2]);
+                var ev = Math.sqrt(es[3] * es[3] + es[4] * es[4] + es[5] * es[5]);
+                rows['Earth distance from Sun'] = fmt(er, 3) + ' AU';
+                rows['Earth speed'] = fmt(ev * KM_PER_AU / 86400, 2) + ' km/s';
+                rows['Earth sunlight'] = fmt(sunlightFactor(er), 4) + ' x the value at 1 AU';
             }
 
             sim._telemetry = rows;
@@ -855,7 +918,7 @@
             var padL = 10, padR = 10, padT = 20, padB = 18;
             var plotW = w - padL - padR, plotH = h - padT - padB;
             var hist = state.history;
-            var label = state.focus === 'sun' ? 'Sun' : OE.ELEMENTS[state.focus].label;
+            var label = state.focus === 'sun' ? 'Earth' : OE.ELEMENTS[state.focus].label;
 
             c.fillStyle = 'rgba(226,232,240,0.86)';
             c.font = '9px "JetBrains Mono", monospace';
@@ -1002,12 +1065,18 @@
             setFocus(id === 'sun' ? 'sun' : id);
         }
 
-        function setFocus(id) {
+        function setFocus(id, reframe) {
             state.focus = id;
             followSelect.value = id;
             state.history.length = 0;
             state.dirtyGraph = true;
+            if (reframe !== false) {
+                cam.distance = frameDistance(id);
+                cam.velAz = 0;
+                cam.velPol = 0;
+            }
             refreshReadouts();
+            state.dirtyGraph = true;
         }
 
         // ---- resize / context ----
@@ -1149,9 +1218,14 @@
                 var r = Math.sqrt(s[0] * s[0] + s[1] * s[1] + s[2] * s[2]);
                 b.pivot.position.set(s[0], s[1], s[2]);
                 b.mesh.scale.setScalar(radiusAu(id));
+                if (b.clouds) b.clouds.scale.setScalar(radiusAu(id));
                 var rot = BODY_FACTS[id].rotationDays;
                 b.phase += (2 * Math.PI / rot) * dtDays;
                 b.mesh.rotation.y = b.phase;
+                if (b.clouds) {
+                    b.cloudPhase = (b.cloudPhase || 0) + (2 * Math.PI / rot) * dtDays * 1.12;
+                    b.clouds.rotation.y = b.cloudPhase;
+                }
                 if (id === state.focus) focusPos = [s[0], s[1], s[2]];
 
                 // Sunlight with the real 1/r^2 falloff. Compensation is applied
@@ -1168,10 +1242,15 @@
                 if (b.moon) b.moon.material.color.setScalar(Math.min(1200, 1 / Math.max(1e-9, base)));
 
                 if (b.moon) {
-                    // Circular Moon orbit at the mean distance, exaggerated with
-                    // the same gain in readable mode so it stays outside the
-                    // exaggerated Earth.
-                    var moonDist = kmToAu(MOON_DISTANCE_KM) * (readable ? READABLE_RADIUS_GAIN : 1);
+                    // Circular Moon orbit at the mean distance. In readable mode
+                    // the Moon cannot keep its true distance: the Earth's radius
+                    // is enlarged 1500 times while the Earth-Moon distance is 60
+                    // Earth radii, so an honest 1500 times that distance would put
+                    // the Moon 3.9 AU away, further from the Earth than Mars is
+                    // from the Sun. It is placed 3.2 Earth radii out instead, and
+                    // the limits line says the ratio is not preserved.
+                    var moonDist = kmToAu(MOON_DISTANCE_KM);
+                    if (readable) moonDist = Math.max(moonDist, 3.2 * radiusAu(id));
                     var ang = (2 * Math.PI / MOON_PERIOD_DAYS) * (state.jd - OE.J2000_JD);
                     b.moon.position.set(
                         s[0] + Math.cos(ang) * moonDist,
@@ -1255,7 +1334,8 @@
             if (frameCount % 20 === 0) govern();
 
             if (frameCount % 10 === 0) {
-                var b = bodies[state.focus];
+                var graphId = state.focus === 'sun' ? 'embary' : state.focus;
+                var b = bodies[graphId];
                 if (b) {
                     var s = b.state;
                     var v = Math.sqrt(s[3] * s[3] + s[4] * s[4] + s[5] * s[5]);
@@ -1336,6 +1416,7 @@
             buildScene();
             reseed(state.jd);
             refreshLimits();
+            cam.distance = frameDistance(state.focus);
 
             canvas.addEventListener('webglcontextlost', onContextLost, false);
             addPointerListeners();
@@ -1384,7 +1465,13 @@
                 state.dirtyGraph = true;
             }
             if (key === 'logDaysPerSec') { refreshReadouts(); refreshLimits(); }
-            if (key === 'scaleMode') { refreshReadouts(); }
+            if (key === 'scaleMode') {
+                // Changing scale changes how big the followed body is drawn, so
+                // the framing has to follow or the view becomes empty (true
+                // scale) or fills the screen (readable).
+                cam.distance = frameDistance(state.focus);
+                refreshReadouts();
+            }
             if (key === 'exposure') { refreshReadouts(); }
         };
         sim.onReset = function () { reseed(OE.J2000_JD + sim.params.dayOffset); };
