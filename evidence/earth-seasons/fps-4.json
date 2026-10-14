@@ -1,0 +1,26 @@
+{
+ "cmd": "fps",
+ "simId": "earth-seasons",
+ "seconds": "6",
+ "throttle": "4",
+ "fps": {
+  "frames": 361,
+  "avgMs": 16.67,
+  "fps": 60,
+  "medianMs": 16.7,
+  "worstMs": 16.8,
+  "over25ms": 0
+ },
+ "quality": {
+  "scale": 0.85,
+  "frameMs": 16.66512498740197,
+  "stars": 1200,
+  "dayOffset": 57
+ },
+ "problems": [
+  "warning: [.WebGL-0x11c00452e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x11c00452e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x11c00452e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x11c00452e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

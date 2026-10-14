@@ -1,0 +1,65 @@
+{
+ "cmd": "seasoncheck",
+ "simId": "earth-seasons",
+ "requestedJuneSolstice": {
+  "year": 2026,
+  "epochJd": 2461328.0833,
+  "offset": -116
+ },
+ "probe": {
+  "jd": 2461212.0833333335,
+  "date": "20 Jun 2026",
+  "earthPosition": {
+   "x": -0.019463979,
+   "y": -1.015995872,
+   "z": 0.000061034
+  },
+  "distanceAu": 1.016182297,
+  "declinationDeg": 23.4354,
+  "latitudeDeg": 51.5,
+  "daylightHours": 16.4028,
+  "tiltDeg": 23.44,
+  "axisWorld": {
+   "x": 0,
+   "y": 0.397789,
+   "z": 0.917477
+  },
+  "measuredAxisDeg": 23.44,
+  "sunLightDirection": {
+   "x": 0.019154,
+   "y": 0.999817,
+   "z": -0.00006
+  },
+  "subSolarMarkerLatDeg": 23.432,
+  "cameraDistance": 3.4,
+  "readouts": [
+   "Date20 Jun 2026",
+   "Sub-solar latitude23.44 deg (north)",
+   "Daylight at this latitude16 h 24 m",
+   "Solar noon altitude61.9 deg above the horizon",
+   "Earth-Sun distance1.01618 AU",
+   "Distance rank in the yearfurther than average",
+   "Sunlight relative to the annual mean0.968 x",
+   "Daylight at the equator12 h 00 m"
+  ],
+  "limits": "What this model leaves out: daylight hours use the geometric definition, so there is no atmospheric refraction and the Sun is treated as a point. That makes each day about 6 to 15 minutes shorter than a sunrise-to-sunset table gives, depending on latitude; at 51.5 degrees north the model says 16 h 24 m at the June solstice against about 16 h 38 m published. The Earth is a smooth sphere: no terrain, no mountains, no time zones, and the globe turns at the sidereal rate with an arbitrary starting phase, so the longitude under the Sun is not the real one for a given clock time even though the latitude of the sub-solar point is. The Sun is a parallel light source, so its angular size, the twilight band and eclipses are absent. The orbit is the two-body approximation from the JPL table: the distance, the declination and the date of perihelion are from that table, and the table is only valid from 1800 to 2050.",
+  "describe": "Earth on 20 Jun 2026. The sub-solar latitude is 23.4 degrees, so the Sun is overhead at 23 degrees north. 52 degrees north gets 16 h 24 m of daylight. The Earth is 1.0162 AU from the Sun, 1.62 percent from its mean distance. Paused."
+ },
+ "checks": {
+  "tiltAppliedDeg": 23.44,
+  "tiltFromModuleDeg": 23.44,
+  "declinationFromModuleDeg": 23.4354,
+  "declinationInSceneDeg": 23.4354,
+  "subSolarMarkerLatDeg": 23.432,
+  "markerMinusDeclination": -0.0034,
+  "daylightInSceneHours": 16.4028,
+  "daylightFromModuleHours": 16.4028,
+  "lightVersusEarthPositionDeg": 180
+ },
+ "problems": [
+  "warning: [.WebGL-0x12400458200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x12400458200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x12400458200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x12400458200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

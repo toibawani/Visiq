@@ -1,0 +1,314 @@
+{
+ "cmd": "sheets",
+ "simId": "earth-seasons",
+ "captures": [
+  {
+   "viewport": "1440x900",
+   "theme": "dark",
+   "mark": "t0",
+   "file": "evidence/earth-seasons/sheets/earth-seasons-1440x900-dark-t0.png",
+   "elapsedMs": 402,
+   "quality": {
+    "scale": 0.85,
+    "frameMs": 22.20315957930378,
+    "stars": 1200,
+    "dayOffset": 1
+   },
+   "canvas": {
+    "w": 931,
+    "h": 394
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     14.9,
+     19.1,
+     28.1
+    ],
+    "stdevChannel": [
+     23.7,
+     25.9,
+     31
+    ],
+    "nonBlackPct": 68.8,
+    "brightPct": 1.4,
+    "blueDominantPct": 54.9,
+    "redDominantPct": 2.1
+   }
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "dark",
+   "mark": "t10",
+   "file": "evidence/earth-seasons/sheets/earth-seasons-1440x900-dark-t10.png",
+   "elapsedMs": 10149,
+   "quality": {
+    "scale": 0.85,
+    "frameMs": 18.736949307912777,
+    "stars": 1200,
+    "dayOffset": 50
+   },
+   "canvas": {
+    "w": 931,
+    "h": 394
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     16.8,
+     21.1,
+     30.9
+    ],
+    "stdevChannel": [
+     28.3,
+     30.1,
+     36.2
+    ],
+    "nonBlackPct": 69.5,
+    "brightPct": 2.2,
+    "blueDominantPct": 55.4,
+    "redDominantPct": 2.2
+   }
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "light",
+   "mark": "t0",
+   "file": "evidence/earth-seasons/sheets/earth-seasons-1440x900-light-t0.png",
+   "elapsedMs": 161,
+   "quality": {
+    "scale": 0.85,
+    "frameMs": 26.021024230000013,
+    "stars": 1200,
+    "dayOffset": 1
+   },
+   "canvas": {
+    "w": 931,
+    "h": 394
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     154.3,
+     157.1,
+     161.9
+    ],
+    "stdevChannel": [
+     117.2,
+     115.4,
+     112.3
+    ],
+    "nonBlackPct": 68.7,
+    "brightPct": 60.3,
+    "blueDominantPct": 6.1,
+    "redDominantPct": 2
+   }
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "light",
+   "mark": "t10",
+   "file": "evidence/earth-seasons/sheets/earth-seasons-1440x900-light-t10.png",
+   "elapsedMs": 10111,
+   "quality": {
+    "scale": 0.85,
+    "frameMs": 16.669718508888828,
+    "stars": 1200,
+    "dayOffset": 51
+   },
+   "canvas": {
+    "w": 931,
+    "h": 394
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     155.2,
+     158.4,
+     164.1
+    ],
+    "stdevChannel": [
+     116.5,
+     114.3,
+     110.6
+    ],
+    "nonBlackPct": 69.4,
+    "brightPct": 60.7,
+    "blueDominantPct": 6.9,
+    "redDominantPct": 2
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "dark",
+   "mark": "t0",
+   "file": "evidence/earth-seasons/sheets/earth-seasons-375x812-dark-t0.png",
+   "elapsedMs": 113,
+   "quality": {
+    "scale": 1,
+    "frameMs": 26.963658804893107,
+    "stars": 1200,
+    "dayOffset": 2
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     23.5,
+     30.6,
+     46.8
+    ],
+    "stdevChannel": [
+     33.4,
+     36.1,
+     48.4
+    ],
+    "nonBlackPct": 78.7,
+    "brightPct": 3.3,
+    "blueDominantPct": 62.9,
+    "redDominantPct": 3.2
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "dark",
+   "mark": "t10",
+   "file": "evidence/earth-seasons/sheets/earth-seasons-375x812-dark-t10.png",
+   "elapsedMs": 10063,
+   "quality": {
+    "scale": 0.9,
+    "frameMs": 16.65928126040059,
+    "stars": 1200,
+    "dayOffset": 51
+   },
+   "canvas": {
+    "w": 317,
+    "h": 358
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     23.2,
+     31.4,
+     50.2
+    ],
+    "stdevChannel": [
+     28.1,
+     33.4,
+     50
+    ],
+    "nonBlackPct": 81.1,
+    "brightPct": 1.9,
+    "blueDominantPct": 65.3,
+    "redDominantPct": 2
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "light",
+   "mark": "t0",
+   "file": "evidence/earth-seasons/sheets/earth-seasons-375x812-light-t0.png",
+   "elapsedMs": 115,
+   "quality": {
+    "scale": 1,
+    "frameMs": 29.519869999999987,
+    "stars": 1200,
+    "dayOffset": 1
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     144.1,
+     149.6,
+     158.3
+    ],
+    "stdevChannel": [
+     112.1,
+     107.8,
+     103
+    ],
+    "nonBlackPct": 78.5,
+    "brightPct": 54,
+    "blueDominantPct": 17.8,
+    "redDominantPct": 6
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "light",
+   "mark": "t10",
+   "file": "evidence/earth-seasons/sheets/earth-seasons-375x812-light-t10.png",
+   "elapsedMs": 10072,
+   "quality": {
+    "scale": 1,
+    "frameMs": 16.67011179241171,
+    "stars": 1200,
+    "dayOffset": 51
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     145,
+     151.4,
+     161.6
+    ],
+    "stdevChannel": [
+     111.1,
+     105.9,
+     99.3
+    ],
+    "nonBlackPct": 80.6,
+    "brightPct": 54.5,
+    "blueDominantPct": 19.9,
+    "redDominantPct": 5.8
+   }
+  }
+ ],
+ "cells": [
+  {
+   "viewport": "1440x900",
+   "theme": "dark",
+   "problems": [
+    "warning: [.WebGL-0x12c00456400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "warning: [.WebGL-0x12c00456400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "warning: [.WebGL-0x12c00456400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "warning: [.WebGL-0x12c00456400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+   ]
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "light",
+   "problems": []
+  },
+  {
+   "viewport": "375x812",
+   "theme": "dark",
+   "problems": []
+  },
+  {
+   "viewport": "375x812",
+   "theme": "light",
+   "problems": []
+  }
+ ],
+ "problemCount": 4
+}
