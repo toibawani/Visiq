@@ -1,0 +1,225 @@
+{
+ "cmd": "leak",
+ "simId": "black-hole",
+ "cycles": 20,
+ "first": {
+  "cycle": 1,
+  "info": {
+   "geometries": 1,
+   "textures": 1,
+   "programs": 1,
+   "calls": 1,
+   "triangles": 2
+  },
+  "heap": 10000000,
+  "canvases": 3,
+  "simCanvases": 2,
+  "liveThreeModules": 1
+ },
+ "last": {
+  "cycle": 20,
+  "info": {
+   "geometries": 1,
+   "textures": 1,
+   "programs": 1,
+   "calls": 1,
+   "triangles": 2
+  },
+  "heap": 10000000,
+  "canvases": 3,
+  "simCanvases": 2,
+  "liveThreeModules": 1
+ },
+ "all": [
+  {
+   "cycle": 1,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 2,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 3,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 4,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 5,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 6,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 7,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 8,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 9,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 10,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 11,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 12,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 13,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 14,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 15,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 16,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 17,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 18,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 19,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  },
+  {
+   "cycle": 20,
+   "geo": 1,
+   "tex": 1,
+   "prog": 1,
+   "heap": 10000000,
+   "canvases": 3,
+   "simCanvases": 2
+  }
+ ],
+ "afterGc": {
+  "supported": true,
+  "heap": 10000000
+ },
+ "problems": [
+  "warning: [.WebGL-0x1040044fe00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x1040044fe00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x1040044fe00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x1040044fe00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}
