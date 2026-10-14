@@ -8,7 +8,16 @@
 //   node scripts/verify-3d.mjs leak <simId> [cycles]
 //   node scripts/verify-3d.mjs console <simId>
 //   node scripts/verify-3d.mjs sheets <simId> [outDir]
+//   node scripts/verify-3d.mjs orbitcheck <simId> [daysAfterSeed]
 //   node scripts/verify-3d.mjs stats <png>          analyse a screenshot
+//
+// `orbitcheck` is for the solar system: it seeds from the element table, runs
+// the clock at its fastest rate for the requested number of seconds, then
+// compares the integrated heliocentric positions against the table's own
+// closed-form positions at the same Julian Day. The table is the source the
+// simulation starts from, so the residual is the integrator's accumulated error
+// and nothing else. The RK4 step and the steps per Mercury orbit are printed
+// next to it so the residual can be read against the step size.
 //
 // `sheets` is the hero gate: for both themes (dark, light) and both viewports
 // (1440x900 desktop, 375x812 phone) it captures the first frame and the frame
@@ -24,9 +33,11 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { extname, join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const nodeRequire = createRequire(import.meta.url);
 const PORT = parseInt(process.env.VISIQ_PORT || '8129', 10);
 const BASE = `http://127.0.0.1:${PORT}`;
 
@@ -178,6 +189,67 @@ async function main() {
                 return ctrl && ctrl.quality ? ctrl.quality() : null;
             });
             console.log(JSON.stringify({ cmd, simId, seconds, throttle, fps, quality, problems }, null, 1));
+            await context.close();
+        } else if (cmd === 'orbitcheck') {
+            const [simId = 'solar-system', seconds = '4'] = args;
+            const OE = nodeRequire(join(ROOT, 'assets/orbital-elements.js'));
+            const { context, page, problems } = await makePage(browser);
+            await signIn(page);
+            await openSim(page, simId, { waitMs: 7000 });
+            // Reseed at the table epoch, then run the clock at its fastest rate
+            // so the integration accumulates a real error over the wait.
+            const seeded = await page.evaluate(async (offsetDays) => {
+                const ctrl = window.gallery && window.gallery._currentSimController;
+                if (!ctrl || !ctrl.sim) return null;
+                ctrl.sim.params.dayOffset = 0;
+                if (ctrl.sim.onParamChange) ctrl.sim.onParamChange('dayOffset', 0);
+                const sliders = document.querySelectorAll('#controls-section input[type=range]');
+                if (sliders[0]) {
+                    sliders[0].value = sliders[0].max;
+                    sliders[0].dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                await new Promise((r) => requestAnimationFrame(r));
+                return true;
+            });
+            await page.waitForTimeout(parseFloat(seconds) * 1000);
+            const snap = await page.evaluate(() => {
+                const ctrl = window.gallery._currentSimController;
+                return {
+                    bodies: ctrl && ctrl.bodies ? ctrl.bodies() : null,
+                    quality: ctrl && ctrl.quality ? ctrl.quality() : null
+                };
+            });
+            if (!seeded || !snap.bodies) {
+                console.log(JSON.stringify({ cmd, simId, error: 'no bodies() probe on this sim' }, null, 1));
+            } else {
+                const snapBodies = snap.bodies;
+                const rows = [];
+                for (const id of OE.PLANET_ORDER) {
+                    const b = snapBodies[id];
+                    if (!b) continue;
+                    const dx = b.x - b.tableX, dy = b.y - b.tableY, dz = b.z - b.tableZ;
+                    const errAu = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    const period = OE.periodDays(OE.elementsAt(id, snapBodies.jd).a);
+                    rows.push({
+                        body: id,
+                        periodDays: Math.round(period * 1000) / 1000,
+                        errorKm: Math.round(errAu * 1.495978707e8),
+                        errorOverOrbit: +(errAu / b.r).toExponential(2),
+                        // Positional error expressed in degrees of orbital phase,
+                        // which is the unit JPL's own accuracy is quoted in.
+                        errorArcmin: +(Math.atan2(errAu, b.r) * 180 / Math.PI * 60).toFixed(3)
+                    });
+                }
+                rows.sort((a, b) => b.errorKm - a.errorKm);
+                console.log(JSON.stringify({
+                    cmd, simId, secondsAtMaxRate: parseFloat(seconds),
+                    julianDay: snapBodies.jd,
+                    date: OE.calendarFromJD(snapBodies.jd),
+                    mode: snapBodies.mode, focus: snapBodies.focus,
+                    quality: snap.quality,
+                    worst: rows[0], rows, problems
+                }, null, 1));
+            }
             await context.close();
         } else if (cmd === 'console') {
             const [simId] = args;
