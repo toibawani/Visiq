@@ -1,0 +1,25 @@
+{
+ "cmd": "fps",
+ "simId": "black-hole",
+ "seconds": "8",
+ "throttle": "0",
+ "fps": {
+  "frames": 451,
+  "avgMs": 17.79,
+  "fps": 56.2,
+  "medianMs": 16.7,
+  "worstMs": 33.4,
+  "over25ms": 30
+ },
+ "quality": {
+  "scale": 0.5588070399999999,
+  "steps": 324,
+  "frameMs": 16.66427034299476
+ },
+ "problems": [
+  "warning: [.WebGL-0x13c00459400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x13c00459400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x13c00459400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x13c00459400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}
