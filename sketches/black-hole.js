@@ -1205,7 +1205,11 @@
             ctx2d.font = '10px "JetBrains Mono", monospace';
             ctx2d.fillText(rIn.toFixed(0) + ' rs', padL, h - 5);
             ctx2d.fillText(rOut.toFixed(0) + ' rs', padL + plotW - 26, h - 5);
-            ctx2d.fillText('peak at ' + peakR.toFixed(1) + ' rs', padL + 60, 14);
+            // Right-aligned so it can never collide with the left-aligned
+            // title on the same baseline (they used to overlap at padL+60).
+            ctx2d.textAlign = 'right';
+            ctx2d.fillText('peak at ' + peakR.toFixed(1) + ' rs', padL + plotW, 14);
+            ctx2d.textAlign = 'left';
         }
 
         function roundRect(c, x, y, w, h, r) {
