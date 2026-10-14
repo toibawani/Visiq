@@ -73,6 +73,24 @@
         return c.day + ' ' + months[c.month - 1] + ' ' + c.year;
     }
 
+    // The simulation opens on today's date, not on the table's epoch, so the
+    // first frame shows where the planets actually are. The table is valid 1800
+    // to 2050, and the sim flags it in the readouts when the clock leaves that
+    // window.
+    function todayJulianDay() {
+        var now = new Date();
+        return OE.julianDay(now.getUTCFullYear(), now.getUTCMonth() + 1, now.getUTCDate())
+            + now.getUTCHours() / 24;
+    }
+
+    var EPOCH_JD = null;
+    function epochJD() {
+        if (EPOCH_JD === null) {
+            EPOCH_JD = (OE && typeof OE.julianDay === 'function') ? todayJulianDay() : 2451545.0;
+        }
+        return EPOCH_JD;
+    }
+
     function hasWebGL2() {
         try {
             var canvas = document.createElement('canvas');
@@ -93,7 +111,7 @@
             controlsContainerId: config.controlsContainerId,
             params: {
                 logDaysPerSec: { value: 1.0, min: 0, max: 4.56, step: 0.02, label: 'Time rate, log10(days/s)', unit: 'dex' },
-                dayOffset: { value: 0, min: -7305, max: 7305, step: 1, label: 'Date offset from the table epoch', unit: 'd' },
+                dayOffset: { value: 0, min: -7305, max: 7305, step: 1, label: 'Date offset from today', unit: 'd' },
                 showOrbits: { value: 1, min: 0, max: 1, step: 1, label: 'Show orbit paths', unit: '' }
             },
             getReadouts(ctx) {
@@ -128,7 +146,7 @@
         }
 
         var rafId = null;
-        var jd = OE.J2000_JD;
+        var jd = epochJD();
         var last = 0;
 
         function draw(now) {
@@ -182,9 +200,9 @@
         }
 
         sim.onParamChange = function (key) {
-            if (key === 'dayOffset') jd = OE.J2000_JD + sim.params.dayOffset;
+            if (key === 'dayOffset') jd = epochJD() + sim.params.dayOffset;
         };
-        jd = OE.J2000_JD + sim.params.dayOffset;
+        jd = epochJD() + sim.params.dayOffset;
         rafId = requestAnimationFrame(draw);
 
         return {
@@ -198,7 +216,7 @@
                 if (p && p.parentNode) p.parentNode.removeChild(p);
                 sim.destroy();
             },
-            reset: function () { jd = OE.J2000_JD; sim.reset(); },
+            reset: function () { jd = epochJD(); sim.reset(); },
             describe: function () { return 'Flat orbit plot at ' + fmtDate(jd) + '.'; }
         };
     }
@@ -231,7 +249,7 @@
                 },
                 dayOffset: {
                     value: 0, min: -7305, max: 7305, step: 1,
-                    label: 'Date offset from the table epoch (2000-01-01)', unit: 'd'
+                    label: 'Date offset from today', unit: 'd'
                 },
                 scaleMode: {
                     value: 1, min: 0, max: 1, step: 1,
@@ -250,12 +268,23 @@
                     label: 'Exposure', unit: ''
                 }
             },
+            // SimBase builds the readout DOM from this first call and only ever
+            // writes to keys that already had a span, so every row the sim
+            // updates has to be listed here or it never appears on screen. The
+            // first version of this listed eight and silently hid the other
+            // eleven.
             getReadouts(ctx) {
                 return ctx._telemetry || {
                     'Date': '-', 'Focused body': '-', 'Time rate': '-',
                     'Distance from Sun': '-', 'Heliocentric speed': '-',
-                    'Kepler III P^2/a^3': '-', 'Energy drift (RK4)': '-',
-                    'Sunlight relative to Earth': '-'
+                    'Orbital period': '-', 'Kepler III P^2/a^3': '-',
+                    'Energy drift (RK4)': '-', 'Angular momentum drift': '-',
+                    'Residual vs element table': '-', 'Element table valid': '-',
+                    'Sunlight relative to Earth': '-', 'Axial tilt': '-',
+                    'Rotation period': '-', 'True radius': '-',
+                    'Mean surface temperature': '-',
+                    'Earth distance from Sun': '-', 'Earth speed': '-',
+                    'Earth sunlight': '-'
                 };
             }
         });
@@ -372,7 +401,7 @@
 
         // ---- state ----
         var state = {
-            jd: OE.J2000_JD + sim.params.dayOffset,
+            jd: epochJD() + sim.params.dayOffset,
             autoScale: 1,
             manualReduced: false,
             frameMs: 16.7,
@@ -456,7 +485,7 @@
                 state.manualReduced = false;
                 reduceBtn.setAttribute('aria-pressed', 'false');
                 state.history.length = 0;
-                reseed(OE.J2000_JD);
+                reseed(epochJD());
                 sim.reset();
             },
             describe: function () { return describeState(); },
@@ -858,10 +887,10 @@
             }
 
             // The Earth's own numbers stay on screen whatever is being followed,
-            // because the Earth is the body the seasons and the perihelion
-            // speed-up are about, and the opening frame follows the Sun.
+            // because the Earth is the body the perihelion speed-up is about and
+            // following the Sun switches to the system view.
             var earth = bodies.embary;
-            if (earth && id !== 'embary') {
+            if (earth) {
                 var es = earth.state;
                 var er = Math.sqrt(es[0] * es[0] + es[1] * es[1] + es[2] * es[2]);
                 var ev = Math.sqrt(es[3] * es[3] + es[4] * es[4] + es[5] * es[5]);
@@ -887,7 +916,10 @@
                 + 'circular 27.32 day orbit at the mean distance rather than a real ephemeris. '
                 + 'The Sun\u2019s light is treated as constant; a real star loses mass and brightens '
                 + 'over these timescales. Planets are perfect spheres with a single albedo map: no '
-                + 'topography, no clouds that move, no cloud shadows, and no ring shadow. The '
+                + 'topography. The cloud layer is one flat alpha map with no thickness, so '
+                + 'no cloud casts a shadow and none changes shape; it turns 12 percent faster '
+                + 'than the surface, which is a real effect but not this one. The '
+                + 'rings cast no shadow on Saturn and nothing eclipses anything. The '
                 + 'star field is random, not a catalogue. The model also cannot follow the '
                 + 'table\u2019s own per-century element drift, which is where the real perturbations '
                 + 'by the other planets live: measured 130 years from the epoch, the integration '
@@ -1460,7 +1492,7 @@
 
         sim.onParamChange = function (key) {
             if (key === 'dayOffset') {
-                reseed(OE.J2000_JD + sim.params.dayOffset);
+                reseed(epochJD() + sim.params.dayOffset);
                 refreshReadouts();
                 state.dirtyGraph = true;
             }
@@ -1474,7 +1506,7 @@
             }
             if (key === 'exposure') { refreshReadouts(); }
         };
-        sim.onReset = function () { reseed(OE.J2000_JD + sim.params.dayOffset); };
+        sim.onReset = function () { reseed(epochJD() + sim.params.dayOffset); };
         sim.onPause = function () { /* keep rendering so the view stays live */ };
         sim.onDestroy = function () { /* handled by controller.destroy */ };
 
