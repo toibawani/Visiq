@@ -1,0 +1,57 @@
+{
+ "seconds": 6,
+ "note": "each measurement gets its own browser process; Chromium dedupes GL driver messages per GPU process",
+ "rounds": [
+  {
+   "plain": {
+    "warningCount": 4,
+    "warnings": [
+     "[.WebGL-0x10c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x10c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x10c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x10c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+    ],
+    "errorCount": 0,
+    "errors": []
+   },
+   "three": {
+    "warningCount": 4,
+    "warnings": [
+     "[.WebGL-0x13400439c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x13400439c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x13400439c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x13400439c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+    ],
+    "errorCount": 0,
+    "errors": []
+   }
+  },
+  {
+   "three": {
+    "warningCount": 4,
+    "warnings": [
+     "[.WebGL-0x12400439c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x12400439c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x12400439c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x12400439c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+    ],
+    "errorCount": 0,
+    "errors": []
+   },
+   "plain": {
+    "warningCount": 4,
+    "warnings": [
+     "[.WebGL-0x12c00437200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x12c00437200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x12c00437200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+     "[.WebGL-0x12c00437200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+    ],
+    "errorCount": 0,
+    "errors": []
+   }
+  }
+ ],
+ "plainWebGL2TotalWarnings": 8,
+ "stockThreeTotalWarnings": 8,
+ "verdict": "both control pages warn in fresh processes: the four GL driver warnings are environmental (headless compositor readback), not sim code"
+}
