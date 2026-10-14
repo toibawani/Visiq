@@ -419,6 +419,22 @@ const SIMULATIONS = [
         estimatedTime: '8-14 min'
     },
     {
+        id: 'earth-seasons',
+        title: 'Earth, Tilt and Seasons',
+        category: 'Astronomy',
+        icon: '🌍',
+        difficulty: 'Beginner',
+        description: 'Turn a lit globe through a year and see that the tilt, not the distance, makes the seasons.',
+        longDescription: 'The Earth leans by 23.44 degrees, and that lean stays pointing the same way in space all year. As the planet goes round the Sun, the northern half leans into the sunlight in June and away from it in December, which is the whole of the seasons. The distance is a red herring that is worth checking directly: the orbit is slightly elliptical, and the Earth is closest to the Sun in early January, right in the middle of northern winter, with the distance changing by only 3 percent across the year. The simulation puts the day and night line where the geometry says it goes, then reads off the sub-solar latitude, the daylight hours at any latitude you click, and the altitude of the Sun at local noon.',
+        tags: ['seasons', 'axial tilt', 'daylight', 'solstice', 'orbit'],
+        learningOutcomes: [
+            'Compare daylight hours at a chosen latitude on 21 June and 21 December',
+            'Watch the sub-solar latitude reach +23.44 and -23.44 at the solstices and cross zero at the equinoxes',
+            'Check the Earth-Sun distance at the January perihelion and see that the seasons are not about it'
+        ],
+        estimatedTime: '6-10 min'
+    },
+    {
         id: 'galaxy-collision',
         title: 'Galaxy Collision & Tidal Stripping',
         category: 'Astronomy',

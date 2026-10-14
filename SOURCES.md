@@ -6,7 +6,8 @@ the asset was not used, and that decision is recorded rather than hidden.
 
 ## Planet maps (CC BY 4.0, attribution required)
 
-Used by `sketches/solar-system.js`. Source: Solar System Scope,
+Used by `sketches/solar-system.js` and, for the day map, the night map and the
+cloud map, by `sketches/earth-seasons.js`. Source: Solar System Scope,
 <https://www.solarsystemscope.com/textures/>, published on Wikimedia Commons
 and fetched through the Commons API, which reports the licence string checked
 by the script before download. The licence is **CC BY 4.0**, so attribution is
