@@ -403,6 +403,22 @@ const SIMULATIONS = [
         estimatedTime: '7-11 min'
     },
     {
+        id: 'solar-system',
+        title: 'Solar System in 3D',
+        category: 'Astronomy',
+        icon: '🪐',
+        difficulty: 'Intermediate',
+        description: 'Fly through the eight planets on textured spheres, lit only by the Sun, with real orbital elements.',
+        longDescription: 'Each planet starts from the orbital elements NASA/JPL publishes for it, and from there the motion is integrated under the Sun\'s gravity. The ellipses, the faster speed at perihelion and the slower speed at aphelion are not drawn in: they fall out of the numbers. One point light at the Sun is the only illumination, so every body is dark on the side facing away from it, and the axial tilts are the real ones, which is why Uranus rolls on its side. A second scale mode makes the planets large enough to see, and the readout always states the true radius in kilometres.',
+        tags: ['orbits', 'kepler', 'planets', 'sunlight', 'scale'],
+        learningOutcomes: [
+            'Compare the Earth at 0.983 AU in January with 1.017 AU in July and see why the distance is not what causes the seasons',
+            'Watch Saturn\'s rings stay in one plane while the planet orbits, which is what a fixed axial tilt means',
+            'Check the sunlight falling on each planet against its distance, and see that it drops as the square of that distance'
+        ],
+        estimatedTime: '8-14 min'
+    },
+    {
         id: 'galaxy-collision',
         title: 'Galaxy Collision & Tidal Stripping',
         category: 'Astronomy',
