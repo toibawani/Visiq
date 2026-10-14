@@ -8,7 +8,8 @@
 //   node scripts/verify-3d.mjs leak <simId> [cycles]
 //   node scripts/verify-3d.mjs console <simId>
 //   node scripts/verify-3d.mjs sheets <simId> [outDir]
-//   node scripts/verify-3d.mjs orbitcheck <simId> [daysAfterSeed]
+//   node scripts/verify-3d.mjs orbitcheck <simId> [seconds]
+//   node scripts/verify-3d.mjs seasoncheck
 //   node scripts/verify-3d.mjs stats <png>          analyse a screenshot
 //
 // `orbitcheck` is for the solar system: it seeds from the element table, runs
@@ -248,6 +249,85 @@ async function main() {
                     mode: snapBodies.mode, focus: snapBodies.focus,
                     quality: snap.quality,
                     worst: rows[0], rows, problems
+                }, null, 1));
+            }
+            await context.close();
+        } else if (cmd === 'seasoncheck') {
+            // earth-seasons probe: park the clock on the June solstice, then
+            // compare the geometry the scene is actually using against the
+            // module that computed it. Checks the tilt is applied, that the
+            // sub-solar marker lands on the declination, that the Sun light is
+            // exactly opposite the Earth's heliocentric direction, and that the
+            // daylight hours agree with the hour-angle formula.
+            const OE = nodeRequire(join(ROOT, 'assets/orbital-elements.js'));
+            const Seasons = nodeRequire(join(ROOT, 'assets/seasons.js'));
+            const { context, page, problems } = await makePage(browser);
+            await signIn(page);
+            await openSim(page, 'earth-seasons', { waitMs: 7000 });
+
+            // Offset that lands the clock on 21 June of the year the sim opened on.
+            // The offset is relative to the sim's own epoch (today), so re-zero the
+            // slider first and read the date back before computing it. Getting this
+            // wrong made the first run of this check park on 15 May instead of the
+            // solstice and still print a result.
+            const juneOffset = await page.evaluate(() => {
+                const ctrl = window.gallery._currentSimController;
+                ctrl.sim.isPlaying = false;
+                ctrl.sim.params.dayOffset = 0;
+                if (ctrl.sim.onParamChange) ctrl.sim.onParamChange('dayOffset', 0);
+                const probe = ctrl.geometryProbe();
+                const jd = probe.jd;
+                const cal = window.VisiqOrbitalElements.calendarFromJD(jd);
+                const target = window.VisiqOrbitalElements.julianDay(cal.year, 6, 21);
+                return { year: cal.year, epochJd: +jd.toFixed(4), offset: Math.round(target - jd) };
+            });
+            await page.evaluate((offset) => {
+                const ctrl = window.gallery._currentSimController;
+                ctrl.sim.isPlaying = false;
+                ctrl.sim.params.dayOffset = offset;
+                if (ctrl.sim.onParamChange) ctrl.sim.onParamChange('dayOffset', offset);
+            }, juneOffset.offset);
+            await page.waitForTimeout(1200);
+
+            const probe = await page.evaluate(() => {
+                const ctrl = window.gallery._currentSimController;
+                const ps = [...document.querySelectorAll('#controls-section p')].map((e) => e.textContent.trim());
+                return Object.assign(
+                    ctrl.geometryProbe ? ctrl.geometryProbe() : {},
+                    {
+                        readouts: [...document.querySelectorAll('#controls-section .telemetry-item')].map((e) => e.textContent.trim()),
+                        limits: ps.find((t) => t.startsWith('What this model leaves out')) || null,
+                        describe: ctrl.describe ? ctrl.describe() : null
+                    }
+                );
+            });
+            if (!probe) {
+                console.log(JSON.stringify({ cmd, error: 'no geometryProbe on this sim' }, null, 1));
+            } else {
+                const pos = OE.positionAt('embary', probe.jd);
+                const r = Math.sqrt(pos.x ** 2 + pos.y ** 2 + pos.z ** 2);
+                const moduleDeclination = Seasons.solarDeclination(pos);
+                const moduleDaylight = Seasons.daylightHours(probe.latitudeDeg, moduleDeclination);
+                const light = probe.sunLightDirection || {};
+                // The light must sit exactly opposite the Earth's position.
+                const dot = (light.x * pos.x + light.y * pos.y + light.z * pos.z) / (r * 1);
+                const lightAngle = Math.acos(Math.max(-1, Math.min(1, dot))) * 180 / Math.PI;
+                console.log(JSON.stringify({
+                    cmd, simId: 'earth-seasons',
+                    requestedJuneSolstice: juneOffset,
+                    probe,
+                    checks: {
+                        tiltAppliedDeg: probe.measuredAxisDeg,
+                        tiltFromModuleDeg: Seasons.AXIAL_TILT_DEG,
+                        declinationFromModuleDeg: +moduleDeclination.toFixed(4),
+                        declinationInSceneDeg: probe.declinationDeg,
+                        subSolarMarkerLatDeg: probe.subSolarMarkerLatDeg,
+                        markerMinusDeclination: +(probe.subSolarMarkerLatDeg - probe.declinationDeg).toFixed(6),
+                        daylightInSceneHours: probe.daylightHours,
+                        daylightFromModuleHours: +moduleDaylight.toFixed(4),
+                        lightVersusEarthPositionDeg: +lightAngle.toFixed(6)
+                    },
+                    problems
                 }, null, 1));
             }
             await context.close();
