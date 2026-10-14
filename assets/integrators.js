@@ -148,6 +148,37 @@
         return 0.5 * (s[2] * s[2] + s[3] * s[3]) - mu / r;
     }
 
+    // Same central force in three dimensions, state layout
+    // [x, y, z, vx, vy, vz]. The integrators above are dimension-agnostic in
+    // this layout (they work on both halves of whatever length they are
+    // handed), so this is the only piece the 3D orbit sims need beyond
+    // centralForce. a = -mu * r / |r|^3.
+    function centralForce3(mu) {
+        return function (s) {
+            var r2 = s[0] * s[0] + s[1] * s[1] + s[2] * s[2];
+            var r = Math.sqrt(r2) || 1e-9;
+            var k = -mu / (r2 * r);
+            return [s[3], s[4], s[5], k * s[0], k * s[1], k * s[2]];
+        };
+    }
+
+    // Specific orbital energy in three dimensions, v^2/2 - mu/r.
+    function specificOrbitalEnergy3(s, mu) {
+        var r = Math.sqrt(s[0] * s[0] + s[1] * s[1] + s[2] * s[2]) || 1e-9;
+        return 0.5 * (s[3] * s[3] + s[4] * s[4] + s[5] * s[5]) - mu / r;
+    }
+
+    // Specific angular momentum vector r x v (length 3). Its length and its
+    // direction are both conserved by a central force, so a test can assert
+    // both, not just the magnitude.
+    function angularMomentum3(s) {
+        return [
+            s[1] * s[5] - s[2] * s[4],
+            s[2] * s[3] - s[0] * s[5],
+            s[0] * s[4] - s[1] * s[3]
+        ];
+    }
+
     return {
         euler: euler,
         semiImplicitEuler: semiImplicitEuler,
@@ -157,6 +188,9 @@
         order: ['euler', 'semi', 'verlet', 'rk4'],
         mountIntegratorSwitch: mountIntegratorSwitch,
         centralForce: centralForce,
-        specificOrbitalEnergy: specificOrbitalEnergy
+        centralForce3: centralForce3,
+        specificOrbitalEnergy: specificOrbitalEnergy,
+        specificOrbitalEnergy3: specificOrbitalEnergy3,
+        angularMomentum3: angularMomentum3
     };
 }));
