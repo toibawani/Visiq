@@ -1,0 +1,306 @@
+{
+ "cmd": "sheets",
+ "simId": "black-hole",
+ "captures": [
+  {
+   "viewport": "1440x900",
+   "theme": "dark",
+   "mark": "t0",
+   "file": "evidence/black-hole/black-hole-1440x900-dark-t0.png",
+   "elapsedMs": 216,
+   "quality": {
+    "scale": 0.7215999999999999,
+    "steps": 300,
+    "frameMs": 29.586742706111323
+   },
+   "canvas": {
+    "w": 790,
+    "h": 334
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     13,
+     16,
+     24.2
+    ],
+    "stdevChannel": [
+     21.6,
+     23.3,
+     29.6
+    ],
+    "nonBlackPct": 71.8,
+    "brightPct": 1.2,
+    "blueDominantPct": 57.9,
+    "redDominantPct": 0.4
+   }
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "dark",
+   "mark": "t10",
+   "file": "evidence/black-hole/black-hole-1440x900-dark-t10.png",
+   "elapsedMs": 10140,
+   "quality": {
+    "scale": 0.6350079999999999,
+    "steps": 300,
+    "frameMs": 19.451570737101463
+   },
+   "canvas": {
+    "w": 695,
+    "h": 294
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     12.9,
+     16,
+     24
+    ],
+    "stdevChannel": [
+     21.7,
+     23.4,
+     29.4
+    ],
+    "nonBlackPct": 72,
+    "brightPct": 1.3,
+    "blueDominantPct": 57.3,
+    "redDominantPct": 0.4
+   }
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "light",
+   "mark": "t0",
+   "file": "evidence/black-hole/black-hole-1440x900-light-t0.png",
+   "elapsedMs": 217,
+   "quality": {
+    "scale": 0.7215999999999999,
+    "steps": 300,
+    "frameMs": 29.72880091012086
+   },
+   "canvas": {
+    "w": 790,
+    "h": 334
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     153.3,
+     155.1,
+     159.1
+    ],
+    "stdevChannel": [
+     118.6,
+     118.1,
+     116.2
+    ],
+    "nonBlackPct": 71.8,
+    "brightPct": 60.7,
+    "blueDominantPct": 9,
+    "redDominantPct": 0.2
+   }
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "light",
+   "mark": "t10",
+   "file": "evidence/black-hole/black-hole-1440x900-light-t10.png",
+   "elapsedMs": 10175,
+   "quality": {
+    "scale": 0.6350079999999999,
+    "steps": 300,
+    "frameMs": 19.91287236352067
+   },
+   "canvas": {
+    "w": 695,
+    "h": 294
+   },
+   "stats": {
+    "size": "1440x900",
+    "channels": 3,
+    "meanChannel": [
+     153.1,
+     154.9,
+     158.8
+    ],
+    "stdevChannel": [
+     118.8,
+     118.3,
+     116.4
+    ],
+    "nonBlackPct": 71.9,
+    "brightPct": 60.7,
+    "blueDominantPct": 8.3,
+    "redDominantPct": 0.2
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "dark",
+   "mark": "t0",
+   "file": "evidence/black-hole/black-hole-375x812-dark-t0.png",
+   "elapsedMs": 58,
+   "quality": {
+    "scale": 1,
+    "steps": 180,
+    "frameMs": 16.966029436246714
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     18.9,
+     22.8,
+     33.2
+    ],
+    "stdevChannel": [
+     32.4,
+     35,
+     43.4
+    ],
+    "nonBlackPct": 74.3,
+    "brightPct": 3.4,
+    "blueDominantPct": 57.3,
+    "redDominantPct": 1.2
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "dark",
+   "mark": "t10",
+   "file": "evidence/black-hole/black-hole-375x812-dark-t10.png",
+   "elapsedMs": 10056,
+   "quality": {
+    "scale": 1,
+    "steps": 240,
+    "frameMs": 16.664920983981762
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     17.7,
+     21.4,
+     31.2
+    ],
+    "stdevChannel": [
+     30.8,
+     33.2,
+     41.3
+    ],
+    "nonBlackPct": 74.1,
+    "brightPct": 3.1,
+    "blueDominantPct": 56.2,
+    "redDominantPct": 1.2
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "light",
+   "mark": "t0",
+   "file": "evidence/black-hole/black-hole-375x812-light-t0.png",
+   "elapsedMs": 57,
+   "quality": {
+    "scale": 1,
+    "steps": 180,
+    "frameMs": 16.9910861106429
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     139.4,
+     142.1,
+     149.1
+    ],
+    "stdevChannel": [
+     117.4,
+     116.1,
+     112.9
+    ],
+    "nonBlackPct": 74,
+    "brightPct": 54.6,
+    "blueDominantPct": 16.9,
+    "redDominantPct": 0.5
+   }
+  },
+  {
+   "viewport": "375x812",
+   "theme": "light",
+   "mark": "t10",
+   "file": "evidence/black-hole/black-hole-375x812-light-t10.png",
+   "elapsedMs": 10056,
+   "quality": {
+    "scale": 1,
+    "steps": 240,
+    "frameMs": 16.66506668852951
+   },
+   "canvas": {
+    "w": 353,
+    "h": 398
+   },
+   "stats": {
+    "size": "375x812",
+    "channels": 3,
+    "meanChannel": [
+     139.5,
+     142,
+     148.3
+    ],
+    "stdevChannel": [
+     118.4,
+     117.1,
+     114
+    ],
+    "nonBlackPct": 73.8,
+    "brightPct": 54.7,
+    "blueDominantPct": 15.3,
+    "redDominantPct": 0.5
+   }
+  }
+ ],
+ "cells": [
+  {
+   "viewport": "1440x900",
+   "theme": "dark",
+   "problems": [
+    "warning: [.WebGL-0x10c0043d800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "warning: [.WebGL-0x10c0043d800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "warning: [.WebGL-0x10c0043d800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "warning: [.WebGL-0x10c0043d800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+   ]
+  },
+  {
+   "viewport": "1440x900",
+   "theme": "light",
+   "problems": []
+  },
+  {
+   "viewport": "375x812",
+   "theme": "dark",
+   "problems": []
+  },
+  {
+   "viewport": "375x812",
+   "theme": "light",
+   "problems": []
+  }
+ ],
+ "problemCount": 4
+}
