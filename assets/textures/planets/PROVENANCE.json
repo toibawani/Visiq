@@ -3,7 +3,7 @@
   "license": "CC BY 4.0 - attribution required, see SOURCES.md",
   "author": "Solar System Scope",
   "authorUrl": "https://www.solarsystemscope.com/textures/",
-  "totalStoredBytes": 980870,
+  "totalStoredBytes": 1117688,
   "textures": [
     {
       "slug": "earth-day",
@@ -41,6 +41,25 @@
       "author": "Solar System Scope",
       "credit": "http://solarsystemscope.com/textures",
       "sha256": "91c40562224062bc40a1ab00b9e7522db344d6d9eb2b09759907475f27a4a4be",
+      "fetched": "2026-10-14"
+    },
+    {
+      "slug": "earth-clouds",
+      "usedFor": "alpha",
+      "file": "assets/textures/planets/earth-clouds.webp",
+      "storedPx": "1024x512",
+      "storedBytes": 136818,
+      "sourceTitle": "Solarsystemscope texture 2k earth clouds.jpg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Solarsystemscope_texture_2k_earth_clouds.jpg",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Solarsystemscope_texture_2k_earth_clouds.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "sourcePx": "2048x1024",
+      "sourceBytes": 965676,
+      "sourceSha1": "5dde546d7e053eace71779e26289f84f32f48828",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "author": "Solar System Scope",
+      "credit": "http://solarsystemscope.com/textures",
+      "sha256": "add2f206140fa1ae30695e45d0491cd6da5ca0a304f60c13a8fc03c51f95bbcc",
       "fetched": "2026-10-14"
     },
     {

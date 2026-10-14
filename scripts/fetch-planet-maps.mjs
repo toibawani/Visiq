@@ -26,6 +26,9 @@ const FORCE = process.argv.includes('--force');
 const WANTED = [
   { slug: 'earth-day',    title: 'Solarsystemscope texture 2k earth daymap.jpg',     width: 2048, kind: 'albedo' },
   { slug: 'earth-night',  title: 'Solarsystemscope texture 2k earth nightmap.jpg',   width: 2048, kind: 'emissive' },
+  // The cloud map is soft and low-frequency, so 1K holds up at the sizes the
+  // Earth is actually drawn and saves about 350 KB against storing it at 2K.
+  { slug: 'earth-clouds', title: 'Solarsystemscope texture 2k earth clouds.jpg',     width: 1024, kind: 'alpha' },
   { slug: 'mars',         title: 'Solarsystemscope texture 2k mars.jpg',            width: 2048, kind: 'albedo' },
   { slug: 'jupiter',      title: 'Solarsystemscope texture 2k jupiter.jpg',         width: 2048, kind: 'albedo' },
   { slug: 'saturn',       title: 'Solarsystemscope texture 2k saturn.jpg',          width: 1024, kind: 'albedo' },
@@ -104,7 +107,9 @@ async function main() {
 
     const isRing = want.kind === 'ring';
     const pipeline = sharp(rawPath).resize({ width: want.width, withoutEnlargement: false });
-    // The ring strip keeps its alpha channel; the body maps are opaque.
+    // The ring strip keeps its alpha channel; the body maps are opaque. The
+    // cloud map is white on black and is used as an alpha map, so it is stored
+    // opaque too and its luminance is what matters.
     const webp = isRing
       ? await pipeline.webp({ quality: 88, alphaQuality: 90 }).toBuffer()
       : await pipeline.flatten({ background: '#000000' }).webp({ quality: 82 }).toBuffer();

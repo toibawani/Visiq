@@ -25,6 +25,7 @@ without trusting this paragraph. Re-run with `--force` to re-fetch.
 |---|---|---|
 | `earth-day.webp` | 2048x1024 | Earth albedo |
 | `earth-night.webp` | 2048x1024 | Earth night lights (emissive) |
+| `earth-clouds.webp` | 1024x512 | Earth cloud layer (alpha map, stored at 1K because it is soft) |
 | `mars.webp` | 2048x1024 | Mars albedo |
 | `jupiter.webp` | 2048x1024 | Jupiter albedo |
 | `saturn.webp` | 1024x512 | Saturn albedo |
@@ -36,8 +37,9 @@ without trusting this paragraph. Re-run with `--force` to re-fetch.
 | `moon.webp` | 1024x512 | Moon albedo (Earth's moon) |
 | `sun.webp` | 1024x512 | Sun photosphere |
 
-Total 958 KB of webp for all twelve, which is the whole texture budget of the
-solar system sim. Nothing here is a normal-map or a roughness map: the bodies
+Total 1,091 KB of webp for all thirteen (the cloud map was added after the
+first pass, at 1K rather than 2K to keep it to 134 KB), which is the whole
+texture budget of the solar system sim. Nothing here is a normal-map or a roughness map: the bodies
 are lit by one point light and use flat roughness, which is stated in the sim's
 "what this model leaves out" line rather than implied.
 
