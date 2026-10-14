@@ -4,6 +4,43 @@ Everything in the project that did not come from the repository author is
 listed here, with the licence checked before use. If a licence was not clear,
 the asset was not used, and that decision is recorded rather than hidden.
 
+## Planet maps (CC BY 4.0, attribution required)
+
+Used by `sketches/solar-system.js`. Source: Solar System Scope,
+<https://www.solarsystemscope.com/textures/>, published on Wikimedia Commons
+and fetched through the Commons API, which reports the licence string checked
+by the script before download. The licence is **CC BY 4.0**, so attribution is
+required and is shown in the simulation's own credit line as well as here:
+
+> Planet maps by Solar System Scope (CC BY 4.0), via Wikimedia Commons.
+
+Fetched by `scripts/fetch-planet-maps.mjs`, which refuses any file whose
+licence is not CC BY 4.0 / CC0 / public domain and any file with no recorded
+author. It writes `assets/textures/planets/PROVENANCE.json` with the title,
+description page, licence URL, author, source dimensions, source sha1, output
+sha256 and stored size for every file, so any of these can be re-checked
+without trusting this paragraph. Re-run with `--force` to re-fetch.
+
+| file | stored | used as |
+|---|---|---|
+| `earth-day.webp` | 2048x1024 | Earth albedo |
+| `earth-night.webp` | 2048x1024 | Earth night lights (emissive) |
+| `mars.webp` | 2048x1024 | Mars albedo |
+| `jupiter.webp` | 2048x1024 | Jupiter albedo |
+| `saturn.webp` | 1024x512 | Saturn albedo |
+| `saturn-ring.webp` | 1024x63 | Saturn ring strip, alpha kept |
+| `mercury.webp` | 1024x512 | Mercury albedo |
+| `venus.webp` | 1024x512 | Venus surface albedo |
+| `uranus.webp` | 1024x512 | Uranus albedo |
+| `neptune.webp` | 1024x512 | Neptune albedo |
+| `moon.webp` | 1024x512 | Moon albedo (Earth's moon) |
+| `sun.webp` | 1024x512 | Sun photosphere |
+
+Total 958 KB of webp for all twelve, which is the whole texture budget of the
+solar system sim. Nothing here is a normal-map or a roughness map: the bodies
+are lit by one point light and use flat roughness, which is stated in the sim's
+"what this model leaves out" line rather than implied.
+
 ## Vendored code
 
 ### three.js 0.186.1
