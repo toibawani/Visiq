@@ -755,6 +755,36 @@ class SimBase {
         }
     }
 
+    /** Render the perf grid from this.perf. Called from _perfHook every frame. */
+    _refreshPerfGrid() {
+        if (!this._perfOverlay || !this.perf) return;
+        const grid = this._perfOverlay.querySelector('.vp-grid');
+        if (!grid) return;
+        const rows = [];
+        const order = [
+            ['frameMs', 'frame time'],
+            ['fps', 'fps'],
+            ['resolutionScale', 'resolution scale'],
+            ['quality', 'quality'],
+            ['floatTargets', 'float targets'],
+            ['renderer', 'renderer'],
+            ['vendor', 'vendor'],
+            ['draws', 'draw calls'],
+            ['tris', 'triangles'],
+            ['geos', 'geometry'],
+            ['text', 'text objects'],
+            ['gpuMs', 'gpu ms']
+        ];
+        for (const [key, label] of order) {
+            const v = this.perf[key];
+            const text = v === null || v === undefined || v === '' ? 'n/a' : String(v);
+            rows.push(`<div class="vp-row"><span class="vp-label">${label}</span><span class="vp-val">${text}</span></div>`);
+        }
+        grid.innerHTML = rows.join('');
+        const hard = this._perfOverlay.querySelector('#vp-hard');
+        if (hard) hard.textContent = this.perf.vendor || 'unknown';
+    }
+
     /** Post-draw hook: samples frame time and refreshes the readout bar. */
     _perfHook() {
         if (!this.perfMode || !this.perf || this._isDestroyed) return;
@@ -769,6 +799,7 @@ class SimBase {
             this.perf.frameMs = med.toFixed(1);
             this.perf.fps = Math.round(1000 / med * 10) / 10;
         }
+        this._refreshPerfGrid();
     }
 }
 
