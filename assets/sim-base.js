@@ -55,6 +55,7 @@ class SimBase {
         this._postDrawHooks = [];
 
         this.initParameters();
+        this._setupPerf();
     }
 
     /**
@@ -141,6 +142,13 @@ class SimBase {
         };
 
         this.p5Instance = new window.p5(sketch, container);
+
+        // ?perf=1: install the post-draw hook so every frame refreshes the
+        // live readout bar, then mount the overlay onto the canvas container.
+        if (this.perfMode) {
+            this._postDrawHooks.push(this._perfHook.bind(this));
+            this._attachPerfOverlay();
+        }
 
         // Setup responsive container observer
         this.setupResizeObserver(container);
@@ -658,7 +666,68 @@ class SimBase {
 
         console.log(`[SimBase] Cleanly destroyed simulation: ${this.id}`);
     }
+
+    /**
+     * Setup ?perf=1 telemetry overlay. No sketch edits required: the sim
+     * only has to set this.perf.resolutionScale, this.perf.quality,
+     * this.perf.floatTargets and (optionally) this.perf.gpuMs. Unset
+     * fields show as not measured.
+     */
+    _setupPerf() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('perf') !== '1') return;
+
+        this.perfMode = true;
+        this._perfDeltas = [];
+        this._perfLast = performance.now();
+        this._perfFrame = 0;
+
+        this._perfOverlay = document.createElement('div');
+        this._perfOverlay.className = 'visiq-perf';
+        this._perfOverlay.setAttribute('role', 'region');
+        this._perfOverlay.setAttribute('aria-label', 'Performance readout');
+        this._perfOverlay.setAttribute('aria-live', 'polite');
+        this._perfOverlay.innerHTML = `
+          <div class="vp-head">
+            <span class="vp-name">perf</span>
+            <button class="vp-close" aria-label="Hide performance readout">×</button>
+          </div>
+          <div class="vp-grid"></div>
+          <div class="vp-foot">
+            <span class="vp-label">hardware</span>
+            <span class="vp-val" id="vp-hard"></span>
+          </div>
+        `;
+        this._perfOverlay.querySelector('.vp-close').addEventListener('click', () => {
+            this.perfMode = false;
+            const h = this._perfOverlay.parentElement;
+            if (h) h.removeChild(this._perfOverlay);
+        });
+    }
+
+    /** Mount the perf overlay onto the existing canvas container. */
+    _attachPerfOverlay() {
+        if (!this._perfOverlay || !this._perfOverlay.isConnected) {
+            const host = document.getElementById(this.containerId);
+            if (host) host.appendChild(this._perfOverlay);
+        }
+    }
+
+    /** Post-draw hook: samples frame time and refreshes the readout bar. */
+    _perfHook() {
+        if (!this.perfMode) return;
+        const t = performance.now();
+        this._perfDeltas.push(t - this._perfLast);
+        this._perfLast = t;
+        this._perfFrame += 1;
+        if (this._perfDeltas.length > 60) this._perfDeltas.shift();
+        if (this._perfDeltas.length >= 2) {
+            const srt = this._perfDeltas.slice().sort((a, b) => a - b);
+            const med = srt[Math.floor(srt.length / 2)];
+            this.perf.frameMs = med.toFixed(1);
+            this.perf.fps = Math.round(1000 / med * 10) / 10;
+        }
+    }
 }
 
-// Export for browser global context
 window.SimBase = SimBase;
