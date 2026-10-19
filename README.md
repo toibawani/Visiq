@@ -1,135 +1,105 @@
-# 🌀 VISIQ
+# VISIQ
 
-> Interactive Science Visualizations · Real-time simulations · Vanilla JS + p5.js
+VISIQ is a free, interactive science simulation site for curious people aged 15 to 80. It is a static site built with vanilla JavaScript and CSS - no framework, no bundler, no backend. Every simulation is a real model you can touch, not a canned animation.
 
-![Status](https://img.shields.io/badge/status-active-brightgreen)
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![Author](https://img.shields.io/badge/author-toibawani-blueviolet)
+![Black hole spacetime simulation, dark theme](docs/media/black-hole-readme.png)
 
-## 🎯 What is VISIQ?
+Live site: https://toibawani.github.io/Visiq/
 
-**VISIQ** is a static, dependency-light gallery of **29 interactive science
-simulations** across four categories: **Physics (8)**, **Biology (8)**,
-**Geography (7)**, and **Astronomy (6)**. Each sketch is a real p5.js canvas
-rendering an actual physical / biological / geophysical model — not a canned
-animation — and responds to pointer, keyboard, and on-screen controls in real
-time.
+## What is here
 
-The front end is **vanilla HTML, CSS, and ES modules** (no framework, no build
-step). Node is used only for developer tooling: tests (Vitest) and type
-checking (`tsc`).
+VISIQ is a gallery of science simulations. Each one runs in the browser and responds to pointer, keyboard, and on-screen controls in real time. The catalog lives in `assets/simulations-data.js`, which is the single source of truth: the gallery renders every entry from it, and any count you see on the live site is computed from that array at load time (not hand-typed).
 
-## 🌍 The Simulations
+The site splits into physics, biology, geography, and astronomy. Three simulations have been rebuilt as 3D heroes with measured, published numbers: a ray-marched black hole, a true-scale solar system, and an Earth-and-seasons model. The rest are 2D p5.js sketches in instance mode.
 
-Titles are taken from `assets/simulations-data.js` (the single source of truth).
+## Technically interesting things
 
-| Category | Simulations |
-|---|---|
-| **Physics (8)** | Double Pendulum Chaos · Wave Interference · Quantum Tunneling · Magnetic Field & Lorentz Force · Doppler Effect · Gas Laws & Molecular Motion · Orbital Mechanics & Escape Velocity · Neutron Star & Pulsar Beams |
-| **Biology (8)** | Mitosis · Meiosis · DNA Replication · Protein Folding · Enzyme Kinetics · Neuron Action Potential · Population Genetics & Selection · Epidemic Spread (SIR Model) |
-| **Geography (7)** | Plate Tectonics & Boundaries · Ocean Currents & Gyres · Hurricane Dynamics · River Erosion & Landforms · The Water Cycle · Earthquake Seismic Waves · Volcanic Eruption Dynamics |
-| **Astronomy (6)** | Black Hole Spacetime · Galaxy Collision & Tidal Stripping · Stellar Evolution & Fusion · Exoplanet Transit Photometry · Cosmic Expansion & Hubble Law |
+- **Physics validated by known-answer tests.** The solar system integrator is checked against NASA/JPL orbital elements (Kepler's third law, perihelion, Earth's year, Mercury's speed), the black hole against the Schwarzschild photon sphere and ISCO, and the seasons model against declination and day length at real dates. See `tests/solar-system.test.js`, `tests/relativity.test.js`, `tests/seasons.test.js`.
+- **GPU ray-marched black hole.** The black hole simulation renders gravitational lensing in a fragment shader, with Doppler beaming, gravitational redshift, and a visible photon ring. The shadow radius was measured against the predicted value (59 px vs 56.9 px predicted). See `sketches/black-hole.js` and `evidence/black-hole/VERIFICATION.md`.
+- **Fixed-timestep integrators.** A shared integrator layer (`assets/integrators.js`) exposes Euler, semi-implicit Euler, Verlet, and RK4, used by the double pendulum and black-hole orbit sketches, with live energy-drift graphs.
+- **Leak-tested 3D lifecycle.** Every 3D hero passes a 20 open-close cycle test with identical geometry, texture, and program counts, and a flat JS heap. See `assets/sim-base.js` and `evidence/*/leak-*.json`.
 
-## ✨ Features
 
-These are the features that actually ship in this repository:
+## Run locally
 
-- **Gallery** — responsive card grid rendered from `assets/simulations-data.js`,
-  with live **search**, **category filters**, and **sorting**.
-- **Favorites** — heart any sketch; state is persisted and reflected with a
-  correct label and `aria-pressed`. A "favorites only" filter is included.
-- **Dark / light theme** — toggle persisted to `localStorage`; every control has
-  a stable text label (no emoji-only UI).
-- **Shared integrator layer** (`assets/integrators.js`) — a reusable UMD module
-  exposing Euler, semi-implicit Euler, Verlet, and RK4. Used by the double
-  pendulum and the black-hole orbit sketches.
-- **Double Pendulum Chaos** — pick the integrator, watch a live energy-drift
-  graph, draw your own guess of the path and see a measured "% off", and fork
-  the timeline with a +0.001 rad twin to watch divergence.
-- **Black Hole Spacetime** — the same integrator switch plus an orbital
-  energy-drift readout.
-- **In-page detail modal** for each sketch (long description + controls).
-
-## 🚀 Quick Start
-
-The site is fully static — serve the folder with any web server.
-
-```bash
-git clone https://github.com/toibawani/visiq.git
-cd visiq
-npx live-server        # or: npm start
-```
-
-Then open the printed local URL (default `http://localhost:8000`). Any static
-server works (`python -m http.server`, `npx http-server`, VS Code Live Server).
-
-## 🧪 Development
-
-```bash
-npm install        # install dev tooling
-npm test           # Vitest: integrator accuracy, orbital drift, font glyph coverage
-npm run typecheck  # tsc --noEmit
-```
-
-Tests live in `tests/`:
-- `integrators.test.js` — RK4 beats Euler on a harmonic oscillator (drift bounds).
-- `orbit-drift.test.js` — Euler's orbital energy drift exceeds RK4's over N steps.
-- `font-glyphs.test.js` — every `unicode-range` the CSS claims has a real glyph,
-  and required symbols (π √ ≈ → …) route to a font that contains them.
-
-## 📁 Project Structure
+The site is fully static. Serve the folder with any web server:
 
 ```
-index.html            Landing / auth page + gallery shell
-gallery.js            Renders the simulation grid, search, favorites, filters
-style.css             Design system (self-hosted subset fonts, theming)
+git clone https://github.com/toibawani/Visiq.git
+cd Visiq
+python3 -m http.server 8000
+```
+
+Then open http://localhost:8000. The service worker does not register on localhost, so you always get fresh files.
+
+## Run tests
+
+```
+npm install
+npm test
+```
+
+Vitest runs 73 tests across 7 files (integrators, orbit drift, relativity, seasons, solar system, persistence, font glyph coverage). The suite takes about one second. CI runs the same command on every push.
+
+## Measured numbers
+
+Every figure below comes from a file in `evidence/` that you can reproduce yourself. None are hand-typed estimates.
+
+| Figure | Where it comes from | Reproduce with |
+|--------|---------------------|----------------|
+| 73 tests pass, 1.09s | `npm test` output | `npm test` |
+| Solar system at 60 fps, unthrottled and 4x CPU throttle | `evidence/solar-system/fps-unthrottled.json`, `fps-4x-throttle.json` | `scripts/verify-3d.mjs fps solar-system 6` |
+| Solar system: 20 open-close cycles, zero retained geometries/textures/programs | `evidence/solar-system/leak-20-cycles.json` | `scripts/verify-3d.mjs leak solar-system 20` |
+| Black hole shadow radius 59 px vs 56.9 px predicted | `evidence/black-hole/VERIFICATION.md` | view live capture in `evidence/black-hole/` |
+| Black hole: 20-cycle leak flat, heap unchanged | `evidence/black-hole/leak.json` | `scripts/verify-3d.mjs leak black-hole 20` |
+| 13 planet textures, 1,091 KB total webp | `assets/textures/planets/PROVENANCE.json` | `scripts/fetch-planet-maps.mjs` |
+| Solar system scene: 9,794 triangles, 15 draw calls | `evidence/solar-system/VERIFICATION.md` | open `evidence/solar-system/sheets/` |
+
+Scores quoted in this README only appear because they live in `evidence/` with a reproducing command.
+
+## Project structure
+
+```
+index.html            Landing and gallery shell
+gallery.js            Renders the simulation grid, search, filters, sorting
+style.css             Design system (Fraunces, IBM Plex Sans, JetBrains Mono)
 assets/
-  simulations-data.js  The 29 sketches: metadata + descriptions (source of truth)
-  sim-base.js          Base class shared by every sketch
-  integrators.js       Euler / semi-implicit / Verlet / RK4 (shared, UMD)
-  visual-kit.js        Canvas drawing helpers
-  ...                  ~60 feature modules (search, theme, stats, audio, …)
-  fonts/                Self-hosted subset .woff2 (Fraunces, IBM Plex Sans, JetBrains Mono)
-sketches/             One file per simulation (p5 sketch)
-tests/                Vitest specs
-scripts/              Dev tooling (font subsetter, thumbnail capture, image gen)
+  simulations-data.js  Catalog: single source of truth, read at load time
+  sim-base.js          Sim mount/destroy lifecycle, URL params, teardown
+  integrators.js       Euler, semi-implicit Euler, Verlet, RK4
+  visual-kit.js        Shared canvas drawing helpers
+  vendor/three/        Vendored three.js 0.186.1 (MIT, pinned)
+sketches/              One p5.js instance-mode sketch per simulation
+tests/                 Vitest specs
+scripts/               Dev tooling (thumbnail capture, planet-map fetch, font subsetter)
+evidence/              Raw measurement files for every published number
+docs/                  Architecture, decisions, sources, physics, walkthrough
 ```
 
-## 🔤 Rebuilding the font subsets
+## What this doesn't do
 
-The subset `.woff2` files in `assets/fonts/` include the math/Greek symbols the
-app renders (`π √ ⇄ ‰ ≈ →`) **where each font actually has them**. To rebuild:
+- It is not a backend product. There is no database, no cloud saving, no leaderboards, and no shared content. Nothing you do in a simulation leaves your device.
+- It does not guarantee scientific precision for real-world design. Each simulation states its own limits in a "what this model leaves out" line.
+- It does not log you, track you, or fingerprint you. The only third-party request is p5.js from cdnjs.
+- It is not a replacement for a telescope or a lab. It is a playground for curiosity.
 
-```bash
-# 1. Download the full source TTFs (cached in scripts/.font-src/, git-ignored)
-mkdir -p scripts/.font-src
-# fetch the exact .ttf URLs from https://fonts.googleapis.com/css2?family=... for
-# Fraunces (200, 800), IBM Plex Sans (400, 600), JetBrains Mono (400, 600)
+## What I'd build next
 
-# 2. Re-subset from the CSS unicode-range + the extra symbols
-python3 scripts/subset-fonts.py --write
+- Galaxy collision with Barnes-Hut in a web worker (20,000+ stars, dark-matter halo, tidal tails).
+- Hydrogen orbitals from the real wavefunctions (n, l, m), tested against analytical expectation values.
+- An FFT ocean from a Phillips spectrum, plus a two-source ripple tank.
+- Charged particles in magnetic and electric fields with a Boris integrator.
 
-# 3. Confirm coverage (what CI runs)
-npx vitest run tests/font-glyphs.test.js
-```
+These are in the backlog, not this build. Two excellent simulations beat four rushed ones.
 
-Fraunces (display serif) lacks `π √ ⇄ →`; JetBrains Mono lacks `⇄`. The CSS
-`unicode-range` only lists codepoints each file can actually render, so nothing
-falls back to tofu. `tests/font-glyphs.test.js` enforces this on every run.
+## Stack
 
+- Vanilla JavaScript, HTML, CSS (no framework, no bundler)
+- p5.js (instance mode, 2D sketches)
+- three.js 0.186.1 (vendored, 3D heroes)
+- Vitest (tests)
+- Self-hosted fonts: Fraunces, IBM Plex Sans, JetBrains Mono
 
-## 📄 License
+## License
 
-MIT — see [LICENSE](LICENSE).
-
-## 🤝 Contributing
-
-Contributions are welcome! Please read:
-
-- [Code of Conduct](CODE_OF_CONDUCT.md)
-- [Contributing Guide](docs/CONTRIBUTING.md) — branching model, Conventional
-  Commits, how to run tests, and the pull-request / review process.
-
-When you open an issue or pull request, the templates in `.github/` will guide
-you. Questions? Email **toibawani14@gmail.com**.
+MIT - see `LICENSE`.
