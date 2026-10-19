@@ -6,8 +6,8 @@
 // Usage:
 //   node scripts/verify-perf.mjs
 import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
-import { resolve, dirname } from 'node:path';
+import { readFile, writeFile } from 'node:fs/promises';
+import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'url';
 import { chromium } from 'playwright';
 
@@ -22,7 +22,7 @@ const server = createServer(async (req, res) => {
         const url = new URL(req.url, BASE);
         let p = decodeURIComponent(url.pathname);
         if (p.endsWith('/')) p += 'index.html';
-        const file = resolve(ROOT, p);
+        const file = join(ROOT, p);
         if (!file.startsWith(ROOT)) { res.writeHead(403).end(); return; }
         res.writeHead(200, { 'Content-Type': MIME[extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
         res.end(await readFile(file));
@@ -37,6 +37,12 @@ try {
     for (const simId of SIMS) {
         const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, colorScheme: 'dark' });
         const page = await context.newPage();
+        // Seed the real sign-in session (the site gates the sims behind it) so
+        // the canvas actually paints.
+        await page.addInitScript(() => {
+            localStorage.setItem('visiq_session', JSON.stringify({ email: 'verify@visiq.test', loginTime: Date.now() }));
+            localStorage.setItem('visiq_user_email', 'verify@visiq.test');
+        });
         const errs = [];
         page.on('console', m => { if (m.type() === 'error' || m.type() === 'warning') errs.push(m.text()); });
         page.on('pageerror', e => errs.push(e.message));
@@ -71,4 +77,5 @@ try {
     await browser.close();
     server.close();
 }
+await writeFile(join(ROOT, 'evidence', 'verify-perf.json'), JSON.stringify(results, null, 1));
 console.log(JSON.stringify(results, null, 1));
