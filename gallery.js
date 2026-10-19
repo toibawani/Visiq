@@ -154,13 +154,16 @@ class Gallery {
             const grid = document.createElement('div');
             grid.className = 'category-sim-grid';
 
+            const FEATURED = ['black-hole', 'solar-system', 'earth-seasons'];
             sims.forEach(sim => {
                 const card = document.createElement('article');
-                card.className = 'sim-card-featured';
+                const featured = FEATURED.includes(sim.id);
+                card.className = featured ? 'sim-card sim-card-featured' : 'sim-card';
                 card.setAttribute('role', 'article');
-                card.setAttribute('aria-label', `${sim.title} simulation`);
+                card.setAttribute('aria-label', `${sim.title} simulation${featured ? ' (featured)' : ''}`);
                 card.setAttribute('data-sim-id', sim.id);
                 card.setAttribute('data-category', sim.category);
+                if (featured) card.setAttribute('data-featured', 'true');
                 card.style.setProperty('--card-idx', cardIdx++);
 
                 const isFav = window.statsTracker?.isFavorite(sim.id) || false;
@@ -182,7 +185,7 @@ class Gallery {
                         </button>
                         <div class="card-meta">
                             <div class="card-title">${sim.title}</div>
-                            <div class="card-category">${sim.category} • ${sim.difficulty}</div>
+                            <div class="card-category">${featured ? 'Featured • ' : ''}${sim.category} • ${sim.difficulty}</div>
                         </div>
                     </div>
                     <div class="card-body" role="button" tabindex="0" aria-label="Open ${sim.title} simulation" style="cursor: pointer;">
@@ -266,7 +269,7 @@ class Gallery {
             });
         }, { threshold: 0.1 });
 
-        document.querySelectorAll('.sim-card-featured').forEach(card => {
+        document.querySelectorAll('.sim-card').forEach(card => {
             this._cardObserver.observe(card);
         });
     }
@@ -404,7 +407,7 @@ class Gallery {
     syncFavoriteButtons() {
         if (!window.statsTracker) return;
         const simIds = window.statsTracker.stats?.favoriteIds || [];
-        document.querySelectorAll('.sim-card-featured').forEach(card => {
+        document.querySelectorAll('.sim-card').forEach(card => {
             const btn = card.querySelector('.btn-favorite');
             const cardId = card.getAttribute('data-sim-id');
             if (!btn || !cardId) return;

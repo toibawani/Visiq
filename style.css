@@ -926,71 +926,69 @@ html, body {
     }
 }
 
-/* Simulation Card: Precision Instrument Module */
-.sim-card-featured {
+/* Simulation Card: base style shared by featured and regular cards. */
+.sim-card {
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 22px;
+    padding: 18px;
     cursor: pointer;
     transition: transform var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
     position: relative;
     overflow: hidden;
     animation: instrumentCardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: calc(var(--card-idx, 0) * 35ms);
 }
 
-/* Category Specific Instrument Signatures */
-.sim-card-featured[data-category="Physics"] {
-    --card-accent: var(--accent-physics);
-    --card-accent-glow: var(--accent-physics-glow);
-}
-.sim-card-featured[data-category="Biology"] {
-    --card-accent: var(--accent-biology);
-    --card-accent-glow: var(--accent-biology-glow);
-}
-.sim-card-featured[data-category="Geography"] {
-    --card-accent: var(--accent-geography);
-    --card-accent-glow: var(--accent-geography-glow);
-}
-.sim-card-featured[data-category="Astronomy"] {
-    --card-accent: var(--accent-astronomy);
-    --card-accent-glow: var(--accent-astronomy-glow);
-}
-.sim-card-featured[data-category="Chemistry"] {
-    --card-accent: var(--accent-chemistry);
-    --card-accent-glow: var(--accent-chemistry-glow);
-}
-
-.sim-card-featured::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--card-accent, var(--accent-primary));
-    opacity: 0.35;
-    transition: opacity var(--transition-fast), height var(--transition-fast);
-}
-
-.sim-card-featured:hover {
+.sim-card:hover {
     transform: translateY(-2px);
-    border-color: var(--card-accent, var(--border-strong));
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5), 0 0 16px var(--card-accent-glow, transparent);
+    border-color: var(--border-strong);
     background: var(--bg-hover);
 }
 
-.sim-card-featured:hover::before {
-    opacity: 1;
-    height: 3px;
+.sim-card:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
 }
 
-.sim-card-featured:hover .card-title {
-    color: var(--card-accent, var(--accent-primary));
+.sim-card .card-title {
+    font-size: 15px;
+}
+
+/* Featured cards are larger and set off by scale, never by a stripe,
+   a glow, or color alone. Category identity is the same text label both
+   tiers use. */
+.sim-card-featured {
+    padding: 24px;
+    gap: 16px;
+    border-color: var(--border-default);
+}
+
+.sim-card-featured .card-title {
+    font-size: 19px;
+}
+
+@media (min-width: 1100px) {
+    .sim-card-featured {
+        grid-column: span 2;
+    }
+
+    .sim-card-featured .card-thumb {
+        aspect-ratio: 21 / 9;
+    }
+}
+
+/* Cards change on hover through the shared tonal treatment only: a border
+   shift and a 1px press translate. Never a stripe, glow, or color wash. */
+.sim-card:hover {
+    border-color: var(--border-strong);
+}
+
+.sim-card:active {
+    transform: translateY(1px);
 }
 
 .sim-card-featured.card-pressed {
