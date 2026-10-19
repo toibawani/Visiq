@@ -1,0 +1,372 @@
+{
+  "generatedBy": "node scripts/capture-thumbs.js",
+  "baseUrl": "http://localhost:8123/index.html",
+  "maxBytes": 15360,
+  "thumbWidth": 480,
+  "rows": [
+    {
+      "id": "newton",
+      "bytes": 2178,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "black-hole",
+      "bytes": 4936,
+      "width": 480,
+      "height": 238,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "wave-interference",
+      "bytes": 15046,
+      "width": 480,
+      "height": 237,
+      "quality": 62,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "quantum-tunnel",
+      "bytes": 3092,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "pendulum-chaos",
+      "bytes": 4150,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "magnetic-field",
+      "bytes": 4070,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "doppler-effect",
+      "bytes": 4912,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "pressure-temperature",
+      "bytes": 6990,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "mitosis",
+      "bytes": 4172,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "meiosis",
+      "bytes": 2570,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "dna-replication",
+      "bytes": 7302,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "protein-folding",
+      "bytes": 2876,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "enzyme-kinetics",
+      "bytes": 5464,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "neuron-firing",
+      "bytes": 2506,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "population-genetics",
+      "bytes": 6860,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "virus-spreading",
+      "bytes": 10568,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": [
+        "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+      ]
+    },
+    {
+      "id": "plate-tectonics",
+      "bytes": 2226,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "ocean-currents",
+      "bytes": 522,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "erosion-weathering",
+      "bytes": 3212,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "water-cycle",
+      "bytes": 2876,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "earthquake-waves",
+      "bytes": 3646,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "volcanic-eruption",
+      "bytes": 1508,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "black-hole-orbit",
+      "bytes": 2224,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "solar-system",
+      "bytes": 5216,
+      "width": 480,
+      "height": 238,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "earth-seasons",
+      "bytes": 7004,
+      "width": 480,
+      "height": 238,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "galaxy-collision",
+      "bytes": 666,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "exoplanet-detection",
+      "bytes": 3852,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "neutron-star",
+      "bytes": 7656,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    },
+    {
+      "id": "cosmic-expansion",
+      "bytes": 4868,
+      "width": 480,
+      "height": 237,
+      "quality": 82,
+      "under15kb": true,
+      "problems": []
+    }
+  ],
+  "note": "hurricane-formation and star-lifecycle captured no frame: they throw on load (TypeError in hurricane-formation.js:104, ReferenceError in star-lifecycle.js:876). Their cards render the loader art instead; the sim fixes are separate work."
+}
