@@ -16,6 +16,8 @@ class Gallery {
         this._compareSpeed = 1.0;
         this._reduceMotion = false;
         this._cardObserver = null;
+        this._heroController = null;
+        this._heroMounted = false;
         this.loadingMessages = [
             'Preparing physical force calculations...',
             'Setting up coordinate spaces...',
@@ -34,8 +36,86 @@ class Gallery {
         this.loadUserData();
         this.setupOnboarding();
         this.syncFavoriteButtons();
+        this.mountHero();
         this.checkInitialUrlParam();
         console.log('[GALLERY] Ready with simulations');
+    }
+
+    /** Decide what the first screen shows: a live sim, or a still frame. */
+    shouldUseHeroThumbnail() {
+        let reduced = false;
+        try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+        catch (e) { /* matchMedia missing: allow the live view */ }
+        let hasGL2 = false;
+        try {
+            const c = document.createElement('canvas');
+            hasGL2 = !!(window.WebGL2RenderingContext && c.getContext('webgl2'));
+        } catch (e) { hasGL2 = false; }
+        return { reduced, hasGL2, showStill: reduced || !hasGL2 };
+    }
+
+    /** Mount the live black hole as the first screen, or show a still frame. */
+    mountHero() {
+        const canvas = document.getElementById('hero-canvas');
+        const controls = document.getElementById('hero-controls');
+        const skeleton = document.getElementById('hero-skeleton');
+        const thumb = document.getElementById('hero-thumbnail');
+        const note = document.getElementById('hero-fallback-note');
+        if (!canvas) return;
+
+        if (this._heroMounted && this._heroController) return;
+
+        const { reduced, hasGL2, showStill } = this.shouldUseHeroThumbnail();
+
+        if (showStill || typeof window.initSketch !== 'function') {
+            canvas.style.display = 'none';
+            if (controls) controls.style.display = 'none';
+            if (skeleton) skeleton.style.display = 'none';
+            if (thumb) thumb.hidden = false;
+            if (note) {
+                note.hidden = false;
+                note.textContent = (reduced && !hasGL2)
+                    ? 'Still frame: reduced motion is on and this browser has no WebGL2.'
+                    : reduced
+                        ? 'Still frame: reduced motion is on, so the view does not autoplay.'
+                        : 'Still frame: this browser has no WebGL2, so the live ray-marched view is not shown.';
+            }
+            return;
+        }
+
+        if (thumb) thumb.hidden = true;
+        if (note) note.hidden = true;
+        try {
+            const inst = window.initSketch({ containerId: 'hero-canvas', controlsContainerId: 'hero-controls' });
+            this._heroController = (inst && typeof inst.destroy === 'function') ? inst : null;
+            this._heroMounted = true;
+            if (skeleton) skeleton.style.display = 'none';
+            canvas.style.display = '';
+            if (controls) controls.style.display = '';
+        } catch (e) {
+            console.warn('[GALLERY] hero mount failed, showing still frame:', e);
+            this._heroController = null;
+            canvas.style.display = 'none';
+            if (controls) controls.style.display = 'none';
+            if (skeleton) skeleton.style.display = 'none';
+            if (thumb) thumb.hidden = false;
+            if (note) { note.hidden = false; note.textContent = 'Still frame: the live view could not start here.'; }
+        }
+    }
+
+    /** Tear down the hero so only one WebGL context is live per page. */
+    destroyHero() {
+        if (this._heroController) {
+            try { this._heroController.destroy(); } catch (e) { console.warn('[GALLERY] hero destroy warning:', e); }
+            this._heroController = null;
+        }
+        this._heroMounted = false;
+        const canvas = document.getElementById('hero-canvas');
+        const controls = document.getElementById('hero-controls');
+        const skeleton = document.getElementById('hero-skeleton');
+        if (canvas) canvas.innerHTML = '';
+        if (controls) controls.innerHTML = '';
+        if (skeleton) skeleton.style.display = '';
     }
 
     renderSimulationsCatalog() {
@@ -328,16 +408,19 @@ class Gallery {
         }
         
         this.currentSimulation = sim;
-        
+
+        // Only one live WebGL context per page: tear down the hero first.
+        this.destroyHero();
+
         const galleryView = document.getElementById('gallery-view');
         const simView = document.getElementById('simulation-view');
-        
+
         if (galleryView && simView) {
             galleryView.classList.remove('active');
             simView.classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        
+
         this.updateSimulationHeader(sim);
         this.loadSketch(simId);
         
@@ -511,8 +594,11 @@ class Gallery {
         
         const container = document.getElementById('simulation-canvas');
         this.destroyCurrentSketch(container);
-        
+
         this.currentSimulation = null;
+
+        // Bring the live hero back now that the sim page released its context.
+        this.mountHero();
 
         // Reset the document title so the gallery chrome is reflected again.
         document.title = 'VISIQ – Interactive Science Learning';

@@ -615,75 +615,36 @@ html, body {
 
 /* ── HERO SECTION ───────────────────────────────────── */
 .hero-section {
-    padding: 90px 24px 60px;
-    text-align: center;
+    display: grid;
+    grid-template-columns: minmax(320px, 440px) 1fr;
+    gap: 32px;
+    align-items: center;
+    padding: 40px 32px;
     background: var(--bg-surface);
     border-bottom: 1px solid var(--border-subtle);
-    position: relative;
-    overflow: hidden;
 }
 
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: -60px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-    pointer-events: none;
-}
-
-.hero-content {
-    max-width: 740px;
-    margin: 0 auto;
-    position: relative;
+.hero-copy {
     animation: instrumentReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.hero-telemetry-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--accent-primary);
-    background: rgba(232, 160, 76, 0.08);
-    border: 1px solid rgba(232, 160, 76, 0.28);
-    padding: 4px 12px;
-    border-radius: var(--radius-sm);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-}
-
-.hero-telemetry-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent-primary);
-    box-shadow: 0 0 8px var(--accent-primary);
-    animation: telemetry-pulse 2s ease-in-out infinite;
+    min-width: 0;
 }
 
 .hero-section h1 {
     font-family: var(--font-display);
-    font-size: clamp(52px, 8.5vw, 92px);
+    font-size: clamp(38px, 4.6vw, 58px);
     font-weight: 200;
     letter-spacing: -0.04em;
-    margin-bottom: 12px;
-    line-height: 0.95;
+    margin-bottom: 14px;
+    line-height: 1.0;
     color: var(--text-primary);
 }
 
 .hero-subtitle {
     font-family: var(--font-sans);
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     color: var(--text-secondary);
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     letter-spacing: -0.01em;
 }
 
@@ -691,10 +652,103 @@ html, body {
     font-size: 15px;
     color: var(--text-muted);
     line-height: 1.7;
-    margin-bottom: 32px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 28px;
+}
+
+.hero-stage {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.hero-viewport {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.hero-canvas {
+    position: absolute;
+    inset: 0;
+}
+
+.hero-canvas canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-skeleton {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: var(--bg-canvas);
+}
+
+.hero-skeleton .skeleton-block {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-elevated);
+    background-image: linear-gradient(90deg, var(--bg-elevated) 0%, var(--bg-hover) 50%, var(--bg-elevated) 100%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-skeleton .skeleton-block { animation: none; }
+}
+
+.hero-thumbnail {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.hero-thumbnail[hidden] {
+    display: none;
+}
+
+.hero-fallback-note {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    z-index: 3;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 8px 11px;
+}
+
+.hero-controls {
+    display: none;
+}
+
+/* The hero is a clean first screen: hide the in-viewport HUD overlays
+   (quality readout, flux graph) that belong in the full sim page.
+   This keeps HUD text off the rendered scene here. */
+.hero-viewport .bh-quality-note,
+.hero-viewport .bh-overlay {
+    display: none;
 }
 
 .btn-explore {
@@ -2822,7 +2876,8 @@ kbd {
         gap: 6px;
     }
 
-    .user-name {
+    .user-name,
+    .auth-note {
         display: none;
     }
 
@@ -2833,11 +2888,21 @@ kbd {
     }
 
     .hero-section {
-        padding: 60px 18px 40px;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 30px 18px 36px;
+    }
+
+    .hero-stage {
+        order: -1;
+    }
+
+    .hero-controls {
+        display: none;
     }
 
     .hero-section h1 {
-        font-size: 36px;
+        font-size: 34px;
         letter-spacing: -1px;
     }
 

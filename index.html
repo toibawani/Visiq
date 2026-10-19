@@ -168,22 +168,32 @@
         <!-- GALLERY VIEW -->
         <main id="gallery-view" class="view active instrument-grid">
 
-            <!-- HERO SECTION -->
-            <section class="hero-section" aria-label="Hero">
-                <div class="hero-content">
-                    <div class="hero-telemetry-badge">
-                        <span class="hero-telemetry-dot"></span>
-                        
-                    </div>
-                    <h1>VISIQ</h1>
-                    <p class="hero-subtitle">Scientific Instrumentation for Interactive Phenomena</p>
-                    <p class="hero-description">Directly manipulate physical laws, fluid mechanics, biological systems, and cosmic horizons in real-time calibrated digital instruments.</p>
+            <!-- HERO SECTION: a live simulation is the first screen -->
+            <section class="hero-section" aria-label="Featured simulation: Black Hole Spacetime">
+                <div class="hero-copy">
+                    <h1>Black hole spacetime</h1>
+                    <p class="hero-subtitle">A ray-marched, non-spinning black hole you can orbit.</p>
+                    <p class="hero-description">Light from the far side of the accretion disk bends over the top of the shadow, and the side spinning toward you is brighter. Every pixel comes from the Schwarzschild metric, not from a drawing.</p>
                     <button class="btn-explore"
                             id="btn-explore"
-                            aria-label="Explore simulations"
-                            onclick="document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' })">
-                        Explore Modules ↓
+                            aria-label="Browse all simulations"
+                            onclick="document.querySelector('.simulations-section').scrollIntoView({ behavior: 'smooth' })">
+                        Browse all simulations
                     </button>
+                </div>
+
+                <div class="hero-stage">
+                    <div class="hero-viewport">
+                        <div class="hero-skeleton" id="hero-skeleton" aria-hidden="true"><span class="skeleton-block"></span></div>
+                        <div class="hero-canvas" id="hero-canvas" role="img" aria-label="Live ray-marched black hole simulation"></div>
+                        <img class="hero-thumbnail" id="hero-thumbnail"
+                             src="docs/media/black-hole-hero.webp"
+                             width="1096" height="464"
+                             alt="Black hole: a bright accretion disk arcs over a dark circular shadow"
+                             hidden>
+                        <p class="hero-fallback-note" id="hero-fallback-note" hidden></p>
+                    </div>
+                    <div class="hero-controls" id="hero-controls" aria-label="Black hole controls"></div>
                 </div>
             </section>
 
@@ -334,6 +344,7 @@
     <script src="assets/visiq-audio.js"></script>
     <script src="assets/starfield.js"></script>
     <script src="gallery.js"></script>
+    <script src="sketches/black-hole.js"></script>
 
     <script>
         // Register the service worker for app-shell caching + offline support.
