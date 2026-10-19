@@ -258,7 +258,19 @@
                 ctx.perf.geos = renderer.info.memory.geometries || 0;
                 ctx.perf.text = renderer.info.memory.textures || 0;
                 ctx.perf.resolutionScale = renderer.getPixelRatio ? renderer.getPixelRatio() : 1;
-                ctx.perf.quality = 'default';
+                ctx.perf.quality = state && state.autoScale ? 'auto' : 'manual';
+                // Publish the live snapshot to the window so the leak check can
+                // read it after the sim is unmounted.
+                try {
+                    if (!window.__visiqPerf) window.__visiqPerf = {};
+                    window.__visiqPerf[ctx.id] = {
+                        geometries: ctx.perf.geos,
+                        textures: ctx.perf.text,
+                        programs: renderer.info.programs ? renderer.info.programs.length : 0,
+                        calls: ctx.perf.draws,
+                        triangles: ctx.perf.tris
+                    };
+                } catch (e) { /* window not available */ }
             }
         });
 

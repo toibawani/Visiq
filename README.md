@@ -55,6 +55,9 @@ Every figure below comes from a file in `evidence/` that you can reproduce yours
 | 13 planet textures, 1,091 KB total webp | `assets/textures/planets/PROVENANCE.json` | `scripts/fetch-planet-maps.mjs` |
 | Solar system scene: 9,794 triangles, 15 draw calls | `evidence/solar-system/VERIFICATION.md` | open `evidence/solar-system/sheets/` |
 | `?perf=1` overlay shows real frame time and fps on all three 3D heroes | `evidence/verify-perf.json` | `node scripts/verify-perf.mjs` |
+| `?perf=1` overlay reports real GPU telemetry: renderer, vendor, draw calls, triangles, geometry, textures, pixel ratio, quality | `evidence/verify-perf.json` | `node scripts/verify-perf.mjs` |
+| Overlay costs 0 fps (0%) on all three 3D heroes, 16.67 ms/frame, zero frames over 25 ms, overlay on and off | `evidence/perf-compare.json` | `node scripts/perf-compare.mjs` |
+| 8 mount/unmount cycles per sim, zero geometry or texture growth, `destroy()` runs on every unmount | `evidence/perf-leak.json` | `node scripts/perf-leak.mjs` |
 | Real-pixel captures, 390 px wide, dark and light, t = 0 / 5 / 20 s, 18 frames | `evidence/shots.json`, `evidence/contact.png` | `node scripts/shots.mjs` |
 
 Scores quoted in this README only appear because they live in `evidence/` with a reproducing command.

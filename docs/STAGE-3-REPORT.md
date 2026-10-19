@@ -82,9 +82,12 @@ frozen. No frame is pure black or pure white.
 - The "does the overlay eat the frame budget" question is a human check.
 - The black hole's physics honesty (do the modes look like different
   objects, is the disk occluded edge-on) is a human check.
-- The renderer / vendor / draw calls / triangles fields are n/a until a
-  sketch wires them; that is a known shortfall, not a failure.
 - `REVIEW.md` answers are blank and waiting on the owner.
+
+The renderer / vendor / draw calls / triangles fields were n/a in the
+first version of this report. They are now real (see section 2), wired
+through a `perfProbe(config)` hook in SimBase that each 3D sketch fills
+from its live three.js `renderer.info`.
 
 ## 5. Stage report
 
