@@ -1,0 +1,98 @@
+[
+ {
+  "sim": "black-hole",
+  "cycles": 8,
+  "geometries": [
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  "textures": [
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  "geometryStart": 1,
+  "geometryEnd": 1,
+  "geometryDelta": 0,
+  "textureStart": 1,
+  "textureEnd": 1,
+  "textureDelta": 0,
+  "verdict": "ok",
+  "errors": []
+ },
+ {
+  "sim": "solar-system",
+  "cycles": 8,
+  "geometries": [
+   16,
+   16,
+   16,
+   16,
+   16,
+   16,
+   16,
+   16
+  ],
+  "textures": [
+   10,
+   10,
+   10,
+   10,
+   10,
+   10,
+   10,
+   10
+  ],
+  "geometryStart": 16,
+  "geometryEnd": 16,
+  "geometryDelta": 0,
+  "textureStart": 10,
+  "textureEnd": 10,
+  "textureDelta": 0,
+  "verdict": "ok",
+  "errors": []
+ },
+ {
+  "sim": "earth-seasons",
+  "cycles": 8,
+  "geometries": [
+   6,
+   6,
+   6,
+   6,
+   6,
+   6,
+   6,
+   6
+  ],
+  "textures": [
+   5,
+   5,
+   5,
+   5,
+   5,
+   5,
+   5,
+   5
+  ],
+  "geometryStart": 6,
+  "geometryEnd": 6,
+  "geometryDelta": 0,
+  "textureStart": 5,
+  "textureEnd": 5,
+  "textureDelta": 0,
+  "verdict": "ok",
+  "errors": []
+ }
+]

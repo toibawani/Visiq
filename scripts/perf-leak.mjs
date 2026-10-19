@@ -55,12 +55,12 @@ async function probe(simId, cycle) {
     let info = null;
     for (let i = 0; i < 6; i++) {
         await page.waitForTimeout(500);
-        info = await page.evaluate(() => {
+        info = await page.evaluate((id) => {
             const w = window.__visiqPerf || {};
-            const v = w[simId];
+            const v = w[id];
             const c = document.querySelector('#simulation-canvas canvas');
             return v && c ? { ...v, canvas: { w: c.width, h: c.height } } : null;
-        });
+        }, simId);
         if (info) break;
     }
     // Unmount so the next cycle starts from a clean DOM.
