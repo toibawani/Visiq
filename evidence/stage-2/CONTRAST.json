@@ -1,0 +1,191 @@
+{
+  "tool": "node scripts/check-contrast.mjs",
+  "pairs": 16,
+  "passed": 16,
+  "failed": 0,
+  "rows": [
+    {
+      "name": "body text / canvas (dark)",
+      "fg": "--text-primary",
+      "bg": "--bg-canvas",
+      "min": 4.5,
+      "fgHex": "#f1f5f9",
+      "bgHex": "#07090e",
+      "ratio": 18.18,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "body text / canvas (light)",
+      "fg": "--text-primary",
+      "bg": "--bg-canvas",
+      "min": 4.5,
+      "theme": "light",
+      "fgHex": "#0a0f1d",
+      "bgHex": "#f6f8fb",
+      "ratio": 17.96,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "secondary text / surface (dark)",
+      "fg": "--text-secondary",
+      "bg": "--bg-surface",
+      "min": 4.5,
+      "fgHex": "#94a3b8",
+      "bgHex": "#0c0f17",
+      "ratio": 7.47,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "secondary text / surface (light)",
+      "fg": "--text-secondary",
+      "bg": "--bg-surface",
+      "min": 4.5,
+      "theme": "light",
+      "fgHex": "#334155",
+      "bgHex": "#ffffff",
+      "ratio": 10.35,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "card title / card (dark)",
+      "fg": "--text-primary",
+      "bg": "--bg-card",
+      "min": 4.5,
+      "fgHex": "#f1f5f9",
+      "bgHex": "#161c2a",
+      "ratio": 15.54,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "card title / card (light)",
+      "fg": "--text-primary",
+      "bg": "--bg-card",
+      "min": 4.5,
+      "theme": "light",
+      "fgHex": "#0a0f1d",
+      "bgHex": "#ffffff",
+      "ratio": 19.11,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "category label / card (dark)",
+      "fg": "--text-secondary",
+      "bg": "--bg-card",
+      "min": 4.5,
+      "fgHex": "#94a3b8",
+      "bgHex": "#161c2a",
+      "ratio": 6.64,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "category label / card (light)",
+      "fg": "--text-secondary",
+      "bg": "--bg-card",
+      "min": 4.5,
+      "theme": "light",
+      "fgHex": "#334155",
+      "bgHex": "#ffffff",
+      "ratio": 10.35,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "hero description / surface (dark)",
+      "fg": "--text-secondary",
+      "bg": "--bg-surface",
+      "min": 4.5,
+      "fgHex": "#94a3b8",
+      "bgHex": "#0c0f17",
+      "ratio": 7.47,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "hero description / surface (light)",
+      "fg": "--text-secondary",
+      "bg": "--bg-surface",
+      "min": 4.5,
+      "theme": "light",
+      "fgHex": "#334155",
+      "bgHex": "#ffffff",
+      "ratio": 10.35,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "accent button text / accent bg (dark)",
+      "fg": "#07090e",
+      "bg": "--accent-primary",
+      "min": 4.5,
+      "fgHex": "#07090e",
+      "bgHex": "#e8a04c",
+      "ratio": 9.07,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "accent text / surface (dark)",
+      "fg": "--accent-primary",
+      "bg": "--bg-surface",
+      "min": 4.5,
+      "fgHex": "#e8a04c",
+      "bgHex": "#0c0f17",
+      "ratio": 8.72,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "auth note text / elevated (dark)",
+      "fg": "--text-secondary",
+      "bg": "--bg-elevated",
+      "min": 4.5,
+      "fgHex": "#94a3b8",
+      "bgHex": "#131824",
+      "ratio": 6.92,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "auth note text / elevated (light)",
+      "fg": "--text-secondary",
+      "bg": "--bg-elevated",
+      "min": 4.5,
+      "theme": "light",
+      "fgHex": "#334155",
+      "bgHex": "#edf2f7",
+      "ratio": 9.19,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "footer copy / surface (dark)",
+      "fg": "--text-secondary",
+      "bg": "--bg-surface",
+      "min": 4.5,
+      "fgHex": "#94a3b8",
+      "bgHex": "#0c0f17",
+      "ratio": 7.47,
+      "status": "PASS",
+      "pass": true
+    },
+    {
+      "name": "footer copy / surface (light)",
+      "fg": "--text-secondary",
+      "bg": "--bg-surface",
+      "min": 4.5,
+      "theme": "light",
+      "fgHex": "#334155",
+      "bgHex": "#ffffff",
+      "ratio": 10.35,
+      "status": "PASS",
+      "pass": true
+    }
+  ]
+}
