@@ -1,0 +1,390 @@
+{
+  "records": [
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        18.6,
+        22.4,
+        32.7
+      ],
+      "stdevChannel": [
+        31.4,
+        33.9,
+        42.3
+      ],
+      "nonBlackPct": 74.5,
+      "brightPct": 3.1,
+      "blueDominantPct": 59.7,
+      "redDominantPct": 1.8,
+      "frame": 0,
+      "sim": "black-hole",
+      "theme": "dark"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        18.4,
+        22.1,
+        32.1
+      ],
+      "stdevChannel": [
+        31.2,
+        33.5,
+        41
+      ],
+      "nonBlackPct": 74.9,
+      "brightPct": 3.1,
+      "blueDominantPct": 59.2,
+      "redDominantPct": 1.8,
+      "frame": 5,
+      "sim": "black-hole",
+      "theme": "dark"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        18.4,
+        22.1,
+        32.1
+      ],
+      "stdevChannel": [
+        31.2,
+        33.6,
+        41.4
+      ],
+      "nonBlackPct": 73.8,
+      "brightPct": 3.1,
+      "blueDominantPct": 57.8,
+      "redDominantPct": 1.8,
+      "frame": 20,
+      "sim": "black-hole",
+      "theme": "dark"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        142.9,
+        145.6,
+        152.2
+      ],
+      "stdevChannel": [
+        117,
+        115.7,
+        112.5
+      ],
+      "nonBlackPct": 74.5,
+      "brightPct": 56.1,
+      "blueDominantPct": 16.2,
+      "redDominantPct": 0.5,
+      "frame": 0,
+      "sim": "black-hole",
+      "theme": "light"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        142.3,
+        144.9,
+        151.3
+      ],
+      "stdevChannel": [
+        117.5,
+        116.2,
+        112.9
+      ],
+      "nonBlackPct": 74.6,
+      "brightPct": 56,
+      "blueDominantPct": 15.6,
+      "redDominantPct": 0.5,
+      "frame": 5,
+      "sim": "black-hole",
+      "theme": "light"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        142.4,
+        144.9,
+        151.3
+      ],
+      "stdevChannel": [
+        117.5,
+        116.2,
+        113.1
+      ],
+      "nonBlackPct": 73.4,
+      "brightPct": 56.1,
+      "blueDominantPct": 14.3,
+      "redDominantPct": 0.5,
+      "frame": 20,
+      "sim": "black-hole",
+      "theme": "light"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        13.6,
+        16.2,
+        23.4
+      ],
+      "stdevChannel": [
+        25.4,
+        25.5,
+        25.9
+      ],
+      "nonBlackPct": 57.9,
+      "brightPct": 1.6,
+      "blueDominantPct": 45.6,
+      "redDominantPct": 1.8,
+      "frame": 0,
+      "sim": "solar-system",
+      "theme": "dark"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        14.3,
+        17,
+        24.1
+      ],
+      "stdevChannel": [
+        26.8,
+        27.3,
+        27.3
+      ],
+      "nonBlackPct": 58.7,
+      "brightPct": 1.9,
+      "blueDominantPct": 45.7,
+      "redDominantPct": 2,
+      "frame": 5,
+      "sim": "solar-system",
+      "theme": "dark"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        15.9,
+        19,
+        26.5
+      ],
+      "stdevChannel": [
+        30.1,
+        30.8,
+        31
+      ],
+      "nonBlackPct": 60.1,
+      "brightPct": 2.7,
+      "blueDominantPct": 46.4,
+      "redDominantPct": 2.3,
+      "frame": 20,
+      "sim": "solar-system",
+      "theme": "dark"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        135.9,
+        137.3,
+        140.9
+      ],
+      "stdevChannel": [
+        120.9,
+        120.2,
+        117.4
+      ],
+      "nonBlackPct": 57.8,
+      "brightPct": 53.9,
+      "blueDominantPct": 2.2,
+      "redDominantPct": 0.5,
+      "frame": 0,
+      "sim": "solar-system",
+      "theme": "light"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        136.2,
+        137.7,
+        141.2
+      ],
+      "stdevChannel": [
+        120.8,
+        120,
+        117.3
+      ],
+      "nonBlackPct": 58.3,
+      "brightPct": 54.1,
+      "blueDominantPct": 2.3,
+      "redDominantPct": 0.7,
+      "frame": 5,
+      "sim": "solar-system",
+      "theme": "light"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        137.7,
+        139.6,
+        143.6
+      ],
+      "stdevChannel": [
+        120,
+        119,
+        115.8
+      ],
+      "nonBlackPct": 59.7,
+      "brightPct": 54.9,
+      "blueDominantPct": 3.1,
+      "redDominantPct": 0.9,
+      "frame": 20,
+      "sim": "solar-system",
+      "theme": "light"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        22.7,
+        29.8,
+        46
+      ],
+      "stdevChannel": [
+        32.6,
+        35.3,
+        47.5
+      ],
+      "nonBlackPct": 78.5,
+      "brightPct": 3.1,
+      "blueDominantPct": 64.4,
+      "redDominantPct": 3.3,
+      "frame": 0,
+      "sim": "earth-seasons",
+      "theme": "dark"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        26.7,
+        33.5,
+        47.1
+      ],
+      "stdevChannel": [
+        37.4,
+        39.1,
+        46.9
+      ],
+      "nonBlackPct": 80.4,
+      "brightPct": 4.5,
+      "blueDominantPct": 61.5,
+      "redDominantPct": 6.5,
+      "frame": 5,
+      "sim": "earth-seasons",
+      "theme": "dark"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        21.7,
+        24.4,
+        31.4
+      ],
+      "stdevChannel": [
+        37.3,
+        36.5,
+        36.5
+      ],
+      "nonBlackPct": 68.7,
+      "brightPct": 3.9,
+      "blueDominantPct": 49.8,
+      "redDominantPct": 6.2,
+      "frame": 20,
+      "sim": "earth-seasons",
+      "theme": "dark"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        143.9,
+        150.1,
+        163.9
+      ],
+      "stdevChannel": [
+        112.9,
+        108.2,
+        100.5
+      ],
+      "nonBlackPct": 78.5,
+      "brightPct": 54.1,
+      "blueDominantPct": 21.6,
+      "redDominantPct": 1.8,
+      "frame": 0,
+      "sim": "earth-seasons",
+      "theme": "light"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        154.4,
+        158.4,
+        166.2
+      ],
+      "stdevChannel": [
+        108.8,
+        104.7,
+        98.1
+      ],
+      "nonBlackPct": 80.2,
+      "brightPct": 60.4,
+      "blueDominantPct": 15.5,
+      "redDominantPct": 5.4,
+      "frame": 5,
+      "sim": "earth-seasons",
+      "theme": "light"
+    },
+    {
+      "size": "390x844",
+      "channels": 3,
+      "meanChannel": [
+        140.2,
+        142.6,
+        148.1
+      ],
+      "stdevChannel": [
+        117.1,
+        115.7,
+        112.2
+      ],
+      "nonBlackPct": 68.6,
+      "brightPct": 54.3,
+      "blueDominantPct": 9.7,
+      "redDominantPct": 2.8,
+      "frame": 20,
+      "sim": "earth-seasons",
+      "theme": "light"
+    }
+  ],
+  "summary": {
+    "problems": [
+      "black-hole/dark warning: [.WebGL-0x13c00452800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "black-hole/dark warning: [.WebGL-0x13c00436000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+      "black-hole/dark warning: [.WebGL-0x13c00436000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+    ],
+    "status": "errors"
+  }
+}
