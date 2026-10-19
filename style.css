@@ -197,6 +197,15 @@ html {
     scroll-behavior: smooth;
 }
 
+html {
+    overflow-x: clip;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 html, body {
     width: 100%;
     height: 100%;
@@ -461,6 +470,8 @@ html, body {
 .btn-sort,
 .btn-theme-toggle,
 .btn-signin {
+    min-height: 48px;
+    min-width: 48px;
     padding: 7px 11px;
     background: var(--bg-elevated);
     color: var(--text-secondary);
@@ -777,6 +788,7 @@ html, body {
 }
 
 .btn-explore {
+    min-height: 48px;
     padding: 13px 28px;
     background: rgba(232, 160, 76, 0.08);
     color: var(--accent-primary);
@@ -1056,6 +1068,8 @@ html, body {
     position: absolute;
     top: 10px;
     right: 10px;
+    min-height: 48px;
+    min-width: 48px;
     background: transparent;
     border: 1px solid var(--border-default);
     font-size: 11px;
@@ -3633,4 +3647,86 @@ kbd {
         align-items: flex-start;
         gap: 8px;
     }
+}
+
+/* ── PERFORMANCE TELEMETRY OVERLAY ( ?perf=1 ) ─────────────────────────────
+ * Solid panel with a 1px border; the sim never has to be edited for this. */
+.visiq-perf {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    background: #0d0d0f;
+    border: 1px solid var(--border-subtle);
+    border-top: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-primary);
+}
+
+.visiq-perf .vp-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.visiq-perf .vp-name {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+.visiq-perf .vp-close {
+    border: 1px solid var(--border-subtle);
+    background: transparent;
+    color: var(--text-muted);
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    padding: 1px 4px;
+    min-width: 16px;
+    text-align: center;
+}
+
+.visiq-perf .vp-close:hover,
+.visiq-perf .vp-close:focus-visible {
+    background: rgba(255, 255, 255, 0.06);
+    outline: none;
+}
+
+.visiq-perf .vp-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 3px 8px 4px;
+}
+
+.visiq-perf .vp-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 10px;
+    color: var(--text-primary);
+}
+
+.visiq-perf .vp-row .vp-label {
+    color: var(--text-muted);
+}
+
+.visiq-perf .vp-row .vp-val {
+    font-variant-numeric: tabular-nums;
+}
+
+.visiq-perf .vp-foot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: var(--text-muted);
+    padding: 2px 8px 4px;
 }
