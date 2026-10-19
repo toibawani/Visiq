@@ -123,6 +123,7 @@ class AuthSystem {
         localStorage.setItem('visiq_user_email', email);
         
         console.log('[AUTH] Session created for:', email);
+        this.updateAuthUI();
     }
     
     loadSession() {
@@ -138,12 +139,41 @@ class AuthSystem {
         if (this.currentSession && this.currentSession.email) {
             console.log('[AUTH] Session found, showing app');
             this.showApp();
+            this.updateAuthUI();
         } else {
-            console.log('[AUTH] No session, showing auth page');
-            this.showAuthPage();
+            // No session: the gallery is open to everyone. Login is optional
+            // and never gates the simulations, so do not show the auth page.
+            console.log('[AUTH] No session - gallery open without login');
+            this.updateAuthUI();
         }
     }
-    
+
+    /** Reflect the signed-in / signed-out state in the header chrome. */
+    updateAuthUI() {
+        const email = this.currentSession && this.currentSession.email
+            ? this.currentSession.email
+            : null;
+        const userDisplay = document.getElementById('user-display');
+        const authNote = document.getElementById('auth-note');
+        const btnSignin = document.getElementById('btn-signin');
+        const btnLogout = document.getElementById('btn-logout');
+
+        if (userDisplay) {
+            userDisplay.textContent = email || 'Not signed in';
+        }
+        if (authNote) {
+            authNote.textContent = email
+                ? 'Signed in as ' + email + '. This saves your theme and favorites on this device only.'
+                : 'Sign in is optional - every simulation opens without it, and any data stays on this device only.';
+        }
+        if (btnSignin) {
+            btnSignin.style.display = email ? 'none' : 'inline-block';
+        }
+        if (btnLogout) {
+            btnLogout.style.display = email ? 'inline-block' : 'none';
+        }
+    }
+
     showApp() {
         console.log('[AUTH] Showing app');
         
@@ -233,7 +263,10 @@ class AuthSystem {
         localStorage.removeItem('visiq_session');
         localStorage.removeItem('visiq_user_email');
         this.currentSession = null;
-        this.showAuthPage();
+        // Logout does not force the auth page: the gallery stays open and
+        // any simulation the visitor was using keeps running.
+        this.updateAuthUI();
+        this.showApp();
     }
     
     loadUsers() {

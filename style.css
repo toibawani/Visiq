@@ -396,6 +396,19 @@ html, body {
     transition: background var(--transition-base), border-color var(--transition-base);
 }
 
+.auth-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 0 10px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+    margin-right: 8px;
+}
+
 .nav-container {
     width: 100%;
     max-width: 1600px;
@@ -446,7 +459,8 @@ html, body {
 .btn-stats,
 .btn-favorites-toggle,
 .btn-sort,
-.btn-theme-toggle {
+.btn-theme-toggle,
+.btn-signin {
     padding: 7px 11px;
     background: var(--bg-elevated);
     color: var(--text-secondary);
@@ -464,6 +478,7 @@ html, body {
 
 .btn-mute:hover,
 .btn-logout:hover,
+.btn-signin:hover,
 .btn-stats:hover,
 .btn-theme-toggle:hover,
 .btn-favorites-toggle:hover,
@@ -477,6 +492,7 @@ html, body {
 
 .btn-mute:active,
 .btn-logout:active,
+.btn-signin:active,
 .btn-stats:active,
 .btn-theme-toggle:active,
 .btn-favorites-toggle:active,

@@ -45,7 +45,7 @@
 </head>
 <body>
     <!-- AUTH PAGE -->
-    <div id="auth-page" class="auth-page active" role="main" aria-label="Sign in or Create Account">
+    <div id="auth-page" class="auth-page" style="display: none;" role="main" aria-label="Sign in or Create Account">
         <div class="auth-container">
             <div class="auth-left">
                 <h1>VISIQ</h1>
@@ -106,7 +106,7 @@
     </div>
 
     <!-- MAIN APP -->
-    <div id="main-app" class="main-app" style="display: none;" aria-label="VISIQ Application">
+    <div id="main-app" class="main-app active" aria-label="VISIQ Application">
 
         <!-- NAVBAR -->
         <nav class="navbar" role="navigation" aria-label="Main navigation">
@@ -120,7 +120,12 @@
                 </div>
 
                 <div class="nav-right" role="toolbar" aria-label="Toolbar">
-                    <span class="user-name" id="user-display" aria-live="polite">User</span>
+                    <span class="user-name" id="user-display" aria-live="polite">Not signed in</span>
+                    <span id="auth-note" class="auth-note" aria-live="polite">Sign in is optional - every simulation opens without it, and any data stays on this device only.</span>
+                    <button class="btn-signin" id="btn-signin"
+                            aria-label="Sign in (optional — saves on this device only)"
+                            title="Sign in"
+                            onclick="window.authSystem.showAuthPage()">Sign in</button>
 
                     <button class="btn-favorites-toggle"
                             id="btn-favorites"
@@ -151,6 +156,7 @@
 
                     <button class="btn-logout"
                             id="btn-logout"
+                            style="display: none;"
                             data-tooltip="Sign Out"
                             title="Sign Out"
                             aria-label="Sign out"
