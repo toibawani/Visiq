@@ -166,8 +166,11 @@ class Gallery {
                 const isFav = window.statsTracker?.isFavorite(sim.id) || false;
 
                 card.innerHTML = `
+                    <div class="card-thumb" role="img" aria-label="${sim.title} preview frame">
+                        <img class="card-thumb-img" src="assets/card-thumbs/${sim.id}.webp" width="480" height="270" alt="" loading="lazy">
+                        <div class="card-thumb-skeleton" aria-hidden="true"></div>
+                    </div>
                     <div class="card-header">
-                        <div class="card-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
                         <button class="btn-favorite no-ripple"
                                 id="fav-btn-${sim.id}"
                                 data-sim-id="${sim.id}"
@@ -199,6 +202,23 @@ class Gallery {
                 const body = card.querySelector('.card-body');
                 const footer = card.querySelector('.card-footer');
                 const favBtn = card.querySelector('.btn-favorite');
+                const thumbImg = card.querySelector('.card-thumb-img');
+                if (thumbImg) {
+                    const markLoaded = () => {
+                        const box = thumbImg.closest('.card-thumb');
+                        if (box) box.setAttribute('data-loaded', 'true');
+                    };
+                    if (thumbImg.complete && thumbImg.naturalWidth > 0) {
+                        markLoaded();
+                    } else {
+                        thumbImg.addEventListener('load', markLoaded);
+                    }
+                    thumbImg.addEventListener('error', () => {
+                        const box = thumbImg.closest('.card-thumb');
+                        thumbImg.remove();
+                        if (box) box.setAttribute('data-loaded', 'true');
+                    });
+                }
 
                 if (body) {
                     body.onclick = openHandler;

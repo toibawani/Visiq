@@ -992,10 +992,41 @@ html, body {
     gap: 14px;
 }
 
-.card-icon {
-    font-size: 34px;
-    min-width: 40px;
-    line-height: 1;
+/* Card thumbnails: real captured frames, fixed 16:9 box, explicit size. */
+.card-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.card-thumb-img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-thumb-skeleton {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-elevated);
+    background-image: linear-gradient(90deg, var(--bg-elevated) 0%, var(--bg-hover) 50%, var(--bg-elevated) 100%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+
+.card-thumb[data-loaded="true"] .card-thumb-skeleton {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card-thumb-skeleton { animation: none; }
 }
 
 .btn-favorite {
