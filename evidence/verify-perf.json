@@ -2,15 +2,15 @@
  {
   "sim": "black-hole",
   "overlay": true,
-  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualitydefaultfloat targetsfalserenderern/avendorn/adraw calls0triangles0geometry0text objects0gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.6fps60.2resolution scale1qualityautofloat targetsfalserendererWebGL2vendorunknowndraw calls1triangles2geometry1text objects1gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
   "rows": [
    [
     "frame time",
-    "16.7"
+    "16.6"
    ],
    [
     "fps",
-    "59.9"
+    "60.2"
    ],
    [
     "resolution scale",
@@ -18,7 +18,7 @@
    ],
    [
     "quality",
-    "default"
+    "auto"
    ],
    [
     "float targets",
@@ -26,27 +26,27 @@
    ],
    [
     "renderer",
-    "n/a"
+    "WebGL2"
    ],
    [
     "vendor",
-    "n/a"
+    "unknown"
    ],
    [
     "draw calls",
-    "0"
+    "1"
    ],
    [
     "triangles",
-    "0"
+    "2"
    ],
    [
     "geometry",
-    "0"
+    "1"
    ],
    [
     "text objects",
-    "0"
+    "1"
    ],
    [
     "gpu ms",
@@ -64,7 +64,7 @@
  {
   "sim": "solar-system",
   "overlay": true,
-  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualitydefaultfloat targetsfalserenderern/avendorn/adraw calls0triangles0geometry0text objects0gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualitydefaultfloat targetsfalserendererWebGL2vendorunknowndraw calls14triangles7586geometry16text objects10gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
   "rows": [
    [
     "frame time",
@@ -88,27 +88,27 @@
    ],
    [
     "renderer",
-    "n/a"
+    "WebGL2"
    ],
    [
     "vendor",
-    "n/a"
+    "unknown"
    ],
    [
     "draw calls",
-    "0"
+    "14"
    ],
    [
     "triangles",
-    "0"
+    "7586"
    ],
    [
     "geometry",
-    "0"
+    "16"
    ],
    [
     "text objects",
-    "0"
+    "10"
    ],
    [
     "gpu ms",
@@ -117,8 +117,8 @@
   ],
   "hardware": "unknown",
   "canvas": {
-   "w": 331,
-   "h": 358,
+   "w": 368,
+   "h": 398,
    "cw": 368,
    "ch": 398
   }
@@ -126,7 +126,7 @@
  {
   "sim": "earth-seasons",
   "overlay": true,
-  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualitydefaultfloat targetsfalserenderern/avendorn/adraw calls0triangles0geometry0text objects0gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualitydefaultfloat targetsfalserendererWebGL2vendorunknowndraw calls6triangles7496geometry6text objects5gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
   "rows": [
    [
     "frame time",
@@ -150,27 +150,27 @@
    ],
    [
     "renderer",
-    "n/a"
+    "WebGL2"
    ],
    [
     "vendor",
-    "n/a"
+    "unknown"
    ],
    [
     "draw calls",
-    "0"
+    "6"
    ],
    [
     "triangles",
-    "0"
+    "7496"
    ],
    [
     "geometry",
-    "0"
+    "6"
    ],
    [
     "text objects",
-    "0"
+    "5"
    ],
    [
     "gpu ms",
@@ -179,8 +179,8 @@
   ],
   "hardware": "unknown",
   "canvas": {
-   "w": 331,
-   "h": 358,
+   "w": 368,
+   "h": 398,
    "cw": 368,
    "ch": 398
   }
