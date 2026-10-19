@@ -3438,3 +3438,64 @@ kbd {
         animation-duration: 2.4s;
     }
 }
+
+/* ── SITE FOOTER ──────────────────────────────────────── */
+.site-footer {
+    border-top: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    padding: 26px 0 34px;
+}
+
+.footer-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer-copy {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    align-items: baseline;
+    font-size: 13px;
+}
+
+.footer-nav a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+}
+
+.footer-nav a:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+.footer-nav a:hover {
+    border-bottom-color: var(--accent-primary);
+}
+
+@media (max-width: 480px) {
+    .footer-inner {
+        padding: 0 12px;
+    }
+    .footer-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
