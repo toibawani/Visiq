@@ -2,15 +2,15 @@
  {
   "sim": "black-hole",
   "overlay": true,
-  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.6fps60.2resolution scale1qualityautofloat targetsfalserendererWebGL2vendorunknowndraw calls1triangles2geometry1text objects1gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualityautofloat targetsfalserendererWebGL2vendorunknowndraw calls1triangles2geometry1text objects1gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
   "rows": [
    [
     "frame time",
-    "16.6"
+    "16.7"
    ],
    [
     "fps",
-    "60.2"
+    "59.9"
    ],
    [
     "resolution scale",
@@ -64,7 +64,7 @@
  {
   "sim": "solar-system",
   "overlay": true,
-  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualitydefaultfloat targetsfalserendererWebGL2vendorunknowndraw calls14triangles7586geometry16text objects10gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualityautofloat targetsfalserendererWebGL2vendorunknowndraw calls13triangles7584geometry16text objects10gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
   "rows": [
    [
     "frame time",
@@ -80,7 +80,7 @@
    ],
    [
     "quality",
-    "default"
+    "auto"
    ],
    [
     "float targets",
@@ -96,11 +96,11 @@
    ],
    [
     "draw calls",
-    "14"
+    "13"
    ],
    [
     "triangles",
-    "7586"
+    "7584"
    ],
    [
     "geometry",
@@ -126,7 +126,7 @@
  {
   "sim": "earth-seasons",
   "overlay": true,
-  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualitydefaultfloat targetsfalserendererWebGL2vendorunknowndraw calls6triangles7496geometry6text objects5gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualityautofloat targetsfalserendererWebGL2vendorunknowndraw calls6triangles7496geometry6text objects5gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
   "rows": [
    [
     "frame time",
@@ -142,7 +142,7 @@
    ],
    [
     "quality",
-    "default"
+    "auto"
    ],
    [
     "float targets",
@@ -183,6 +183,254 @@
    "h": 398,
    "cw": 368,
    "ch": 398
+  }
+ },
+ {
+  "sim": "galaxy-collision",
+  "overlay": true,
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time14.6fps68.5resolution scale1qualitydefaultfloat targetsfalserenderern/avendorn/adraw calls0triangles0geometry0text objects0gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "rows": [
+   [
+    "frame time",
+    "14.6"
+   ],
+   [
+    "fps",
+    "68.5"
+   ],
+   [
+    "resolution scale",
+    "1"
+   ],
+   [
+    "quality",
+    "default"
+   ],
+   [
+    "float targets",
+    "false"
+   ],
+   [
+    "renderer",
+    "n/a"
+   ],
+   [
+    "vendor",
+    "n/a"
+   ],
+   [
+    "draw calls",
+    "0"
+   ],
+   [
+    "triangles",
+    "0"
+   ],
+   [
+    "geometry",
+    "0"
+   ],
+   [
+    "text objects",
+    "0"
+   ],
+   [
+    "gpu ms",
+    "n/a"
+   ]
+  ],
+  "hardware": "unknown",
+  "canvas": {
+   "w": 368,
+   "h": 425,
+   "cw": 368,
+   "ch": 425
+  }
+ },
+ {
+  "sim": "quantum-tunnel",
+  "overlay": true,
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.1fps62.1resolution scale1qualitydefaultfloat targetsfalserenderern/avendorn/adraw calls0triangles0geometry0text objects0gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "rows": [
+   [
+    "frame time",
+    "16.1"
+   ],
+   [
+    "fps",
+    "62.1"
+   ],
+   [
+    "resolution scale",
+    "1"
+   ],
+   [
+    "quality",
+    "default"
+   ],
+   [
+    "float targets",
+    "false"
+   ],
+   [
+    "renderer",
+    "n/a"
+   ],
+   [
+    "vendor",
+    "n/a"
+   ],
+   [
+    "draw calls",
+    "0"
+   ],
+   [
+    "triangles",
+    "0"
+   ],
+   [
+    "geometry",
+    "0"
+   ],
+   [
+    "text objects",
+    "0"
+   ],
+   [
+    "gpu ms",
+    "n/a"
+   ]
+  ],
+  "hardware": "unknown",
+  "canvas": {
+   "w": 368,
+   "h": 425,
+   "cw": 368,
+   "ch": 425
+  }
+ },
+ {
+  "sim": "ocean-currents",
+  "overlay": true,
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time14.7fps68resolution scale1qualitydefaultfloat targetsfalserenderern/avendorn/adraw calls0triangles0geometry0text objects0gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "rows": [
+   [
+    "frame time",
+    "14.7"
+   ],
+   [
+    "fps",
+    "68"
+   ],
+   [
+    "resolution scale",
+    "1"
+   ],
+   [
+    "quality",
+    "default"
+   ],
+   [
+    "float targets",
+    "false"
+   ],
+   [
+    "renderer",
+    "n/a"
+   ],
+   [
+    "vendor",
+    "n/a"
+   ],
+   [
+    "draw calls",
+    "0"
+   ],
+   [
+    "triangles",
+    "0"
+   ],
+   [
+    "geometry",
+    "0"
+   ],
+   [
+    "text objects",
+    "0"
+   ],
+   [
+    "gpu ms",
+    "n/a"
+   ]
+  ],
+  "hardware": "unknown",
+  "canvas": {
+   "w": 368,
+   "h": 415,
+   "cw": 368,
+   "ch": 415
+  }
+ },
+ {
+  "sim": "magnetic-field",
+  "overlay": true,
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time14.2fps70.4resolution scale1qualitydefaultfloat targetsfalserenderern/avendorn/adraw calls0triangles0geometry0text objects0gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "rows": [
+   [
+    "frame time",
+    "14.2"
+   ],
+   [
+    "fps",
+    "70.4"
+   ],
+   [
+    "resolution scale",
+    "1"
+   ],
+   [
+    "quality",
+    "default"
+   ],
+   [
+    "float targets",
+    "false"
+   ],
+   [
+    "renderer",
+    "n/a"
+   ],
+   [
+    "vendor",
+    "n/a"
+   ],
+   [
+    "draw calls",
+    "0"
+   ],
+   [
+    "triangles",
+    "0"
+   ],
+   [
+    "geometry",
+    "0"
+   ],
+   [
+    "text objects",
+    "0"
+   ],
+   [
+    "gpu ms",
+    "n/a"
+   ]
+  ],
+  "hardware": "unknown",
+  "canvas": {
+   "w": 368,
+   "h": 425,
+   "cw": 368,
+   "ch": 425
   }
  }
 ]

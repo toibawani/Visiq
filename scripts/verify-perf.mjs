@@ -15,7 +15,12 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = parseInt(process.env.VISIQ_PORT || '8133', 10);
 const BASE = `http://127.0.0.1:${PORT}`;
 const MIME = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.png':'image/png', '.webp':'image/webp' };
-const SIMS = ['black-hole', 'solar-system', 'earth-seasons'];
+// The three 3D heroes render with three.js and report GPU telemetry; the
+// four 2D heroes render with p5 and report frame time and fps only. Both
+// kinds are measured here so the overlay is verified on every hero that
+// ships, not just the ones with a WebGL renderer.
+const SIMS = ['black-hole', 'solar-system', 'earth-seasons',
+               'galaxy-collision', 'quantum-tunnel', 'ocean-currents', 'magnetic-field'];
 
 const server = createServer(async (req, res) => {
     try {
