@@ -54,6 +54,21 @@ class SimBase {
         this._isDestroyed = false;
         this._postDrawHooks = [];
 
+        this.perf = {
+            resolutionScale: 1,
+            quality: 'default',
+            floatTargets: false,
+            renderer: null,
+            vendor: null,
+            draws: 0,
+            tris: 0,
+            geos: 0,
+            text: 0,
+            gpuMs: null,
+            fps: null,
+            frameMs: null
+        };
+
         this.initParameters();
         this._setupPerf();
     }
@@ -144,10 +159,12 @@ class SimBase {
         this.p5Instance = new window.p5(sketch, container);
 
         // ?perf=1: install the post-draw hook so every frame refreshes the
-        // live readout bar, then mount the overlay onto the canvas container.
+        // live readout bar. The overlay itself is attached in renderControls()
+        // because the 3D path calls renderControls() directly instead of
+        // mount(), and renderControls() always runs after the container is
+        // cleared, so the overlay built in the constructor survives the wipe.
         if (this.perfMode) {
             this._postDrawHooks.push(this._perfHook.bind(this));
-            this._attachPerfOverlay();
         }
 
         // Setup responsive container observer
@@ -434,6 +451,28 @@ class SimBase {
 
         wrapper.appendChild(slidersContainer);
 
+        // ?perf=1: mount the overlay onto the canvas container now that the
+        // controls have been built and the container cleared. This is the one
+        // place both the 2D path (mount() -> renderControls()) and the 3D path
+        // (renderControls() directly) pass through.
+        if (this.perfMode) {
+            this._attachPerfOverlay();
+            // The 3D sketches use raw three.js with no p5 draw loop, so the
+            // post-draw hook installed in mount() never fires for them. Run
+            // our own rAF loop instead; the 2D path's p5 hook is harmless
+            // alongside it (it just updates the same numbers twice a frame).
+            if (!this._perfRaf) {
+                const self = this;
+                this._perfRaf = true;
+                function tick() {
+                    if (self._isDestroyed) return;
+                    self._perfHook();
+                    requestAnimationFrame(tick);
+                }
+                requestAnimationFrame(tick);
+            }
+        }
+
         // Live Telemetry / Readout Panel
         if (typeof this.getReadoutsFn === 'function') {
             const readoutPanel = document.createElement('div');
@@ -656,6 +695,9 @@ class SimBase {
             this.p = null;
         }
 
+        // Stop the ?perf=1 rAF loop if one was started (3D path).
+        this._perfRaf = false;
+
         // Clear controls container
         const wrapper = document.getElementById(this.controlsContainerId);
         if (wrapper) wrapper.innerHTML = '';
@@ -715,7 +757,7 @@ class SimBase {
 
     /** Post-draw hook: samples frame time and refreshes the readout bar. */
     _perfHook() {
-        if (!this.perfMode) return;
+        if (!this.perfMode || !this.perf || this._isDestroyed) return;
         const t = performance.now();
         this._perfDeltas.push(t - this._perfLast);
         this._perfLast = t;
