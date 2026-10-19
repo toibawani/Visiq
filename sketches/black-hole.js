@@ -779,6 +779,17 @@
                     'Disk peak T': '-',
                     'ISCO orbital period': '-'
                 };
+            },
+            perfProbe(ctx) {
+                if (!renderer || !renderer.info) return;
+                ctx.perf.renderer = renderer.info.renderer || 'WebGL2';
+                ctx.perf.vendor = renderer.info.vendor || 'unknown';
+                ctx.perf.draws = renderer.info.render.calls || 0;
+                ctx.perf.tris = renderer.info.render.triangles || 0;
+                ctx.perf.geos = renderer.info.memory.geometries || 0;
+                ctx.perf.text = renderer.info.memory.textures || 0;
+                ctx.perf.resolutionScale = renderer.getPixelRatio ? renderer.getPixelRatio() : 1;
+                ctx.perf.quality = state && state.autoScale ? 'auto' : 'manual';
             }
         });
 

@@ -35,6 +35,10 @@ class SimBase {
         this.getReadoutsFn = config.getReadouts || null;
         this.targetFps = config.targetFps || 60;
         this.scale = config.scale || null;
+        // Optional per-sim perf probe: a function(SimBase) that writes into
+        // this.perf (renderer, vendor, draws, tris, geos, text, gpuMs, ...).
+        // The 3D sketches use it; the 2D ones leave the fields n/a.
+        this.perfProbeFn = config.perfProbe || null;
 
         // Runtime state
         this.params = {};
@@ -798,6 +802,17 @@ class SimBase {
             const med = srt[Math.floor(srt.length / 2)];
             this.perf.frameMs = med.toFixed(1);
             this.perf.fps = Math.round(1000 / med * 10) / 10;
+        }
+        // Let the sketch fill in renderer / vendor / draw calls / triangles /
+        // geometry / text objects / gpu ms. A broken probe must not take the
+        // sim down or spam every frame.
+        if (typeof this.perfProbeFn === 'function') {
+            try {
+                this.perfProbeFn(this);
+            } catch (e) {
+                console.warn('[SimBase] perf probe failed, disabling:', e.message);
+                this.perfProbeFn = null;
+            }
         }
         this._refreshPerfGrid();
     }
