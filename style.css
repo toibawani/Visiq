@@ -490,6 +490,31 @@ html, body {
     box-shadow: var(--shadow-sm);
 }
 
+.btn-favorites-toggle svg,
+.btn-sort svg,
+.btn-stats svg,
+.btn-theme-toggle svg {
+    flex-shrink: 0;
+    vertical-align: -2px;
+}
+
+.header-btn-label {
+    white-space: nowrap;
+}
+
+.btn-favorites-toggle,
+.btn-sort,
+.btn-stats,
+.btn-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.btn-favorites-toggle[aria-pressed="true"] svg {
+    fill: currentColor;
+}
+
 .btn-mute:active,
 .btn-logout:active,
 .btn-signin:active,

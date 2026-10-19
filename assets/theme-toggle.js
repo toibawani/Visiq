@@ -28,26 +28,31 @@ class ThemeToggle {
             window.statsTracker.trackInteraction('theme_toggle');
         }
     }
-    
+
     applyTheme() {
         const root = document.documentElement;
         root.setAttribute('data-theme', this.currentTheme);
 
         const btn = document.querySelector('.btn-theme-toggle');
         if (btn) {
-            if (this.currentTheme === 'dark') {
-                btn.textContent = 'Light Mode';
+            const isDark = this.currentTheme === 'dark';
+            if (isDark) {
                 btn.setAttribute('title', 'Switch to High-Clarity Light Mode (T)');
                 btn.setAttribute('data-tooltip', 'High-Clarity Light Mode (T)');
                 btn.setAttribute('aria-label', 'Switch to High-Clarity Light Mode');
             } else {
-                btn.textContent = 'Dark Mode';
                 btn.setAttribute('title', 'Switch to Deep Obsidian Dark Mode (T)');
                 btn.setAttribute('data-tooltip', 'Deep Dark Mode (T)');
                 btn.setAttribute('aria-label', 'Switch to Deep Obsidian Dark Mode');
             }
+            // Reflect the theme state without destroying the inline SVG icon.
+            btn.setAttribute('aria-pressed', String(!isDark));
+            const sun = btn.querySelector('circle');
+            const rays = btn.querySelectorAll('path');
+            if (sun && rays.length) {
+                rays.forEach(p => { p.style.display = isDark ? '' : 'none'; });
+            }
         }
-
         // Dispatch custom event for canvas or other components
         window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: this.currentTheme } }));
     }
