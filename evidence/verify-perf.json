@@ -1,0 +1,188 @@
+[
+ {
+  "sim": "black-hole",
+  "overlay": true,
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualitydefaultfloat targetsfalserenderern/avendorn/adraw calls0triangles0geometry0text objects0gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "rows": [
+   [
+    "frame time",
+    "16.7"
+   ],
+   [
+    "fps",
+    "59.9"
+   ],
+   [
+    "resolution scale",
+    "1"
+   ],
+   [
+    "quality",
+    "default"
+   ],
+   [
+    "float targets",
+    "false"
+   ],
+   [
+    "renderer",
+    "n/a"
+   ],
+   [
+    "vendor",
+    "n/a"
+   ],
+   [
+    "draw calls",
+    "0"
+   ],
+   [
+    "triangles",
+    "0"
+   ],
+   [
+    "geometry",
+    "0"
+   ],
+   [
+    "text objects",
+    "0"
+   ],
+   [
+    "gpu ms",
+    "n/a"
+   ]
+  ],
+  "hardware": "unknown",
+  "canvas": {
+   "w": 368,
+   "h": 398,
+   "cw": 368,
+   "ch": 398
+  }
+ },
+ {
+  "sim": "solar-system",
+  "overlay": true,
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualitydefaultfloat targetsfalserenderern/avendorn/adraw calls0triangles0geometry0text objects0gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "rows": [
+   [
+    "frame time",
+    "16.7"
+   ],
+   [
+    "fps",
+    "59.9"
+   ],
+   [
+    "resolution scale",
+    "1"
+   ],
+   [
+    "quality",
+    "default"
+   ],
+   [
+    "float targets",
+    "false"
+   ],
+   [
+    "renderer",
+    "n/a"
+   ],
+   [
+    "vendor",
+    "n/a"
+   ],
+   [
+    "draw calls",
+    "0"
+   ],
+   [
+    "triangles",
+    "0"
+   ],
+   [
+    "geometry",
+    "0"
+   ],
+   [
+    "text objects",
+    "0"
+   ],
+   [
+    "gpu ms",
+    "n/a"
+   ]
+  ],
+  "hardware": "unknown",
+  "canvas": {
+   "w": 331,
+   "h": 358,
+   "cw": 368,
+   "ch": 398
+  }
+ },
+ {
+  "sim": "earth-seasons",
+  "overlay": true,
+  "overlayText": "\n          \n            perf\n            ×\n          \n          frame time16.7fps59.9resolution scale1qualitydefaultfloat targetsfalserenderern/avendorn/adraw calls0triangles0geometry0text objects0gpu msn/a\n          \n            hardware\n            unknown\n          \n        ",
+  "rows": [
+   [
+    "frame time",
+    "16.7"
+   ],
+   [
+    "fps",
+    "59.9"
+   ],
+   [
+    "resolution scale",
+    "1"
+   ],
+   [
+    "quality",
+    "default"
+   ],
+   [
+    "float targets",
+    "false"
+   ],
+   [
+    "renderer",
+    "n/a"
+   ],
+   [
+    "vendor",
+    "n/a"
+   ],
+   [
+    "draw calls",
+    "0"
+   ],
+   [
+    "triangles",
+    "0"
+   ],
+   [
+    "geometry",
+    "0"
+   ],
+   [
+    "text objects",
+    "0"
+   ],
+   [
+    "gpu ms",
+    "n/a"
+   ]
+  ],
+  "hardware": "unknown",
+  "canvas": {
+   "w": 331,
+   "h": 358,
+   "cw": 368,
+   "ch": 398
+  }
+ }
+]
