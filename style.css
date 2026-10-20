@@ -93,6 +93,11 @@
        lightened here. */
     --text-muted:      #8b99ad;
     --text-accent:     #e8a04c;
+    /* Text painted on top of an accent fill. The dark theme's accents are
+       bright, so they take near-black text: #07090e reads at 9.07:1 on the
+       amber and 9.30:1 on the sky blue. Plain #ffffff was only 2.20:1. */
+    --on-accent-primary:   #07090e;
+    --on-accent-secondary: #07090e;
 
     /* Phenomenon-Derived Categorical Signatures */
     --accent-primary:    #e8a04c;  /* Instrument warm phosphor */
@@ -163,6 +168,10 @@
        This clears 4.5:1 on every light surface including --bg-active. */
     --text-muted:      #5b6878;
     --text-accent:     #b45309;
+    /* The light theme's accents are dark, so they take white text:
+       5.02:1 on the amber and 5.93:1 on the azure. */
+    --on-accent-primary:   #ffffff;
+    --on-accent-secondary: #ffffff;
 
     --accent-primary:    #b45309;
     --accent-physics:    #0284c7;
@@ -339,7 +348,7 @@ html, body {
     width: 100%;
     padding: 13px;
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    color: #fff;
+    color: var(--on-accent-primary);
     border: none;
     border-radius: var(--radius-md);
     font-size: 14px;
@@ -638,7 +647,7 @@ html, body {
 .onboarding-dismiss {
     padding: 6px 14px;
     background: var(--accent-primary);
-    color: #fff;
+    color: var(--on-accent-primary);
     border: none;
     border-radius: var(--radius-md);
     font-size: 12px;
@@ -1390,7 +1399,7 @@ html, body {
 .btn-resume {
     padding: 7px 16px;
     background: var(--accent-secondary);
-    color: #fff;
+    color: var(--on-accent-secondary);
     border: none;
     border-radius: var(--radius-md);
     cursor: pointer;
@@ -1734,7 +1743,7 @@ html, body {
 .btn-retry-sketch {
     padding: 9px 20px;
     background: var(--accent-primary);
-    color: #fff;
+    color: var(--on-accent-primary);
     border: none;
     border-radius: var(--radius-md);
     cursor: pointer;
@@ -2299,7 +2308,7 @@ kbd {
 .btn-got-it {
     padding: 9px 24px;
     background: var(--accent-primary);
-    color: #fff;
+    color: var(--on-accent-primary);
     border: none;
     border-radius: var(--radius-md);
     cursor: pointer;

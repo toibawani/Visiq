@@ -38,7 +38,11 @@ const PAIRS = [
     { name: 'muted text / active row (dark)', fg: '--text-muted', bg: '--bg-active', min: 4.5 },
     { name: 'muted text / active row (light)', fg: '--text-muted', bg: '--bg-active', min: 4.5, theme: 'light' },
     { name: 'muted text / card (dark)', fg: '--text-muted', bg: '--bg-card', min: 4.5 },
-    { name: 'muted text / card (light)', fg: '--text-muted', bg: '--bg-card', min: 4.5, theme: 'light' }]
+    { name: 'muted text / card (light)', fg: '--text-muted', bg: '--bg-card', min: 4.5, theme: 'light' },
+    { name: 'on-accent / accent fill (dark)', fg: '--on-accent-primary', bg: '--accent-primary', min: 4.5 },
+    { name: 'on-accent / accent fill (light)', fg: '--on-accent-primary', bg: '--accent-primary', min: 4.5, theme: 'light' },
+    { name: 'on-accent / secondary fill (dark)', fg: '--on-accent-secondary', bg: '--accent-secondary', min: 4.5 },
+    { name: 'on-accent / secondary fill (light)', fg: '--on-accent-secondary', bg: '--accent-secondary', min: 4.5, theme: 'light' }]
 
 // NOTE: --text-muted is now covered above in both themes. Before this stage
 // fixed the token it read #64748b and failed on --bg-active (2.87:1 dark)
