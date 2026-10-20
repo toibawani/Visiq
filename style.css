@@ -87,7 +87,11 @@
 
     --text-primary:    #f1f5f9;
     --text-secondary:  #94a3b8;
-    --text-muted:      #64748b;
+    /* Muted text is still body text: it must clear 4.5:1 against every
+       surface it is painted on, including the raised --bg-active. The
+       previous #64748b reached only 2.87:1 on --bg-active, so it is
+       lightened here. */
+    --text-muted:      #8b99ad;
     --text-accent:     #e8a04c;
 
     /* Phenomenon-Derived Categorical Signatures */
@@ -155,7 +159,9 @@
 
     --text-primary:    #0a0f1d;
     --text-secondary:  #334155;
-    --text-muted:      #64748b;
+    /* Darkened from #64748b, which reached only 4.47:1 on the light canvas.
+       This clears 4.5:1 on every light surface including --bg-active. */
+    --text-muted:      #5b6878;
     --text-accent:     #b45309;
 
     --accent-primary:    #b45309;

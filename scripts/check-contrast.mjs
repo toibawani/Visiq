@@ -32,12 +32,17 @@ const PAIRS = [
     { name: 'auth note text / elevated (dark)', fg: '--text-secondary', bg: '--bg-elevated', min: 4.5 },
     { name: 'auth note text / elevated (light)', fg: '--text-secondary', bg: '--bg-elevated', min: 4.5, theme: 'light' },
     { name: 'footer copy / surface (dark)', fg: '--text-secondary', bg: '--bg-surface', min: 4.5 },
-    { name: 'footer copy / surface (light)', fg: '--text-secondary', bg: '--bg-surface', min: 4.5, theme: 'light' },]
+    { name: 'footer copy / surface (light)', fg: '--text-secondary', bg: '--bg-surface', min: 4.5, theme: 'light' },
+    { name: 'muted text / canvas (dark)', fg: '--text-muted', bg: '--bg-canvas', min: 4.5 },
+    { name: 'muted text / canvas (light)', fg: '--text-muted', bg: '--bg-canvas', min: 4.5, theme: 'light' },
+    { name: 'muted text / active row (dark)', fg: '--text-muted', bg: '--bg-active', min: 4.5 },
+    { name: 'muted text / active row (light)', fg: '--text-muted', bg: '--bg-active', min: 4.5, theme: 'light' },
+    { name: 'muted text / card (dark)', fg: '--text-muted', bg: '--bg-card', min: 4.5 },
+    { name: 'muted text / card (light)', fg: '--text-muted', bg: '--bg-card', min: 4.5, theme: 'light' }]
 
-// NOTE: --text-muted (#64748b) on --bg-canvas fails AA in both themes
-// (dark 4.18, light 4.47 vs 4.5). That pair is pre-existing page chrome this
-// stage introduced no new use of, so it is excluded from this gate and flagged
-// as a known shortfall in the stage report instead of being hidden.
+// NOTE: --text-muted is now covered above in both themes. Before this stage
+// fixed the token it read #64748b and failed on --bg-active (2.87:1 dark)
+// and on --bg-canvas in light (4.47:1).
 
 function parseThemeVars(css, theme) {
     const vars = {};
