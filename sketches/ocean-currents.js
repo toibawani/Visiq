@@ -219,7 +219,7 @@ window.initSketch = function(config) {
                     'Worker FPS':     `${renderFps}`,
                     'Particles':      `${count}`,
                     'Ocean Temp':     `${ctx.params.temperature}°C`,
-                    'Gyre Direction': ctx.params.coriolisStrength > 0 ? 'Clockwise (NH)' : 'Reversed',
+                    'Gyre Direction': VisiqOceanCurrents.gyreRotation(45),
                 };
                 ctx.updateTelemetry();
 
@@ -252,7 +252,7 @@ function drawEkmanSpiral(p, ctx) {
 
     const layers = 8;
     for (let d = 0; d < layers; d++) {
-        const angle  = (d / layers) * Math.PI * ctx.params.coriolisStrength;
+        const angle  = VisiqOceanCurrents.ekmanLayer(d, layers, ctx.params.coriolisStrength).angle;
         const length = 45 * (1 - d / layers);
         const alpha  = Math.floor((1 - d / layers) * 180);
         p.stroke(100, 200, 255, alpha);

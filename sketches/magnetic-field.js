@@ -3,6 +3,13 @@
 // Physics: Lorentz force F = q(v × B) causing cyclotron curvature and magnetic mirroring
 
 window.initSketch = function(config) {
+    // The field function lives in assets/magnetic-field.js so the dipole
+    // and the cyclotron radius can be asserted without a canvas. This is
+    // the only copy: the sketch calls the module and multiplies by its own
+    // scale factor.
+    if (!window.VisiqMagneticField) {
+        console.error('[magnetic-field] assets/magnetic-field.js is not loaded; cannot compute the field');
+    }
     const sim = new SimBase({
         id: 'magnetic-field',
         containerId: config.containerId,
@@ -49,29 +56,9 @@ window.initSketch = function(config) {
             }
 
             function getBField(px, py) {
-                const halfL = magnet.length * 0.5;
-                const nx = magnet.x + Math.cos(magnet.angle) * halfL;
-                const ny = magnet.y + Math.sin(magnet.angle) * halfL;
-                const sx = magnet.x - Math.cos(magnet.angle) * halfL;
-                const sy = magnet.y - Math.sin(magnet.angle) * halfL;
-
-                const dnx = px - nx;
-                const dny = py - ny;
-                const distN = Math.hypot(dnx, dny) + 12;
-                const bNx = (dnx / distN) / (distN * distN);
-                const bNy = (dny / distN) / (distN * distN);
-
-                const dsx = px - sx;
-                const dsy = py - sy;
-                const distS = Math.hypot(dsx, dsy) + 12;
-                const bSx = -(dsx / distS) / (distS * distS);
-                const bSy = -(dsy / distS) / (distS * distS);
-
+                const f = VisiqMagneticField.dipoleField(magnet, { x: px, y: py });
                 const scale = ctx.params.fieldStrength * 12000;
-                return {
-                    bx: (bNx + bSx) * scale,
-                    by: (bNy + bSy) * scale
-                };
+                return { bx: f.bx * scale, by: f.by * scale };
             }
 
             updateMagnetPos();
@@ -268,14 +255,16 @@ window.initSketch = function(config) {
                     });
                 }
 
-                // Telemetry
+                // Telemetry. The cyclotron radius comes from the module (r = m v / (|q| B))
+                // rather than an inline formula, so the readout and the unit test
+                // agree. The field magnitude is the sketch's own scaled value.
                 const centerB = getBField(p.width * 0.5, p.height * 0.5);
                 const centerBMag = Math.hypot(centerB.bx, centerB.by);
-                const cyclotronR = (vInit / Math.max(0.1, centerBMag * 0.1));
+                const cyclotronR = VisiqMagneticField.cyclotronRadius(1, vInit, q, centerBMag);
 
                 ctx._telemetry = {
                     'Lorentz Force (F)': `${(meanF).toFixed(2)} pN`,
-                    'Cyclotron Radius': `${cyclotronR.toFixed(1)} px`,
+                    'Cyclotron Radius': cyclotronR == null ? 'straight (no field)' : `${cyclotronR.toFixed(1)} px`,
                     'Active Particles': `${activeCount}`,
                     'Field at Center': `${centerBMag.toFixed(2)} T`
                 };

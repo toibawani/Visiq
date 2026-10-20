@@ -3,6 +3,9 @@
 // Physics: 1D Time-dependent Schrödinger equation approximation with exponential evanescent decay
 
 window.initSketch = function(config) {
+    if (!window.VisiqQuantumTunnel) {
+        console.error('[quantum-tunnel] assets/quantum-tunnel.js is not loaded; cannot compute the transmission coefficient');
+    }
     const sim = new SimBase({
         id: 'quantum-tunnel',
         containerId: config.containerId,
@@ -68,18 +71,11 @@ window.initSketch = function(config) {
                     if (packetX > w + 120) resetPacket();
                 }
 
-                // Tunneling transmission coefficient (analytical 1D WKB)
-                let T = 0, kappa = 0;
-                if (E < V0) {
-                    kappa = Math.sqrt(Math.max(0.01, V0 - E)) * 0.15;
-                    const sinhVal = Math.sinh(kappa * bWidth * 0.1);
-                    T = 1 / (1 + (V0 * V0 * sinhVal * sinhVal) / (4 * E * (V0 - E)));
-                } else {
-                    const kPrime = Math.sqrt(Math.max(0.01, E - V0)) * 0.15;
-                    const sinVal = Math.sin(kPrime * bWidth * 0.1);
-                    T = 1 / (1 + (V0 * V0 * sinVal * sinVal) / (4 * E * (E - V0)));
-                }
-                const R = Math.max(0, 1 - T);
+                // Tunneling transmission coefficient (analytical 1D WKB). The
+                // formula lives in assets/quantum-tunnel.js so it can be
+                // asserted without a canvas; this is the only copy.
+                const T = VisiqQuantumTunnel.transmission(E, V0, bWidth);
+                const R = VisiqQuantumTunnel.reflection(E, V0, bWidth);
 
                 const barrierTopY = groundY - V0 * vScale;
                 const energyY     = groundY - E  * vScale;
@@ -179,6 +175,7 @@ window.initSketch = function(config) {
                             zone = 'transmitted';
                         } else {
                             // Evanescent decay inside barrier
+                            const kappa = VisiqQuantumTunnel.decayConstant(E, V0);
                             const depth = x - bLeft;
                             amp  = Math.exp(-kappa * depth * 0.8) * Math.cos(time * 0.5) * 0.6;
                             zone = 'evanescent';
@@ -255,10 +252,14 @@ window.initSketch = function(config) {
                 }
 
                 // ── Telemetry ──────────────────────────────────────────
+                // The decay constant comes from the module so the readout and
+                // the unit test agree. It is 0 above the barrier, where there
+                // is no evanescent region to decay through.
+                const kappa = VisiqQuantumTunnel.decayConstant(E, V0);
                 ctx._telemetry = {
                     'Transmission (T)': `${(T * 100).toFixed(1)}%`,
                     'Reflection (R)':   `${(R * 100).toFixed(1)}%`,
-                    'Decay Factor (κ)': `${kappa.toFixed(2)} nm⁻¹`,
+                    'Decay Factor (κ)': `${kappa.toFixed(2)} px⁻¹`,
                     'E / V₀ Ratio':     `${(E / V0).toFixed(2)}`
                 };
                 ctx.updateTelemetry();

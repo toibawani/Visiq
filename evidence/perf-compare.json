@@ -1,0 +1,66 @@
+[
+ {
+  "sim": "black-hole",
+  "off": {
+   "fps": 60,
+   "avgMs": 16.67,
+   "medianMs": 16.7,
+   "over25ms": 0,
+   "errors": [
+    "[.WebGL-0x10c00453400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[.WebGL-0x10c0044b000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[.WebGL-0x10c0044b000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+   ]
+  },
+  "on": {
+   "fps": 60,
+   "avgMs": 16.67,
+   "medianMs": 16.7,
+   "over25ms": 0,
+   "errors": []
+  },
+  "deltaFps": 0,
+  "deltaPct": 0,
+  "verdict": "ok"
+ },
+ {
+  "sim": "solar-system",
+  "off": {
+   "fps": 60,
+   "avgMs": 16.67,
+   "medianMs": 16.7,
+   "over25ms": 0,
+   "errors": []
+  },
+  "on": {
+   "fps": 60,
+   "avgMs": 16.67,
+   "medianMs": 16.7,
+   "over25ms": 0,
+   "errors": []
+  },
+  "deltaFps": 0,
+  "deltaPct": 0,
+  "verdict": "ok"
+ },
+ {
+  "sim": "earth-seasons",
+  "off": {
+   "fps": 60,
+   "avgMs": 16.67,
+   "medianMs": 16.7,
+   "over25ms": 0,
+   "errors": []
+  },
+  "on": {
+   "fps": 60,
+   "avgMs": 16.67,
+   "medianMs": 16.7,
+   "over25ms": 0,
+   "errors": []
+  },
+  "deltaFps": 0,
+  "deltaPct": 0,
+  "verdict": "ok"
+ }
+]
