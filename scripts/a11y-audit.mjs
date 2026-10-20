@@ -218,4 +218,3 @@ async function main() {
 }
 
 main().catch((e) => { console.error('FAILED:', e); process.exit(1); });
-// Accessibility audit harness v1.1
