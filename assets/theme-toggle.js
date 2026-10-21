@@ -39,11 +39,9 @@ class ThemeToggle {
             if (isDark) {
                 btn.setAttribute('title', 'Switch to High-Clarity Light Mode (T)');
                 btn.setAttribute('data-tooltip', 'High-Clarity Light Mode (T)');
-                btn.setAttribute('aria-label', 'Switch to High-Clarity Light Mode');
             } else {
                 btn.setAttribute('title', 'Switch to Deep Obsidian Dark Mode (T)');
                 btn.setAttribute('data-tooltip', 'Deep Dark Mode (T)');
-                btn.setAttribute('aria-label', 'Switch to Deep Obsidian Dark Mode');
             }
             // Reflect the theme state without destroying the inline SVG icon.
             btn.setAttribute('aria-pressed', String(!isDark));

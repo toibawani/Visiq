@@ -16,7 +16,7 @@ class SimulationDetails {
         if (sim.learningOutcomes && sim.learningOutcomes.length > 0) {
             html += `
                 <div class="learning-outcomes">
-                    <h4>What You'll Learn</h4>
+                    <h2>What You'll Learn</h2>
                     <ul>
                         ${sim.learningOutcomes.map(outcome => `<li>${outcome}</li>`).join('')}
                     </ul>

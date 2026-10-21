@@ -48,7 +48,7 @@ Raw JSON with reproduction commands lives in
 
 - Gallery shell, hero, cards, header, contrast gate, a11y fixture, and
   Lighthouse scores are done and committed on `feature/stage-2-first-10-seconds`.
-- `npm test` is 81 passed, 1.10s.
+- `npm test` is 128 passed.
 - One stage left to hand to the human: read docs/WALKTHROUGH.md and the
   REVIEW.md questions, then approve the REVIEW.md answers before the real
   release.

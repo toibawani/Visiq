@@ -188,16 +188,16 @@ class Gallery {
                             <div class="card-category">${featured ? 'Featured • ' : ''}${sim.category} • ${sim.difficulty}</div>
                         </div>
                     </div>
-                    <div class="card-body" role="button" tabindex="0" aria-label="Open ${sim.title} simulation" style="cursor: pointer;">
+                    <button class="card-body" type="button" style="cursor: pointer;">
                         <p>${sim.description}</p>
                         <div class="card-tags">
                             ${sim.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
                         </div>
-                    </div>
-                    <div class="card-footer" role="button" tabindex="0" aria-label="Launch ${sim.title}" style="cursor: pointer;">
+                    </button>
+                    <button class="card-footer" type="button" style="cursor: pointer;">
                         <span class="time">${sim.estimatedTime}</span>
                         <span class="arrow" aria-hidden="true">→</span>
-                    </div>
+                    </button>
                 `;
 
                 // Wire click and keyboard handlers
@@ -391,7 +391,7 @@ class Gallery {
                 <div class="onboarding-text">
 <strong>Explore ${SIMULATIONS.length} interactive simulations covering physics, biology, geography, and astronomy. Click any simulation to start experimenting.</strong>
                 </div>
-                <button class="onboarding-dismiss" aria-label="Dismiss welcome hint" title="Dismiss">Got it</button>
+                <button class="onboarding-dismiss" aria-label="Got it" title="Dismiss">Got it</button>
             </div>
         `;
 

@@ -167,7 +167,7 @@
         btn.className = 'btn-control ' + cls;
         btn.setAttribute('aria-pressed', 'false');
         btn.setAttribute('title', description);
-        btn.setAttribute('aria-label', description);
+        btn.setAttribute('aria-label', label);
         btn.innerHTML = `<span class="label">${label}</span>`;
         btn.onclick = onClick;
         return btn;

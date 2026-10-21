@@ -161,6 +161,7 @@
         if (_muteBtn) {
             _muteBtn.textContent = _muted ? '🔇 Sound off' : '🔊 Sound on';
             _muteBtn.setAttribute('aria-pressed', String(_muted));
+            _muteBtn.setAttribute('aria-label', _muted ? 'Sound off' : 'Sound on');
         }
     }
 
@@ -176,7 +177,7 @@
         btn.className = 'visiq-mute-btn';
         btn.setAttribute('aria-pressed', String(_muted));
         btn.setAttribute('title', description || 'Toggle simulation sound');
-        btn.setAttribute('aria-label', `Toggle sound — ${description}`);
+        btn.setAttribute('aria-label', _muted ? 'Sound off' : 'Sound on');
         btn.textContent = _muted ? '🔇 Sound off' : '🔊 Sound on';
         btn.style.cssText = `
             background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.25);

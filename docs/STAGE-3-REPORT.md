@@ -94,7 +94,7 @@ from its live three.js `renderer.info`.
 - `?perf=1` overlay, real-pixel capture harness, contact sheet, perf
   verification, and the REVIEW.md human gate are done and committed on
   `feature/stage-2-first-10-seconds`.
-- `npm test` is 81 passed, 1.19s.
+- `npm test` is 128 passed.
 - The GL driver warning about `ReadPixels` is a known software-GL
   artefact and is recorded in `evidence/shots.json`, not hidden.
 

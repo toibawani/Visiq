@@ -1,0 +1,818 @@
+{
+  "tool": "axe-core",
+  "generated_at": "2026-10-21T04:01:32.254Z",
+  "pages": [
+    {
+      "label": "gallery",
+      "url": "http://127.0.0.1:8131/index.html",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ],
+          "nodes": [
+            {
+              "target": [
+                "article[aria-label=\"Newton's Playground simulation\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Drag masses and tweak gravity and friction to see F = ma in motion.</p>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Newton's Playground simulation\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">5-8 min</span>"
+            },
+            {
+              "target": [
+                ".sim-card-featured[data-sim-id=\"black-hole\"][data-featured=\"true\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Watch how strong gravitational fields curve particle paths and light rays.</p>"
+            },
+            {
+              "target": [
+                ".sim-card-featured[data-sim-id=\"black-hole\"][data-featured=\"true\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">8-12 min</span>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Wave Interference simulation\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Combine two ripple sources to explore constructive and destructive interference.</p>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Wave Interference simulation\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">6-10 min</span>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Quantum Tunneling simulation\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Send wave packets at an energy barrier they classically cannot cross.</p>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Quantum Tunneling simulation\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">8-12 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"pendulum-chaos\"][data-category=\"Physics\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Release two connected arms and watch tiny starting nudges create wildly different paths.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"pendulum-chaos\"][data-category=\"Physics\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">7-12 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"magnetic-field\"][data-category=\"Physics\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Shoot charged particles past a magnetic dipole and watch their paths curve.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"magnetic-field\"][data-category=\"Physics\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">6-10 min</span>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Doppler Effect simulation\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Move a wave source and watch wavefronts bunch up in front and stretch out behind.</p>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Doppler Effect simulation\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">5-9 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"pressure-temperature\"][data-category=\"Physics\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Heat, compress, or add gas molecules inside a piston to test PV = NkT.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"pressure-temperature\"][data-category=\"Physics\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">5-8 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"mitosis\"][data-category=\"Biology\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Step through prophase, metaphase, anaphase, and telophase as duplicated DNA divides.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"mitosis\"][data-category=\"Biology\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">7-11 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"meiosis\"][data-category=\"Biology\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Follow two rounds of cell division and crossing over to form four unique haploid cells.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"meiosis\"][data-category=\"Biology\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">8-12 min</span>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"DNA Replication simulation\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Watch helicase unwind the double helix and polymerase synthesize leading and lagging strands.</p>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"DNA Replication simulation\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">8-13 min</span>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Protein Folding simulation\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Fold an amino acid string driven by hydrophobic collapse and electrostatic charge.</p>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Protein Folding simulation\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">7-11 min</span>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Enzyme Kinetics simulation\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Measure reaction rates as substrate molecules bind active sites up to maximum velocity (Vmax).</p>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Enzyme Kinetics simulation\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">6-10 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"neuron-firing\"][data-category=\"Biology\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Trigger ion channels to watch an electrical spike travel along a nerve axon.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"neuron-firing\"][data-category=\"Biology\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">7-11 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"population-genetics\"][data-category=\"Biology\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Watch allele frequencies shift across generations under selection pressure and random drift.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"population-genetics\"][data-category=\"Biology\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">6-10 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"virus-spreading\"][data-category=\"Biology\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Tweak contact rate, transmission chance, and recovery time to model infection waves.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"virus-spreading\"][data-category=\"Biology\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">6-9 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"plate-tectonics\"][data-category=\"Geography\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Push continental and oceanic plates together to trigger subduction, trenches, and uplift.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"plate-tectonics\"][data-category=\"Geography\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">7-11 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"ocean-currents\"][data-category=\"Geography\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Explore how prevailing trade winds, Coriolis force, and continents create rotating ocean gyres.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"ocean-currents\"][data-category=\"Geography\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">8-12 min</span>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Hurricane Dynamics simulation\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Warm sea surfaces and low vertical wind shear organize thunderstorms into a rotating cyclone.</p>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"Hurricane Dynamics simulation\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">8-12 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"erosion-weathering\"][data-category=\"Geography\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Direct water flow over varied rock strata to watch canyons carve and river meanders form.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"erosion-weathering\"][data-category=\"Geography\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">6-10 min</span>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"The Water Cycle simulation\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Track solar energy powering evaporation, atmospheric transport, condensation, and runoff.</p>"
+            },
+            {
+              "target": [
+                "article[aria-label=\"The Water Cycle simulation\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">5-8 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"earthquake-waves\"][data-category=\"Geography\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Rupture a subterranean fault and record how primary (P) and secondary (S) waves travel.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"earthquake-waves\"][data-category=\"Geography\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">6-10 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"volcanic-eruption\"][data-category=\"Geography\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Vary silica content and dissolved gas pressure to compare gentle lava flows to explosive blasts.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"volcanic-eruption\"][data-category=\"Geography\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">6-10 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"black-hole-orbit\"][data-category=\"Astronomy\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Launch satellites at varied speeds to discover circular orbits, ellipses, and escape trajectories.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"black-hole-orbit\"][data-category=\"Astronomy\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">7-11 min</span>"
+            },
+            {
+              "target": [
+                ".sim-card-featured[data-sim-id=\"solar-system\"][data-featured=\"true\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Fly through the eight planets on textured spheres, lit only by the Sun, with real orbital elements.</p>"
+            },
+            {
+              "target": [
+                ".sim-card-featured[data-sim-id=\"solar-system\"][data-featured=\"true\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">8-14 min</span>"
+            },
+            {
+              "target": [
+                ".sim-card-featured[data-sim-id=\"earth-seasons\"][data-featured=\"true\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Turn a lit globe through a year and see that the tilt, not the distance, makes the seasons.</p>"
+            },
+            {
+              "target": [
+                ".sim-card-featured[data-sim-id=\"earth-seasons\"][data-featured=\"true\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">6-10 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"galaxy-collision\"][data-category=\"Astronomy\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Simulate two disk galaxies passing through each other under mutual gravity.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"galaxy-collision\"][data-category=\"Astronomy\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">8-13 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"star-lifecycle\"][data-category=\"Astronomy\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Track how star mass dictates whether a star ends as a white dwarf, neutron star, or black hole.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"star-lifecycle\"][data-category=\"Astronomy\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">8-12 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"exoplanet-detection\"][data-category=\"Astronomy\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Monitor starlight brightness dips as an orbiting planet crosses the stellar disk.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"exoplanet-detection\"][data-category=\"Astronomy\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">6-10 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"neutron-star\"][data-category=\"Astronomy\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Examine a city-sized stellar core spinning hundreds of times a second with intense magnetic jets.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"neutron-star\"][data-category=\"Astronomy\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">7-11 min</span>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"cosmic-expansion\"][data-category=\"Astronomy\"] > .card-body[type=\"button\"] > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.22 (foreground color: #94a3b8, background color: #efefef, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<p>Expand the metric of space to see distant galaxies recede faster: v = H₀ × d.</p>"
+            },
+            {
+              "target": [
+                "article[data-sim-id=\"cosmic-expansion\"][data-category=\"Astronomy\"] > .card-footer[type=\"button\"] > .time"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.51 (foreground color: #8b99ad, background color: #efefef, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+              "html": "<span class=\"time\">7-12 min</span>"
+            }
+          ]
+        }
+      ],
+      "violationCount": 1,
+      "impactCount": {
+        "serious": 1
+      },
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "newton",
+      "url": "http://127.0.0.1:8131/index.html?sim=newton",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "black-hole",
+      "url": "http://127.0.0.1:8131/index.html?sim=black-hole",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "wave-interference",
+      "url": "http://127.0.0.1:8131/index.html?sim=wave-interference",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "quantum-tunnel",
+      "url": "http://127.0.0.1:8131/index.html?sim=quantum-tunnel",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "pendulum-chaos",
+      "url": "http://127.0.0.1:8131/index.html?sim=pendulum-chaos",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "magnetic-field",
+      "url": "http://127.0.0.1:8131/index.html?sim=magnetic-field",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "doppler-effect",
+      "url": "http://127.0.0.1:8131/index.html?sim=doppler-effect",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "pressure-temperature",
+      "url": "http://127.0.0.1:8131/index.html?sim=pressure-temperature",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "mitosis",
+      "url": "http://127.0.0.1:8131/index.html?sim=mitosis",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "meiosis",
+      "url": "http://127.0.0.1:8131/index.html?sim=meiosis",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "dna-replication",
+      "url": "http://127.0.0.1:8131/index.html?sim=dna-replication",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "protein-folding",
+      "url": "http://127.0.0.1:8131/index.html?sim=protein-folding",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "enzyme-kinetics",
+      "url": "http://127.0.0.1:8131/index.html?sim=enzyme-kinetics",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "neuron-firing",
+      "url": "http://127.0.0.1:8131/index.html?sim=neuron-firing",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "population-genetics",
+      "url": "http://127.0.0.1:8131/index.html?sim=population-genetics",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "virus-spreading",
+      "url": "http://127.0.0.1:8131/index.html?sim=virus-spreading",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "plate-tectonics",
+      "url": "http://127.0.0.1:8131/index.html?sim=plate-tectonics",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "ocean-currents",
+      "url": "http://127.0.0.1:8131/index.html?sim=ocean-currents",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "hurricane-formation",
+      "url": "http://127.0.0.1:8131/index.html?sim=hurricane-formation",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "pageerror: Cannot read properties of undefined (reading 'getScaledParticleCount')",
+        "[GALLERY] Sketch did not register window.initSketch: hurricane-formation"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "erosion-weathering",
+      "url": "http://127.0.0.1:8131/index.html?sim=erosion-weathering",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "water-cycle",
+      "url": "http://127.0.0.1:8131/index.html?sim=water-cycle",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "earthquake-waves",
+      "url": "http://127.0.0.1:8131/index.html?sim=earthquake-waves",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "volcanic-eruption",
+      "url": "http://127.0.0.1:8131/index.html?sim=volcanic-eruption",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "black-hole-orbit",
+      "url": "http://127.0.0.1:8131/index.html?sim=black-hole-orbit",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "solar-system",
+      "url": "http://127.0.0.1:8131/index.html?sim=solar-system",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "earth-seasons",
+      "url": "http://127.0.0.1:8131/index.html?sim=earth-seasons",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "galaxy-collision",
+      "url": "http://127.0.0.1:8131/index.html?sim=galaxy-collision",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "star-lifecycle",
+      "url": "http://127.0.0.1:8131/index.html?sim=star-lifecycle",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "pageerror: createControlGroup is not defined",
+        "[GALLERY] Sketch did not register window.initSketch: star-lifecycle"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "exoplanet-detection",
+      "url": "http://127.0.0.1:8131/index.html?sim=exoplanet-detection",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "neutron-star",
+      "url": "http://127.0.0.1:8131/index.html?sim=neutron-star",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    },
+    {
+      "label": "cosmic-expansion",
+      "url": "http://127.0.0.1:8131/index.html?sim=cosmic-expansion",
+      "violations": [],
+      "violationCount": 0,
+      "impactCount": {},
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "axeError": null
+    }
+  ]
+}
