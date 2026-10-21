@@ -1,9 +1,12 @@
 // ===== THEME TOGGLE (DARK & HIGH-CLARITY) =====
 // Switches between Deep Obsidian Dark and High-Clarity Light modes with WCAG AAA contrast
+// System colour-scheme preference, used as a fallback when no theme is saved.
+const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 class ThemeToggle {
     constructor() {
-        this.currentTheme = localStorage.getItem('visiq-theme') || 'dark';
+        // Fall back to the system colour scheme when the user has not saved one.
+        this.currentTheme = localStorage.getItem('visiq-theme') || (systemPrefersDark ? 'dark' : 'light');
         this.setupToggle();
         this.applyTheme();
         console.log('[THEME] Initialized in', this.currentTheme, 'mode');
