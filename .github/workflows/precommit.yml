@@ -1,0 +1,39 @@
+name: Attribution Guard
+
+# Prevents two kinds of unwanted attribution from entering history:
+#   1. Co-authored-by: trailers (case-insensitive).
+#   2. Pushed commits whose author name is not exactly "toibawani".
+#
+# Note: repository-local .git/hooks are NOT shared when this repository is
+# cloned elsewhere, so this workflow is the tracked safety net for that gap.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  attribution:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reject Co-authored-by trailer
+        run: |
+          if git log --format=%B -n 100 | grep -iE 'co-authored-by:'; then
+            echo "::error::Found a Co-authored-by: trailer in recent commits."
+            exit 1
+          fi
+
+      - name: Reject non-toibawani author on push
+        if: github.event_name == 'push'
+        run: |
+          if git log --format='%an' -n 100 | grep -v -x -q 'toibawani'; then
+            echo "::error::A pushed commit has an author name other than 'toibawani'."
+            git log --format='%h %an' -n 100
+            exit 1
+          fi

@@ -7,6 +7,7 @@
     "start": "live-server",
     "dev": "live-server --port=8000",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
     "test": "vitest run"
   },
   "keywords": [
@@ -19,7 +20,10 @@
   "author": "toibawani",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/p5": "^1.7.7",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
     "live-server": "^1.2.2",
     "typescript": "^7.0.2",
     "vitest": "^5.0.3"
