@@ -4,8 +4,10 @@ name: Attribution Guard
 #   1. Co-authored-by: trailers (case-insensitive).
 #   2. Pushed commits whose author name is not exactly "toibawani".
 #
-# Note: repository-local .git/hooks are NOT shared when this repository is
+# NOTE: repository-local .git/hooks are NOT shared when the repository is
 # cloned elsewhere, so this workflow is the tracked safety net for that gap.
+# The checks below scope to the commits introduced by the current event so
+# pre-existing history is not mistaken for a new regression.
 
 on:
   push:
@@ -22,18 +24,28 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Determine commit range
+        id: range
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            # Commits added by this push (previous main..new main).
+            echo "range=${{ github.event.before }}..HEAD" >> "$GITHUB_OUTPUT"
+          else
+            echo "range=${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Reject Co-authored-by trailer
         run: |
-          if git log --format=%B -n 100 | grep -iE 'co-authored-by:'; then
-            echo "::error::Found a Co-authored-by: trailer in recent commits."
+          if git log --format=%B ${{ steps.range.outputs.range }} | grep -iE 'co-authored-by:'; then
+            echo "::error::Found a Co-authored-by: trailer in the pushed commits."
             exit 1
           fi
 
       - name: Reject non-toibawani author on push
         if: github.event_name == 'push'
         run: |
-          if git log --format='%an' -n 100 | grep -v -x -q 'toibawani'; then
-            echo "::error::A pushed commit has an author name other than 'toibawani'."
-            git log --format='%h %an' -n 100
+          if git log --format='%an' ${{ steps.range.outputs.range }} | grep -v -x -q 'toibawani'; then
+            echo "::error::A pushed commit has an author other than 'toibawani'."
+            git log --format='%h %an' ${{ steps.range.outputs.range }}
             exit 1
           fi
