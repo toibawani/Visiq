@@ -24,7 +24,6 @@
 
 'use strict';
 
-const TRAIL_CAP = 40; // maximum trail points per particle (managed on main thread)
 const DT        = 0.016;
 
 function stepParticles(data) {

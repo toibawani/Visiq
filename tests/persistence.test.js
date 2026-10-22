@@ -55,10 +55,9 @@ function readTheme(ls) {
 }
 
 describe('stats persistence (assets/stats-tracker.js)', () => {
-    let ls;
     let StatsTracker;
     beforeEach(() => {
-        ({ ls, StatsTracker } = loadStatsTracker());
+        ({ StatsTracker } = loadStatsTracker());
     });
 
     it('adds a favorite, persists it, and survives a reload (new instance)', () => {

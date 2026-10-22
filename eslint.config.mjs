@@ -34,6 +34,7 @@ export default [
         VisiqErrors: 'readonly',
         soundManager: 'readonly',
         createControlGroup: 'readonly',
+        systemPrefersDark: 'readonly',
         AudioContext: 'readonly',
         VisiqSeasons: 'readonly',
         VisiqRelativity: 'readonly',
