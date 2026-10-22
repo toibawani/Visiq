@@ -2,6 +2,25 @@
 // Two-source ripple tank visualizer with wave superposition and nodal lines
 // Physics: y(x,y,t) = A₁ sin(k r₁ - ω t) + A₂ sin(k r₂ - ω t + φ)
 
+// Compute the two component amplitudes for the wave-interference field at
+// screen pixel (x, y). Pure and free of p5/DOM deps so it can be unit tested
+// against a brute-force reference. Same formula as the original inline loop:
+//   a1 = sin(k*d1 - omega*time); a2 = sin(k*d2 - omega*time + phaseRad).
+function computeInterference(x, y, s1, s2, k, omegaTime, phaseRad) {
+  const dx1 = x - s1.x;
+  const dy1 = y - s1.y;
+  const d1  = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+
+  const dx2 = x - s2.x;
+  const dy2 = y - s2.y;
+  const d2  = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+
+  return {
+    a1: Math.sin(k * d1 - omegaTime),
+    a2: Math.sin(k * d2 - omegaTime + phaseRad)
+  };
+}
+
 window.initSketch = function(config) {
     const sim = new SimBase({
         id: 'wave-interference',
@@ -46,7 +65,7 @@ window.initSketch = function(config) {
                     waveOsc.osc2.stop();
                     waveOsc.gain.disconnect();
                     waveOsc.gain2.disconnect();
-                } catch (e) {}
+                } catch { /* noop */ }
                 waveOsc = null;
             }
 
@@ -112,6 +131,7 @@ window.initSketch = function(config) {
                 const omega    = 2 * Math.PI * freq;
                 const phaseRad = (ctx.params.phaseShift * Math.PI) / 180;
                 const time     = (p.millis() / 1000) * ctx.speed;
+                const omegaTime = omega * time;
 
                 // ─────────────────────────────────────────────────────
                 // 1. Interference field — downscaled ImageData pixel buffer
@@ -139,16 +159,7 @@ window.initSketch = function(config) {
                     for (let gx = 0; gx < gw; gx++) {
                         const x = gx * scale;
 
-                        const dx1 = x - s1.x;
-                        const dy1 = y - s1.y;
-                        const d1  = Math.sqrt(dx1 * dx1 + dy1 * dy1);
-
-                        const dx2 = x - s2.x;
-                        const dy2 = y - s2.y;
-                        const d2  = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-
-                        const a1 = Math.sin(k * d1 - omega * time);
-                        const a2 = Math.sin(k * d2 - omega * time + phaseRad);
+                        const { a1, a2 } = computeInterference(x, y, s1, s2, k, omegaTime, phaseRad);
                         const netAmp = (a1 + a2) * 0.5; // [-1, 1]
 
                         let r, g, b, a;
