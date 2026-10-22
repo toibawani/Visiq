@@ -32,6 +32,8 @@ export default [
         VisualKit: 'readonly',
         VisiqAudio: 'readonly',
         VisiqErrors: 'readonly',
+        soundManager: 'readonly',
+        createControlGroup: 'readonly',
         AudioContext: 'readonly',
         VisiqSeasons: 'readonly',
         VisiqRelativity: 'readonly',
