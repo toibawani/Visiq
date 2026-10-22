@@ -96,7 +96,7 @@
             var canvas = document.createElement('canvas');
             var gl = canvas.getContext('webgl2');
             return !!gl;
-        } catch (e) {
+        } catch {
             return false;
         }
     }
@@ -236,7 +236,7 @@
         var reducedMotion = false;
         try {
             reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        } catch (e) { /* keep animating */ }
+        } catch { /* keep animating */ }
 
         var sim = new SimBase({
             id: 'solar-system',
@@ -469,7 +469,7 @@
             inner: null,
             destroy: function () {
                 if (controller.inner) {
-                    try { controller.inner.destroy(); } catch (e) { /* already gone */ }
+                    try { controller.inner.destroy(); } catch { /* already gone */ }
                     controller.inner = null;
                 }
                 teardown3D();
@@ -633,7 +633,7 @@
             var url;
             try {
                 url = new URL('assets/textures/planets/' + file + '.webp', document.baseURI).href;
-            } catch (e) {
+            } catch {
                 url = 'assets/textures/planets/' + file + '.webp';
             }
             var tex = new three.TextureLoader().load(url, function () {
@@ -1167,7 +1167,7 @@
         function fallbackTo2D(reason) {
             if (controller.mode === '2d') return;
             teardown3D();
-            try { sim.destroy(); } catch (e) { /* nothing mounted */ }
+            try { sim.destroy(); } catch { /* nothing mounted */ }
             controller.inner = mount2D(config, reason);
             controller.mode = '2d';
         }
@@ -1432,7 +1432,7 @@
                     canvas: canvas, antialias: true, alpha: false,
                     powerPreference: 'high-performance', logarithmicDepthBuffer: true
                 });
-            } catch (e) {
+            } catch {
                 console.warn('[solar-system] WebGL renderer creation failed:', e);
                 fallbackTo2D('This browser could not start a WebGL2 renderer, so the flat orbit plot is shown instead.');
                 return;
@@ -1537,7 +1537,7 @@
         }
         try {
             return mount3D(config);
-        } catch (e) {
+        } catch {
             console.warn('[solar-system] 3D view failed to start:', e);
             return mount2D(config, 'The shaded view could not start here, so the flat orbit plot is shown instead.');
         }

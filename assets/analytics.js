@@ -88,7 +88,7 @@ class Analytics {
             const allEvents = JSON.parse(saved);
             const combined = [...allEvents, ...this.events].slice(-1000);
             localStorage.setItem('visiq_events', JSON.stringify(combined));
-        } catch (e) {
+        } catch {
             // Silent fail if storage is full
         }
     }

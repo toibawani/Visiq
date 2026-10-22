@@ -129,7 +129,7 @@ class AuthSystem {
         try {
             const saved = localStorage.getItem('visiq_session');
             return saved ? JSON.parse(saved) : null;
-        } catch (e) {
+        } catch {
             return null;
         }
     }
@@ -240,7 +240,7 @@ class AuthSystem {
         try {
             const saved = localStorage.getItem('visiq_users');
             return saved ? JSON.parse(saved) : [];
-        } catch (e) {
+        } catch {
             return [];
         }
     }

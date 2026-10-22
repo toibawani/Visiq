@@ -91,7 +91,7 @@ window.initSketch = function(config) {
                     return Array.isArray(parsed)
                         ? parsed.filter(e => e && typeof e.percentOff === 'number')
                         : [];
-                } catch (e) {
+                } catch {
                     return [];
                 }
             }
@@ -99,7 +99,7 @@ window.initSketch = function(config) {
             function saveGuessHistory(history) {
                 try {
                     localStorage.setItem(GUESS_STORAGE_KEY, JSON.stringify(history.slice(-20)));
-                } catch (e) {
+                } catch {
                     // Storage unavailable (private mode / quota) — ignore silently.
                 }
             }

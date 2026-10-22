@@ -42,7 +42,7 @@
             return Array.isArray(parsed)
                 ? parsed.filter(p => p && typeof p.x === 'number' && typeof p.y === 'number')
                 : [];
-        } catch (e) {
+        } catch {
             console.warn('[InstrumentLayer] could not read pins:', e);
             return [];
         }
@@ -52,7 +52,7 @@
         if (!state.sim) return;
         try {
             localStorage.setItem(storageKey(state.sim.id), JSON.stringify(state.pins));
-        } catch (e) {
+        } catch {
             // Storage can be full (quota) — markers stay for this session only.
             console.warn('[InstrumentLayer] pins not persisted (storage full):', e);
         }
@@ -64,7 +64,7 @@
     function setPins(simId, pins) {
         try {
             localStorage.setItem(storageKey(simId), JSON.stringify(Array.isArray(pins) ? pins : []));
-        } catch (e) {
+        } catch {
             console.warn('[InstrumentLayer] pins not persisted (storage full):', e);
         }
         if (state.sim && state.sim.id === simId) {

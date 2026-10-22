@@ -88,7 +88,7 @@ class SimBase {
                 url.searchParams.set(key, typeof val === 'number' ? Number(val.toFixed(3)).toString() : String(val));
             }
             window.history.replaceState({}, '', url.toString());
-        } catch (e) {
+        } catch {
             // URL modification may fail in sandboxed iframes
         }
     }
@@ -196,7 +196,7 @@ class SimBase {
             for (let i = 0; i < self._postDrawHooks.length; i++) {
                 try {
                     self._postDrawHooks[i](self, p);
-                } catch (e) {
+                } catch {
                     // A broken overlay must not take the sketch down or spam every frame.
                     console.warn('[SimBase] removing failing post-draw hook:', e);
                     self._postDrawHooks.splice(i--, 1);
@@ -504,7 +504,7 @@ class SimBase {
                 await navigator.clipboard.writeText(url);
                 copied = true;
             }
-        } catch (e) {
+        } catch {
             copied = false;
         }
 
@@ -519,7 +519,7 @@ class SimBase {
                 ta.select();
                 copied = document.execCommand('copy');
                 ta.remove();
-            } catch (e) {
+            } catch {
                 copied = false;
             }
         }
@@ -604,7 +604,7 @@ class SimBase {
 
         // Worker / extra teardown (galaxy, ocean, gravity-tree). Must run before p5.remove().
         if (typeof this.onDestroy === 'function') {
-            try { this.onDestroy(); } catch (e) {
+            try { this.onDestroy(); } catch {
                 console.warn('[SimBase] onDestroy warning:', e);
             }
         }
@@ -625,7 +625,7 @@ class SimBase {
         for (const { target, event, handler } of this.listeners) {
             try {
                 target.removeEventListener(event, handler);
-            } catch (e) {}
+            } catch { /* noop */ }
         }
         this.listeners = [];
 
@@ -641,7 +641,7 @@ class SimBase {
                 if (typeof this.p5Instance.remove === 'function') {
                     this.p5Instance.remove();
                 }
-            } catch (e) {
+            } catch {
                 console.warn('[SimBase] p5 remove warning:', e);
             }
             this.p5Instance = null;

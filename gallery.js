@@ -191,7 +191,7 @@ class Gallery {
                     const compareUrl = new URL(window.location.href);
                     compareUrl.search = `compare=${compare[0]},${compare[1]}`;
                     window.history.pushState({}, '', compareUrl.toString());
-                } catch (e) {}
+                } catch { /* noop */ }
                 this.openCompare(compare[0], compare[1]);
             }, 100);
             return;
@@ -462,7 +462,7 @@ class Gallery {
         if (this._currentSimController && typeof this._currentSimController.destroy === 'function') {
             try {
                 this._currentSimController.destroy();
-            } catch (e) {
+            } catch {
                 console.warn('[GALLERY] SimController destroy warning:', e);
             }
             this._currentSimController = null;
@@ -472,7 +472,7 @@ class Gallery {
             try {
                 this._p5Instance.remove();
                 console.log('[GALLERY] p5 instance removed (memory cleaned)');
-            } catch (e) {
+            } catch {
                 console.warn('[GALLERY] p5 remove error:', e);
             }
             this._p5Instance = null;
@@ -522,7 +522,7 @@ class Gallery {
             const url = new URL(window.location.href);
             url.search = '';
             window.history.replaceState({}, '', url.toString());
-        } catch (e) {}
+        } catch { /* noop */ }
 
         // Release the compare-mode shortcut layer when it's no longer needed.
         if (this._compareKeyHandler) {
@@ -809,7 +809,7 @@ class Gallery {
         try {
             const saved = sessionStorage.getItem('visiq-compare-speed');
             if (saved) this._compareSpeed = parseFloat(saved) || 1.0;
-        } catch (e) {
+        } catch {
             this._compareSpeed = 1.0;
         }
         document.title = `Compare · ${panes[0].title} vs ${panes[1].title} — VISIQ`;
@@ -898,7 +898,7 @@ class Gallery {
                 // Remember the cadence for a quick reopen.
                 try {
                     sessionStorage.setItem('visiq-compare-speed', String(speed));
-                } catch (e) {}
+                } catch { /* noop */ }
             };
             // Keep the select visually aligned with the restored preference.
             speedSelect.value = String(this._compareSpeed);
@@ -1031,7 +1031,7 @@ class Gallery {
             }
             if (typeof sim.getReadouts !== 'function') return null;
             let readouts = null;
-            try { readouts = sim.getReadouts(); } catch (e) { return null; }
+            try { readouts = sim.getReadouts(); } catch { return null; }
             if (!readouts || typeof readouts !== 'object') return null;
             const entries = Object.entries(readouts).sort(([a], [b]) => {
                 const ea = /energy|kinetic|total/i.test(a) ? 0 : 1;
@@ -1103,7 +1103,7 @@ class Gallery {
     _destroyCompareSims() {
         if (this._compareSims) {
             this._compareSims.forEach(s => {
-                if (s && typeof s.destroy === 'function') { try { s.destroy(); } catch (e) {} }
+                if (s && typeof s.destroy === 'function') { try { s.destroy(); } catch { /* noop */ } }
             });
             this._compareSims = null;
         }
@@ -1129,7 +1129,7 @@ class Gallery {
             const url = new URL(window.location.href);
             url.search = '';
             window.history.replaceState({}, '', url.toString());
-        } catch (e) {}
+        } catch { /* noop */ }
         // Clean up UI state
         if (this._sparklineFrameId != null) {
             cancelAnimationFrame(this._sparklineFrameId);
@@ -1139,7 +1139,7 @@ class Gallery {
         this._resetSparklineHistory();
         this._compareSpeed = 1.0;
         // Forget the per-session speed when compare mode is closed.
-        try { sessionStorage.removeItem('visiq-compare-speed'); } catch (e) {}
+        try { sessionStorage.removeItem('visiq-compare-speed'); } catch { /* noop */ }
         // Release the compare-mode shortcut layer now that the view is gone.
         if (this._compareKeyHandler) {
             document.removeEventListener('keydown', this._compareKeyHandler);

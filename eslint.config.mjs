@@ -27,6 +27,16 @@ export default [
         // p5.js globals (loaded via CDN in index.html)
         p5: 'readonly',
         createButton: 'readonly',
+        createCanvas: 'readonly',
+        createGraphics: 'readonly',
+        text: 'readonly',
+        // CommonJS module object (some node/bundler shimmed files)
+        module: 'readonly',
+        // WebGL/three debugging flag referenced in a few modules
+        __THREE_DEVTOOLS__: 'readonly',
+        // Web API
+        Float16Array: 'readonly',
+        WebAssembly: 'readonly',
         // Session/simulation systems attached to window by their scripts.
         SimBase: 'readonly',
         VisualKit: 'readonly',

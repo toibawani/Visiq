@@ -107,7 +107,7 @@ window.initSketch = function(config) {
 
             function stopSound() {
                 oscs.forEach(n => {
-                    try { n.osc.stop(); n.gain.disconnect(); } catch (e) {}
+                    try { n.osc.stop(); n.gain.disconnect(); } catch { /* noop */ }
                 });
                 oscs = [];
             }

@@ -33,7 +33,7 @@ class StatsTracker {
         if (!saved) return defaultStats;
         try {
             return Object.assign(defaultStats, JSON.parse(saved));
-        } catch (e) {
+        } catch {
             return defaultStats;
         }
     }

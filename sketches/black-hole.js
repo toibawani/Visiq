@@ -45,7 +45,7 @@
             var gl = canvas.getContext('webgl2');
             if (!gl) return false;
             return true;
-        } catch (e) {
+        } catch {
             return false;
         }
     }
@@ -740,7 +740,7 @@
         var reducedMotion = false;
         try {
             reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        } catch (e) { /* matchMedia missing: keep animating */ }
+        } catch { /* matchMedia missing: keep animating */ }
 
         var sim = new SimBase({
             id: 'black-hole',
@@ -914,7 +914,7 @@
             inner: null,
             destroy: function () {
                 if (controller.inner) {
-                    try { controller.inner.destroy(); } catch (e) { /* already gone */ }
+                    try { controller.inner.destroy(); } catch { /* already gone */ }
                     controller.inner = null;
                 }
                 teardown3D();
@@ -955,7 +955,7 @@
         function fallbackTo2D(reason) {
             if (state.disposed) return;
             teardown3D();
-            try { sim.destroy(); } catch (e) { /* nothing mounted */ }
+            try { sim.destroy(); } catch { /* nothing mounted */ }
             controller.inner = mount2D(config, reason);
             controller.mode = '2d';
         }
@@ -1266,7 +1266,7 @@
             var url;
             try {
                 url = new URL('assets/vendor/three/build/three.module.js', document.baseURI).href;
-            } catch (e) {
+            } catch {
                 fallbackTo2D('The raytraced view could not load its renderer, so the flat view is shown instead.');
                 return;
             }
@@ -1285,7 +1285,7 @@
             var m = measure();
             try {
                 renderer = new three.WebGLRenderer({ canvas: canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
-            } catch (e) {
+            } catch {
                 console.warn('[black-hole] WebGL renderer creation failed:', e);
                 fallbackTo2D('This browser could not start a WebGL2 renderer, so the flat view is shown instead.');
                 return;
@@ -1562,7 +1562,7 @@
         }
         try {
             return mount3D(config);
-        } catch (e) {
+        } catch {
             console.warn('[black-hole] 3D view failed to start:', e);
             return mount2D(config, 'The raytraced view could not start here, so the flat view is shown instead.');
         }

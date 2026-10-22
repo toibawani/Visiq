@@ -26,7 +26,7 @@ function grepPattern(pattern) {
     const cmd = `grep -rn "${pattern}" . ${excludeArgs} ${includeArgs} 2>/dev/null || true`;
     const output = execSync(cmd, { encoding: 'utf8', cwd: path.join(__dirname, '..') });
     return output.trim().split('\n').filter(line => line);
-  } catch (e) {
+  } catch {
     return [];
   }
 }

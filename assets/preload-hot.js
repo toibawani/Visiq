@@ -10,7 +10,7 @@
             const counts = stats.openCounts || {};
             const ranked = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
             if (ranked.length >= 2) return ranked.slice(0, 3);
-        } catch (e) {}
+        } catch { /* noop */ }
         return FALLBACK;
     }
 

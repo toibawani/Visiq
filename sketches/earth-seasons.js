@@ -25,7 +25,7 @@
         try {
             var c = document.createElement('canvas');
             return !!c.getContext('webgl2');
-        } catch (e) {
+        } catch {
             return false;
         }
     }
@@ -211,7 +211,7 @@
         var reducedMotion = false;
         try {
             reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        } catch (e) { /* keep animating */ }
+        } catch { /* keep animating */ }
 
         var sim = new SimBase({
             id: 'earth-seasons',
@@ -385,7 +385,7 @@
             inner: null,
             destroy: function () {
                 if (controller.inner) {
-                    try { controller.inner.destroy(); } catch (e) { /* gone */ }
+                    try { controller.inner.destroy(); } catch { /* gone */ }
                     controller.inner = null;
                 }
                 teardown3D();
@@ -500,7 +500,7 @@
             var url;
             try {
                 url = new URL('assets/textures/planets/' + file + '.webp', document.baseURI).href;
-            } catch (e) {
+            } catch {
                 url = 'assets/textures/planets/' + file + '.webp';
             }
             var tex = new three.TextureLoader().load(url, function () { state.dirtyGraph = true; }, undefined,
@@ -934,7 +934,7 @@
         function fallbackTo2D(reason) {
             if (controller.mode === '2d') return;
             teardown3D();
-            try { sim.destroy(); } catch (e) { /* nothing mounted */ }
+            try { sim.destroy(); } catch { /* nothing mounted */ }
             controller.inner = mount2D(config, reason);
             controller.mode = '2d';
         }
@@ -1116,7 +1116,7 @@
                     canvas: canvas, antialias: false, alpha: false,
                     powerPreference: 'high-performance'
                 });
-            } catch (e) {
+            } catch {
                 console.warn('[earth-seasons] WebGL renderer creation failed:', e);
                 fallbackTo2D('This browser could not start a WebGL2 renderer, so the flat daylight chart is shown instead.');
                 return;
@@ -1218,7 +1218,7 @@
         }
         try {
             return mount3D(config);
-        } catch (e) {
+        } catch {
             console.warn('[earth-seasons] 3D view failed to start:', e);
             return mount2D(config, 'The globe could not start here, so the flat daylight chart is shown instead.');
         }
