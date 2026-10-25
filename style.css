@@ -1646,11 +1646,151 @@ html, body {
     justify-content: center;
     min-height: 400px;
     position: relative;
+    transition: min-height var(--transition-base);
 }
 
 #simulation-canvas {
     width: 100%;
     height: 100%;
+}
+
+/* Enhanced feedback when simulation resets */
+.canvas-wrapper.resetting {
+    animation: canvasResetFlash 200ms ease-out;
+}
+
+@keyframes canvasResetFlash {
+    0% { background-color: rgba(232, 160, 76, 0.08); }
+    100% { background-color: var(--bg-surface); }
+}
+
+/* Loading state - improved text hierarchy */
+.sim-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 20px;
+    padding: 40px;
+    text-align: center;
+}
+
+.loading-ring {
+    width: 72px;
+    height: 72px;
+}
+
+.loading-ring svg {
+    width: 100%;
+    height: 100%;
+    animation: spin 1.4s linear infinite;
+    transform-origin: center;
+}
+
+.loading-ring-track {
+    fill: none;
+    stroke: var(--border-default);
+    stroke-width: 5;
+}
+
+.loading-ring-fill {
+    fill: none;
+    stroke: var(--accent-primary);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 80;
+    stroke-dashoffset: 60;
+    filter: drop-shadow(0 0 8px var(--accent-glow-strong));
+}
+
+.loading-label {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-style: italic;
+    max-width: 280px;
+    line-height: 1.5;
+}
+
+.loading-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.loading-hint kbd {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-primary);
+}
+
+/* Error state - improved formatting */
+.sim-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-secondary);
+    text-align: center;
+    gap: 14px;
+    padding: 40px;
+}
+
+.sim-error-icon {
+    font-size: 48px;
+}
+
+.sim-error p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.sim-error-hint {
+    font-size: 12px !important;
+    color: var(--text-muted) !important;
+}
+
+.btn-retry-sketch {
+    padding: 10px 22px;
+    background: var(--accent-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    transition: all var(--transition-fast);
+    margin-top: 4px;
+}
+
+.btn-retry-sketch:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--accent-glow-strong);
+}
+
+/* Enhanced reset feedback on master toolbar */
+.btn-reset-sim:active {
+    transform: scale(0.96);
+}
+
+/* Touch target improvements - buttons at least 44px */
+.btn-control {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 10px 16px;
+}
+
+/* Speed selector touch target */
+.speed-select {
+    min-height: 48px;
+    padding: 8px 12px;
 }
 
 /* ── LOADING STATE ──────────────────────────────────── */
@@ -3045,32 +3185,121 @@ kbd {
     .sim-container {
         padding: 10px;
         gap: 10px;
+        min-height: auto;
+    }
+    
+    .canvas-wrapper {
+        min-height: 300px;
+        border-radius: var(--radius-md);
+    }
+    
+    .controls-wrapper {
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .control-group {
+        padding: 10px 12px;
+    }
+    
+    .sim-control-field {
+        padding: 8px 12px 12px;
+    }
+    
+    .sim-master-toolbar {
+        gap: 6px;
+        padding-bottom: 10px;
+    }
+    
+    .btn-control {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .speed-control-group {
+        gap: 6px;
+    }
+    
+    .speed-label {
+        font-size: 10px;
+    }
+    
+    .speed-select {
+        min-height: 44px;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .sim-timer-display {
+        min-width: 50px;
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    
+    .btn-reset {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .btn-back {
+        padding: 8px 12px;
+        font-size: 12px;
     }
     
     .sim-info-panel {
         max-height: 200px;
+        padding: 14px 16px;
+    }
+    
+    .sim-description-text {
+        font-size: 13px;
+        line-height: 1.6;
     }
     
     .sim-meta {
         grid-template-columns: 1fr 1fr;
+        gap: 8px;
     }
     
-    .stats-drawer {
-        width: 100%;
-        max-width: 100%;
-        border-left: none;
-        border-top: 1px solid var(--border-default);
-        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-        top: auto;
-        bottom: 0;
-        height: 88vh;
-        transform: translateY(100%);
+    .meta-item {
+        padding: 8px 10px;
     }
     
-    .stats-drawer.active {
-        transform: translateY(0);
+    .meta-label {
+        font-size: 9px;
     }
-
+    
+    .meta-value {
+        font-size: 12px;
+    }
+    
+    .sim-telemetry-panel {
+        padding: 12px;
+    }
+    
+    .telemetry-title {
+        font-size: 10px;
+    }
+    
+    .telemetry-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 6px;
+    }
+    
+    .telemetry-item {
+        padding: 6px 8px;
+    }
+    
+    .telemetry-label {
+        font-size: 9px;
+    }
+    
+    .telemetry-value {
+        font-size: 12px;
+    }
+}
 
 /* ── RESPONSIVE: SMALL MOBILE ────────────────────────── */
 @media (max-width: 480px) {
