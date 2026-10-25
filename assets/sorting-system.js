@@ -65,38 +65,80 @@ class SortingSystem {
     sortByMostUsed() {
         const container = document.querySelector('.simulations-container');
         if (!container) return;
-        
-        const cards = Array.from(container.querySelectorAll('.sim-card-featured'));
+
         const stats = window.statsTracker?.stats?.simulationsViewed || [];
-        
-        cards.sort((a, b) => {
-            const aId = this.getCardId(a);
-            const bId = this.getCardId(b);
-            const aIndex = stats.indexOf(aId);
-            const bIndex = stats.indexOf(bId);
-            
-            // Viewed items first, most recently viewed higher
-            if (aIndex === -1 && bIndex === -1) return 0;
-            if (aIndex === -1) return 1;
-            if (bIndex === -1) return -1;
-            return bIndex - aIndex;
+
+        // Group cards by their category grid and sort within each group
+        const grids = container.querySelectorAll('.category-sim-grid');
+        grids.forEach(grid => {
+            const cards = Array.from(grid.querySelectorAll('.sim-card-featured'));
+            cards.sort((a, b) => {
+                const aId = this.getCardId(a);
+                const bId = this.getCardId(b);
+                const aIndex = stats.indexOf(aId);
+                const bIndex = stats.indexOf(bId);
+
+                // Viewed items first, most recently viewed higher
+                if (aIndex === -1 && bIndex === -1) return 0;
+                if (aIndex === -1) return 1;
+                if (bIndex === -1) return -1;
+                return bIndex - aIndex;
+            });
+
+            // Re-append cards to their original grid
+            cards.forEach(card => grid.appendChild(card));
         });
-        
-        cards.forEach(card => container.appendChild(card));
+
+        // Restore original category header order
+        const headers = container.querySelectorAll('.gallery-category-header');
+        const categoryOrder = new Map();
+        headers.forEach((header, idx) => {
+            const title = header.querySelector('h2')?.textContent?.trim() || `Category ${idx + 1}`;
+            categoryOrder.set(title, idx);
+        });
+
+        const sortedHeaders = Array.from(headers).sort((a, b) => {
+            const titleA = a.querySelector('h2')?.textContent?.trim() || '';
+            const titleB = b.querySelector('h2')?.textContent?.trim() || '';
+            return (categoryOrder.get(titleA) ?? 999) - (categoryOrder.get(titleB) ?? 999);
+        });
+
+        sortedHeaders.forEach(header => container.appendChild(header));
     }
 
     sortByAlpha() {
         const container = document.querySelector('.simulations-container');
         if (!container) return;
 
-        const cards = Array.from(container.querySelectorAll('.sim-card-featured'));
-        cards.sort((a, b) => {
-            const aTitle = a.querySelector('.card-title')?.textContent.trim() || '';
-            const bTitle = b.querySelector('.card-title')?.textContent.trim() || '';
-            return aTitle.localeCompare(bTitle);
+        // Group cards by their category grid and sort within each group
+        const grids = container.querySelectorAll('.category-sim-grid');
+        grids.forEach(grid => {
+            const cards = Array.from(grid.querySelectorAll('.sim-card-featured'));
+            cards.sort((a, b) => {
+                const aTitle = a.querySelector('.card-title')?.textContent.trim() || '';
+                const bTitle = b.querySelector('.card-title')?.textContent.trim() || '';
+                return aTitle.localeCompare(bTitle);
+            });
+
+            // Re-append cards to their original grid
+            cards.forEach(card => grid.appendChild(card));
         });
 
-        cards.forEach(card => container.appendChild(card));
+        // Restore original category header order
+        const headers = container.querySelectorAll('.gallery-category-header');
+        const categoryOrder = new Map();
+        headers.forEach((header, idx) => {
+            const title = header.querySelector('h2')?.textContent?.trim() || `Category ${idx + 1}`;
+            categoryOrder.set(title, idx);
+        });
+
+        const sortedHeaders = Array.from(headers).sort((a, b) => {
+            const titleA = a.querySelector('h2')?.textContent?.trim() || '';
+            const titleB = b.querySelector('h2')?.textContent?.trim() || '';
+            return (categoryOrder.get(titleA) ?? 999) - (categoryOrder.get(titleB) ?? 999);
+        });
+
+        sortedHeaders.forEach(header => container.appendChild(header));
     }
     
     sortDefault() {

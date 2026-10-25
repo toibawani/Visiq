@@ -985,6 +985,57 @@ html, body {
     transition: opacity var(--transition-fast), height var(--transition-fast);
 }
 
+/* Card interactive states */
+.sim-card-featured:focus-within {
+    border-color: var(--card-accent, var(--accent-primary));
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 16px var(--card-accent-glow, transparent);
+    transform: translateY(-2px);
+    background: var(--bg-hover);
+}
+
+.sim-card-featured:hover {
+    transform: translateY(-2px);
+    border-color: var(--card-accent, var(--border-strong));
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5), 0 0 16px var(--card-accent-glow, transparent);
+    background: var(--bg-hover);
+}
+
+.sim-card-featured:hover::before {
+    opacity: 1;
+    height: 3px;
+}
+
+.sim-card-featured:hover .card-title {
+    color: var(--card-accent, var(--accent-primary));
+}
+
+.sim-card-featured.card-pressed {
+    transform: translateY(0);
+    transition: transform 60ms ease;
+}
+
+/* Improved card body and footer as single click target */
+.card-body,
+.card-footer {
+    cursor: pointer;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.card-body:hover,
+.card-footer:hover {
+    opacity: 0.85;
+}
+
+/* Make card-footer consistent */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 4px;
+}
+
 .sim-card-featured:hover {
     transform: translateY(-2px);
     border-color: var(--card-accent, var(--border-strong));

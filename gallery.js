@@ -87,7 +87,9 @@ class Gallery {
 
                 card.innerHTML = `
                     <div class="card-header">
-                        <div class="card-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+                        <div class="card-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        </div>
                         <button class="btn-favorite no-ripple"
                                 id="fav-btn-${sim.id}"
                                 data-sim-id="${sim.id}"
@@ -102,19 +104,19 @@ class Gallery {
                             <div class="card-category">${sim.category} • ${sim.difficulty}</div>
                         </div>
                     </div>
-                    <div class="card-body" role="button" tabindex="0" aria-label="Open ${sim.title} simulation" style="cursor: pointer;">
+                    <div class="card-body">
                         <p>${sim.description}</p>
                         <div class="card-tags">
                             ${sim.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
                         </div>
                     </div>
-                    <div class="card-footer" role="button" tabindex="0" aria-label="Launch ${sim.title}" style="cursor: pointer;">
+                    <div class="card-footer">
                         <span class="time">${sim.estimatedTime}</span>
                         <span class="arrow" aria-hidden="true">→</span>
                     </div>
                 `;
 
-                // Wire click and keyboard handlers
+                // Wire click handlers - single click target on card body
                 const openHandler = () => this.openSimulation(sim.id);
                 const body = card.querySelector('.card-body');
                 const footer = card.querySelector('.card-footer');
@@ -134,8 +136,6 @@ class Gallery {
                         if (window.statsTracker) {
                             const cur = window.statsTracker.isFavorite(sim.id);
                             cur ? window.statsTracker.removeFavorite(sim.id) : window.statsTracker.addFavorite(sim.id);
-                            // Label stays "Favorite"; aria-pressed is re-read from
-                            // the saved state so it always reports the truth.
                             favBtn.setAttribute('aria-pressed',
                                 String(window.statsTracker.isFavorite(sim.id)));
                         }
