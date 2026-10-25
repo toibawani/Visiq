@@ -6,6 +6,7 @@
 =================================================== */
 
 /* ── SELF-HOSTED FONTS (AESTHETIC BIBLE) ────────────── */
+/* NOTE: The @font-face unicode-range declarations remain unchanged. */
 @font-face {
     font-family: 'Fraunces';
     font-style: normal;
@@ -141,48 +142,51 @@
 
 /* ── HIGH-CLARITY LIGHT MODE ──────────────────────── */
 [data-theme="light"] {
-    --bg-canvas:       #f6f8fb;
+    /* Light canvas with a subtle cool tint so dark-text tokens read as "inverted" */
+    --bg-canvas:       #f5f7fa;
     --bg-surface:      #ffffff;
-    --bg-elevated:     #edf2f7;
+    --bg-elevated:     #f1f4f8;
     --bg-card:         #ffffff;
-    --bg-input:        #f1f5f9;
-    --bg-hover:        #f0f4f9;
-    --bg-active:       #e2e8f0;
+    --bg-input:        #eef2f7;
+    --bg-hover:        #e8edf4;
+    --bg-active:       #dde5ef;
 
-    --border-subtle:   rgba(0, 0, 0, 0.07);
-    --border-default:  rgba(0, 0, 0, 0.14);
-    --border-strong:   rgba(0, 0, 0, 0.26);
+    --border-subtle:   rgba(0, 0, 0, 0.06);
+    --border-default:  rgba(0, 0, 0, 0.12);
+    --border-strong:   rgba(0, 0, 0, 0.22);
 
-    --text-primary:    #0a0f1d;
-    --text-secondary:  #334155;
-    --text-muted:      #64748b;
-    --text-accent:     #b45309;
+    /* High-contrast light text */
+    --text-primary:    #0b0f1a;
+    --text-secondary:  #1e2a3a;
+    --text-muted:      #5b6b7b;
+    --text-accent:     #9a5a12;
 
-    --accent-primary:    #b45309;
-    --accent-physics:    #0284c7;
-    --accent-physics-glow: rgba(2, 132, 199, 0.15);
-    --accent-biology:    #059669;
-    --accent-biology-glow: rgba(5, 150, 105, 0.15);
-    --accent-chemistry:  #9333ea;
-    --accent-chemistry-glow: rgba(147, 51, 234, 0.15);
-    --accent-geography:  #d97706;
-    --accent-geography-glow: rgba(217, 119, 6, 0.15);
+    /* Same categorical accents (ink-safe), darkened for light mode */
+    --accent-primary:    #9a5a12;
+    --accent-physics:    #1a6fa0;
+    --accent-physics-glow: rgba(26, 111, 160, 0.18);
+    --accent-biology:    #0b7a4a;
+    --accent-biology-glow: rgba(11, 122, 74, 0.18);
+    --accent-chemistry:  #7c3aed;
+    --accent-chemistry-glow: rgba(124, 58, 237, 0.18);
+    --accent-geography:  #b45309;
+    --accent-geography-glow: rgba(180, 83, 9, 0.18);
     --accent-astronomy:  #b45309;
-    --accent-astronomy-glow: rgba(180, 83, 9, 0.15);
+    --accent-astronomy-glow: rgba(180, 83, 9, 0.18);
 
-    --accent-secondary:   #0369a1;  /* Instrument cool channel — deep azure */
+    --accent-secondary:   #0c5fa8;  /* Instrument cool channel — deep azure */
     --accent-danger:     #dc2626;
     --accent-success:    #16a34a;
-    --accent-glow:       rgba(180, 83, 9, 0.15);
-    --accent-glow-strong: rgba(180, 83, 9, 0.25);
+    --accent-glow:       rgba(154, 90, 18, 0.15);
+    --accent-glow-strong: rgba(154, 90, 18, 0.28);
 
-    --navbar-bg:       rgba(255, 255, 255, 0.95);
-    --navbar-border:   rgba(0, 0, 0, 0.1);
+    --navbar-bg:       rgba(255, 255, 255, 0.97);
+    --navbar-border:   rgba(0, 0, 0, 0.08);
 
-    --shadow-sm:       0 1px 3px rgba(15,23,42,0.06);
-    --shadow-md:       0 4px 16px rgba(15,23,42,0.09);
-    --shadow-lg:       0 16px 48px rgba(15,23,42,0.12);
-    --shadow-card:     0 1px 4px rgba(15,23,42,0.06), 0 0 0 1px var(--border-subtle);
+    --shadow-sm:       0 1px 3px rgba(15,23,42,0.05);
+    --shadow-md:       0 4px 16px rgba(15,23,42,0.07);
+    --shadow-lg:       0 16px 48px rgba(15,23,42,0.10);
+    --shadow-card:     0 1px 4px rgba(15,23,42,0.05), 0 0 0 1px var(--border-default);
     --shadow-glow:     0 0 20px var(--accent-glow-strong);
 }
 
@@ -601,7 +605,7 @@ html, body {
 .hero-section {
     padding: 90px 24px 60px;
     text-align: center;
-    background: var(--bg-surface);
+    background: var(--bg-canvas);
     border-bottom: 1px solid var(--border-subtle);
     position: relative;
     overflow: hidden;
@@ -709,14 +713,113 @@ html, body {
     transform: translateY(0);
 }
 
-/* ── SEARCH SECTION ─────────────────────────────────── */
+/* ── FEATURED FLUID CARD ────────────────────────────── */
+.featured-fluid-card {
+    padding: 0 20px 32px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.featured-fluid-link {
+    display: block;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    text-decoration: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.featured-fluid-link:hover {
+    border-color: var(--accent-physics);
+    box-shadow: 0 0 24px var(--accent-physics-glow);
+    background: var(--bg-elevated);
+}
+
+.featured-fluid-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.featured-fluid-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    color: var(--accent-physics);
+    background: rgba(0, 229, 255, 0.08);
+    border: 1px solid rgba(0, 229, 255, 0.22);
+    border-radius: var(--radius-pill);
+    padding: 3px 10px;
+}
+
+.featured-fluid-tag-secondary {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.featured-fluid-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+}
+
+.featured-fluid-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0 0 16px;
+    line-height: 1.65;
+}
+
+.featured-fluid-launch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+    color: var(--accent-physics);
+    text-decoration: none;
+}
+
+.featured-fluid-link:hover .featured-fluid-launch {
+    color: var(--accent-physics);
+}
+
+/* Light mode: fluid card background uses canvas background */
+[data-theme="light"] .featured-fluid-link {
+    background: transparent;
+    border-color: var(--border-default);
+}
+
+[data-theme="light"] .featured-fluid-link:hover {
+    background: var(--bg-elevated);
+}
+
+[data-theme="light"] .featured-fluid-tag {
+    background: rgba(26, 111, 160, 0.08);
+    border-color: rgba(26, 111, 160, 0.22);
+    color: var(--accent-physics);
+}
+
+[data-theme="light"] .featured-fluid-link:hover {
+    border-color: var(--accent-physics);
+    box-shadow: 0 0 24px var(--accent-physics-glow);
+}
 .search-section {
     padding: 32px 24px;
     background: var(--bg-canvas);
     border-bottom: 1px solid var(--border-subtle);
-    position: sticky;
-    top: 60px;
-    z-index: 100;
+    position: relative;
+    z-index: 1;
 }
 
 .search-container {
@@ -923,8 +1026,8 @@ html, body {
 }
 
 .card-icon {
-    font-size: 34px;
-    min-width: 40px;
+    font-size: 30px;
+    min-width: 34px;
     line-height: 1;
 }
 
@@ -963,8 +1066,7 @@ html, body {
 .card-meta {
     flex: 1;
     min-width: 0;
-    /* Reserve room for the absolutely-positioned Favorite button */
-    padding-right: 76px;
+    padding-right: 0;
 }
 
 .card-title {
@@ -973,9 +1075,12 @@ html, body {
     color: var(--text-primary);
     margin-bottom: 4px;
     transition: color var(--transition-fast);
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.35;
+    max-height: 2.7em;
 }
 
 .sim-card-featured:hover .card-title {
@@ -992,6 +1097,7 @@ html, body {
 
 .card-body {
     flex: 1;
+    padding-top: 6px;
 }
 
 .card-body p {
@@ -2835,6 +2941,30 @@ kbd {
 
     .search-section {
         padding: 18px 16px;
+    }
+
+    .hero-section {
+        padding: 60px 18px 40px;
+    }
+
+    .hero-section h1 {
+        font-size: 36px;
+    }
+
+    .hero-subtitle {
+        font-size: 18px;
+    }
+
+    .hero-description {
+        font-size: 14px;
+    }
+
+    .featured-fluid-card {
+        padding: 0 16px 24px;
+    }
+
+    .featured-fluid-title {
+        font-size: 1.2rem;
     }
 
     .simulations-section {
