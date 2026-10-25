@@ -2950,118 +2950,111 @@ kbd {
         height: 52px;
         padding: 0 14px;
     }
-
+    
     .view {
         margin-top: 52px;
     }
-
+    
     #simulation-view {
         margin-top: 52px;
     }
-
+    
     .nav-right {
         gap: 6px;
     }
-
+    
     .user-name {
         display: none;
     }
-
+    
     .btn-mute, .btn-logout, .btn-stats,
     .btn-favorites-toggle, .btn-sort, .btn-theme-toggle {
         padding: 6px 9px;
         font-size: 13px;
     }
-
+    
     .hero-section {
         padding: 60px 18px 40px;
     }
-
+    
     .hero-section h1 {
         font-size: 36px;
         letter-spacing: -1px;
     }
-
+    
     .hero-subtitle {
         font-size: 18px;
     }
-
+    
     .hero-description {
         font-size: 14px;
     }
-
-    .search-section {
-        padding: 18px 16px;
-    }
-
-    .hero-section {
-        padding: 60px 18px 40px;
-    }
-
-    .hero-section h1 {
-        font-size: 36px;
-    }
-
-    .hero-subtitle {
-        font-size: 18px;
-    }
-
-    .hero-description {
-        font-size: 14px;
-    }
-
+    
     .featured-fluid-card {
         padding: 0 16px 24px;
     }
-
+    
     .featured-fluid-title {
         font-size: 1.2rem;
     }
-
+    
+    .search-section {
+        padding: 18px 16px;
+    }
+    
     .simulations-section {
         padding: 36px 16px;
     }
-
+    
     .simulations-container {
         grid-template-columns: 1fr;
         gap: 14px;
     }
-
+    
     .sim-card-featured {
         padding: 16px;
+        border-radius: var(--radius-md);
     }
-
+    
+    .card-body {
+        padding-bottom: 8px;
+    }
+    
+    .card-footer {
+        padding-top: 10px;
+    }
+    
     .how-section {
         padding: 48px 16px;
     }
-
+    
     .how-grid {
         grid-template-columns: 1fr 1fr;
     }
-
+    
     .sim-header {
         flex-wrap: wrap;
         gap: 8px;
         padding: 12px 14px;
     }
-
+    
     .sim-title h1 {
         font-size: 17px;
     }
-
+    
     .sim-container {
         padding: 10px;
         gap: 10px;
     }
-
+    
     .sim-info-panel {
         max-height: 200px;
     }
-
+    
     .sim-meta {
         grid-template-columns: 1fr 1fr;
     }
-
+    
     .stats-drawer {
         width: 100%;
         max-width: 100%;
@@ -3073,32 +3066,11 @@ kbd {
         height: 88vh;
         transform: translateY(100%);
     }
-
+    
     .stats-drawer.active {
         transform: translateY(0);
     }
 
-    .shortcuts-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .shortcuts-category:nth-child(even) {
-        border-right: none;
-    }
-
-    .shortcuts-category {
-        border-right: none;
-    }
-
-    .onboarding-inner {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .onboarding-dismiss {
-        align-self: center;
-    }
-}
 
 /* ── RESPONSIVE: SMALL MOBILE ────────────────────────── */
 @media (max-width: 480px) {
