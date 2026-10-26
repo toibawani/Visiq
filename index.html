@@ -44,69 +44,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- AUTH PAGE -->
-    <div id="auth-page" class="auth-page active" role="main" aria-label="Sign in or Create Account">
-        <div class="auth-container">
-            <div class="auth-left">
-                <h1>VISIQ</h1>
-                <p>Interactive Science Visualizations</p>
-            </div>
-
-            <form class="auth-form active" id="login-form" autocomplete="on" novalidate>
-                <h2>Sign In</h2>
-                <div class="form-field">
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" name="email"
-                           placeholder="you@example.com" required
-                           autocomplete="email"
-                           aria-label="Email address">
-                </div>
-                <div class="form-field">
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password"
-                           placeholder="••••••••" required
-                           autocomplete="current-password"
-                           aria-label="Password">
-                </div>
-                <button type="submit" class="btn-primary" id="btn-login">Sign In</button>
-                <div class="auth-toggle">
-                    Don't have an account? <a href="#" id="link-to-signup" onclick="event.preventDefault(); window.authSystem.switchToSignup();">Create one</a>
-                </div>
-            </form>
-
-            <form class="auth-form" id="signup-form" style="display: none;" autocomplete="on" novalidate>
-                <h2>Create Account</h2>
-                <div class="form-field">
-                    <label for="signup-email">Email</label>
-                    <input type="email" id="signup-email" name="email"
-                           placeholder="you@example.com" required
-                           autocomplete="email"
-                           aria-label="Email address">
-                </div>
-                <div class="form-field">
-                    <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" name="password"
-                           placeholder="••••••••" required
-                           autocomplete="new-password"
-                           aria-label="Password (at least 6 characters)">
-                </div>
-                <div class="form-field">
-                    <label for="signup-confirm">Confirm Password</label>
-                    <input type="password" id="signup-confirm" name="confirm-password"
-                           placeholder="••••••••" required
-                           autocomplete="new-password"
-                           aria-label="Confirm password">
-                </div>
-                <button type="submit" class="btn-primary" id="btn-signup">Create Account</button>
-                <div class="auth-toggle">
-                    Already have an account? <a href="#" id="link-to-login" onclick="event.preventDefault(); window.authSystem.switchToLogin();">Sign in</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- MAIN APP -->
-    <div id="main-app" class="main-app" style="display: none;" aria-label="VISIQ Application">
+    <div id="main-app" class="main-app active" aria-label="VISIQ Application">
 
         <!-- NAVBAR -->
         <nav class="navbar" role="navigation" aria-label="Main navigation">
@@ -307,7 +246,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <script src="assets/config.js"></script>
     <script src="assets/simulations-data.js"></script>
-    <script src="assets/auth.js"></script>
+    
     <script src="assets/advanced-search.js"></script>
     <script src="assets/sim-details.js"></script>
     <script src="assets/sim-timer.js"></script>
