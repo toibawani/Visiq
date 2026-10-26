@@ -331,7 +331,7 @@ window.initSketch = function(config) {
 
                 // Standard legend & interaction caption
                 p.noStroke();
-                p.fill(65, 85, 120);
+                p.fill(148, 163, 184);
                 p.textSize(11);
                 p.textAlign(p.LEFT, p.BOTTOM);
                 p.text('White = velocity  |  Blue = gravity (GM/r²)  |  Drag bobs to fling into new orbits', 14, p.height - 10);
