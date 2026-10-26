@@ -253,7 +253,7 @@ window.initSketch = function(config) {
 
                 // Caption
                 p.noStroke();
-                p.fill(65, 85, 120);
+                p.fill(148, 163, 184);
                 p.textSize(11);
                 p.textAlign(p.LEFT, p.BOTTOM);
                 p.text('Amber = ambient  |  Teal = cool  |  Red = hot  |  Drag piston handle to compress gas', 14, p.height - 10);

@@ -283,7 +283,7 @@ window.initSketch = function(config) {
 
                 // Caption
                 p.noStroke();
-                p.fill(65, 85, 120);
+                p.fill(148, 163, 184);
                 p.textSize(11);
                 p.textAlign(p.LEFT, p.BOTTOM);
                 p.text('White = velocity (v)  |  Green = Lorentz force (F=q v×B)  |  Drag dipole to fling and reposition', 14, p.height - 10);

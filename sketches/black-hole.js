@@ -325,7 +325,7 @@
 
                     // Caption
                     p.noStroke();
-                    p.fill(65, 85, 120);
+                    p.fill(148, 163, 184);
                     p.textSize(11);
                     p.textAlign(p.LEFT, p.BOTTOM);
                     p.text('Amber = redshift  |  Teal = blueshift  |  Drag to aim & fling particles into orbit', 14, p.height - 10);
