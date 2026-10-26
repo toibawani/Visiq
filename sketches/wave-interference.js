@@ -54,6 +54,9 @@ window.initSketch = function(config) {
             let drag2 = VisualKit.createDragTracker();
             let waveOsc = null;
             let waveBuffer = null;
+            let waveWorker = null;
+            let waveWorkerReady = false;
+            let waveWorkerPending = null;
 
             // Stats sparkline history: wave speed over time
             let speedHistory = [];
@@ -70,6 +73,66 @@ window.initSketch = function(config) {
             }
 
             ctx.onDestroy = stopWaveSound;
+
+            // Initialize the wave-interference worker if available
+            function initWaveWorker() {
+                if (waveWorker) return;
+                try {
+                    waveWorker = new Worker('workers/wave-interference.worker.js');
+                    waveWorker.onmessage = (e) => {
+                        const msg = e.data;
+                        if (msg.type === 'ready') {
+                            waveWorkerReady = true;
+                            waveWorker.postMessage({
+                                type: 'init',
+                                width: p.width,
+                                height: p.height,
+                                downscale: 4
+                            });
+                            // Flush any pending compute request
+                            if (waveWorkerPending) {
+                                waveWorker.postMessage(waveWorkerPending);
+                                waveWorkerPending = null;
+                            }
+                        } else if (msg.type === 'computed') {
+                            if (waveBuffer && waveBuffer._img) {
+                                const img = waveBuffer._img;
+                                const src = new Uint8ClampedArray(msg.pixels);
+                                for (let i = 0; i < img.data.length; i++) {
+                                    img.data[i] = src[i];
+                                }
+                                waveBuffer._ctx.putImageData(img, 0, 0);
+                                p.drawingContext.imageSmoothingEnabled = true;
+                                p.drawingContext.drawImage(waveBuffer, 0, 0, p.width, p.height);
+                            }
+                        }
+                    };
+                    waveWorker.onerror = () => {
+                        console.warn('[wave-interference] Worker failed, falling back to main thread');
+                        waveWorker = null;
+                        waveWorkerReady = false;
+                    };
+                } catch (err) {
+                    console.warn('[wave-interference] Worker not available:', err.message);
+                    waveWorker = null;
+                }
+            }
+
+            function computeViaWorker(s1, s2, k, omegaTime, phaseRad, w, h, scale, gw, gh) {
+                if (!waveWorker || !waveWorkerReady) return false;
+                const msg = {
+                    type: 'compute',
+                    s1x: s1.x, s1y: s1.y,
+                    s2x: s2.x, s2y: s2.y,
+                    k, omegaTime, phaseRad,
+                    width: w, height: h, downscale: scale
+                };
+                if (waveBuffer && waveBuffer._img) {
+                    waveWorkerPending = msg;
+                }
+                waveWorker.postMessage(msg);
+                return true;
+            }
 
             const controls = document.getElementById(ctx.controlsContainerId);
             if (window.VisiqAudio && controls) {
@@ -148,44 +211,53 @@ window.initSketch = function(config) {
                     waveBuffer._ctx   = waveBuffer.getContext('2d');
                     waveBuffer._img   = waveBuffer._ctx.createImageData(gw, gh);
                     waveBuffer._u32   = new Uint32Array(waveBuffer._img.data.buffer);
-                }
-
-                const u32   = waveBuffer._u32;
-                const scale = downscale;
-
-                for (let gy = 0; gy < gh; gy++) {
-                    const y = gy * scale;
-                    const rowOffset = gy * gw;
-                    for (let gx = 0; gx < gw; gx++) {
-                        const x = gx * scale;
-
-                        const { a1, a2 } = computeInterference(x, y, s1, s2, k, omegaTime, phaseRad);
-                        const netAmp = (a1 + a2) * 0.5; // [-1, 1]
-
-                        let r, g, b, a;
-                        if (netAmp > 0) {
-                            // Crest: teal (#2dd4bf)
-                            const t = netAmp;
-                            r = Math.round(7  + (45  - 7)  * t);
-                            g = Math.round(9  + (212 - 9)  * t);
-                            b = Math.round(15 + (191 - 15) * t);
-                            a = Math.round(140 + 115 * t);
-                        } else {
-                            // Trough: indigo (#7c6af7)
-                            const t = -netAmp;
-                            r = Math.round(7  + (124 - 7)  * t);
-                            g = Math.round(9  + (106 - 9)  * t);
-                            b = Math.round(15 + (247 - 15) * t);
-                            a = Math.round(140 + 115 * t);
-                        }
-                        // Packed 0xAABBGGRR (little-endian)
-                        u32[rowOffset + gx] = (a << 24) | (b << 16) | (g << 8) | r;
+                    // Re-init worker with new dimensions
+                    if (waveWorker && waveWorkerReady) {
+                        waveWorker.postMessage({ type: 'init', width: w, height: h, downscale });
                     }
                 }
 
-                waveBuffer._ctx.putImageData(waveBuffer._img, 0, 0);
-                p.drawingContext.imageSmoothingEnabled = true;
-                p.drawingContext.drawImage(waveBuffer, 0, 0, w, h);
+                // Try to offload to worker; fall back to main-thread computation
+                const usedWorker = computeViaWorker(s1, s2, k, omegaTime, phaseRad, w, h, downscale, gw, gh);
+
+                if (!usedWorker) {
+                    const u32   = waveBuffer._u32;
+                    const scale = downscale;
+
+                    for (let gy = 0; gy < gh; gy++) {
+                        const y = gy * scale;
+                        const rowOffset = gy * gw;
+                        for (let gx = 0; gx < gw; gx++) {
+                            const x = gx * scale;
+
+                            const { a1, a2 } = computeInterference(x, y, s1, s2, k, omegaTime, phaseRad);
+                            const netAmp = (a1 + a2) * 0.5; // [-1, 1]
+
+                            let r, g, b, a;
+                            if (netAmp > 0) {
+                                // Crest: teal (#2dd4bf)
+                                const t = netAmp;
+                                r = Math.round(7  + (45  - 7)  * t);
+                                g = Math.round(9  + (212 - 9)  * t);
+                                b = Math.round(15 + (191 - 15) * t);
+                                a = Math.round(140 + 115 * t);
+                            } else {
+                                // Trough: indigo (#7c6af7)
+                                const t = -netAmp;
+                                r = Math.round(7  + (124 - 7)  * t);
+                                g = Math.round(9  + (106 - 9)  * t);
+                                b = Math.round(15 + (247 - 15) * t);
+                                a = Math.round(140 + 115 * t);
+                            }
+                            // Packed 0xAABBGGRR (little-endian)
+                            u32[rowOffset + gx] = (a << 24) | (b << 16) | (g << 8) | r;
+                        }
+                    }
+
+                    waveBuffer._ctx.putImageData(waveBuffer._img, 0, 0);
+                    p.drawingContext.imageSmoothingEnabled = true;
+                    p.drawingContext.drawImage(waveBuffer, 0, 0, w, h);
+                }
 
                 // ─────────────────────────────────────────────────────
                 // 2. Source baseline
