@@ -102,7 +102,8 @@ window.initSketch = function(config) {
                 // ── Left plate ──
                 const leftEdge = type === 0 ? cx - 20 - offset : cx - 20 + offset * 0.5;
                 p.noStroke();
-                p.fill(80, 65, 55);
+                // Continental crust (lighter, thicker)
+                p.fill(139, 119, 90);
                 p.rect(0, mid - 55, leftEdge, 60 + 55);
                 // Ocean sediment layer
                 p.fill(45, 55, 70);
@@ -110,7 +111,8 @@ window.initSketch = function(config) {
 
                 // ── Right plate ──
                 const rightEdge = type === 0 ? cx + 20 + offset : cx + 20 - offset * 0.5;
-                p.fill(80, 65, 55);
+                // Continental crust
+                p.fill(139, 119, 90);
                 p.rect(rightEdge, mid - 55, W - rightEdge, 60 + 55);
                 p.fill(45, 55, 70);
                 p.rect(rightEdge, mid - 10, W - rightEdge, 10);
