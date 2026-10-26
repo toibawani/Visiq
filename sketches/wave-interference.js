@@ -342,7 +342,7 @@ window.initSketch = function(config) {
                 // ─────────────────────────────────────────────────────
                 p.push();
                 p.noStroke();
-                p.fill(70, 90, 120);
+                p.fill(148, 163, 184);
                 p.textSize(11);
                 p.textAlign(p.LEFT, p.BOTTOM);
                 p.text('Drag S₁ or S₂ to reposition emitters  ·  Teal = crests  ·  Indigo = troughs', 16, h - 10);

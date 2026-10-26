@@ -252,7 +252,7 @@ window.initSketch = function(config) {
                 // 8. Footer hint
                 // ─────────────────────────────────────────────────────
                 p.push();
-                p.noStroke(); p.fill(70, 90, 120);
+                p.noStroke(); p.fill(148, 163, 184);
                 p.textSize(11); p.textAlign(p.LEFT, p.BOTTOM);
                 p.text('A (Green) pairs with T (Red)  ·  C (Teal) pairs with G (Amber)  ·  Helicase unwinds 5′→3′', 16, h - 10);
                 p.pop();

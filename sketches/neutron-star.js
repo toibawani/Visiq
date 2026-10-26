@@ -316,7 +316,7 @@ window.initSketch = function(config) {
                 // ─────────────────────────────────────────────────────
                 p.push();
                 p.noStroke();
-                p.fill(70, 90, 120);
+                p.fill(148, 163, 184);
                 p.textSize(10);
                 p.textAlign(p.LEFT, p.BOTTOM);
                 p.text('Blue beam = radio/X-ray pulsar lighthouse  ·  Glitch = crust quake, sudden spin-up  ·  High spin + accretion = ms pulsar', 14, H - 8);

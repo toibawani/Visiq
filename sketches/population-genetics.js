@@ -294,7 +294,7 @@ window.initSketch = function(config) {
                 // ─────────────────────────────────────────────────────
                 p.push();
                 p.noStroke();
-                p.fill(70, 90, 120);
+                p.fill(148, 163, 184);
                 p.textSize(11);
                 p.textAlign(p.LEFT, p.BOTTOM);
                 p.text('Teal = AA  ·  Green = Aa  ·  Amber = aa  ·  s > 0 removes aa  ·  small N → random drift', 16, p.height - 10);

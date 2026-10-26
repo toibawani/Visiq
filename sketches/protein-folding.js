@@ -245,7 +245,7 @@ window.initSketch = function(config) {
                 // ─────────────────────────────────────────────────────
                 p.push();
                 p.noStroke();
-                p.fill(70, 90, 120);
+                p.fill(148, 163, 184);
                 p.textSize(11);
                 p.textAlign(p.LEFT, p.BOTTOM);
                 p.text('Amber (H) = Hydrophobic core  ·  Teal (P) = Polar surface  ·  T > 345 K denatures protein', 16, p.height - 10);

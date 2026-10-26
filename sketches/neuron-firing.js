@@ -283,7 +283,7 @@ window.initSketch = function(config) {
                 // ─────────────────────────────────────────────────────
                 p.push();
                 p.noStroke();
-                p.fill(70, 90, 120);
+                p.fill(148, 163, 184);
                 p.textSize(11);
                 p.textAlign(p.LEFT, p.BOTTOM);
                 p.text('Click the soma (cell body) or inject current ≥ 12 μA to trigger all-or-nothing action potential', 16, h - 8);

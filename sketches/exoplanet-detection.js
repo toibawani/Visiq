@@ -287,7 +287,7 @@ window.initSketch = function(config) {
                 // ── Footer hint ────────────────────────────────────────
                 p.push();
                 p.noStroke();
-                p.fill(70, 90, 120);
+                p.fill(148, 163, 184);
                 p.textSize(10);
                 p.textAlign(p.LEFT, p.BOTTOM);
                 p.text('Transit dip reveals planet size  ·  RV wobble reveals mass  ·  Green ring = habitable zone', 14, H - 8);
