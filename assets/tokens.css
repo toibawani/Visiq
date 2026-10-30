@@ -1,0 +1,135 @@
+/* ===================================================
+   VISIQ — DESIGN TOKENS (Index and Stage Concept)
+   Author: Devin
+   Modular scale 1.25 · 4px spacing · 2px corners
+   AA Contrast · Minimal Motion · Color Roles
+=================================================== */
+
+:root {
+    /* ── FONT FAMILIES ────────────────────────────────── */
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Fallback', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* ── TYPE SCALE (modular 1.25 - major third) ─────── */
+    --type-scale: 1.25;
+    --type-size-neg2: 10.24px;
+    --type-size-neg1: 12.8px;
+    --type-size-0: 16px;
+    --type-size-1: 20px;
+    --type-size-2: 25px;
+    --type-size-3: 31.25px;
+    --type-size-4: 39.06px;
+    --type-size-5: 48.83px;
+
+    --type-line-height-neg2: 1.5;
+    --type-line-height-neg1: 1.5;
+    --type-line-height-0: 1.5;
+    --type-line-height-1: 1.4;
+    --type-line-height-2: 1.3;
+    --type-line-height-3: 1.2;
+    --type-line-height-4: 1.1;
+    --type-line-height-5: 1.0;
+
+    /* ── SPACING SCALE (4px base unit) ───────────────── */
+    --space-0: 0px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 48px;
+    --space-9: 64px;
+    --space-10: 96px;
+
+    /* ── CORNER RADIUS ───────────────────────────────── */
+    --radius: 2px;
+
+    /* ── MOTION DURATIONS ─────────────────────────────── */
+    --motion-stage-swap: 200ms;
+    --motion-transition: 300ms;
+    --motion-count: 600ms;
+    --motion-drawer: 250ms;
+    --motion-instant: 0ms;
+
+    /* ── MOTION EASING ───────────────────────────────── */
+    --ease-out: ease-out;
+    --ease-shared: cubic-bezier(0.4, 0.0, 0.2, 1);
+
+    /* ── REDUCED MOTION ───────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+        --motion-stage-swap: var(--motion-instant);
+        --motion-transition: var(--motion-instant);
+        --motion-count: var(--motion-instant);
+        --motion-drawer: var(--motion-instant);
+    }
+
+    /* ── COLOR ROLES (Dark Theme - Default) ───────────── */
+    --color-surface: #0d0e12;
+    --color-raised: #161820;
+    --color-text: #f5f3ed;
+    --color-muted: #8b8d93;
+    --color-rule: #2a2d35;
+
+    /* Category Accents (Dark) */
+    --accent-physics: #e85a56;
+    --accent-biology: #4a9f5c;
+    --accent-geography: #d4a62a;
+    --accent-astronomy: #4c7fd4;
+
+    /* ── Z-INDEX LAYERS ───────────────────────────────── */
+    --z-base: 1;
+    --z-nav: 100;
+    --z-stage: 50;
+    --z-panel: 200;
+    --z-drawer: 300;
+    --z-modal: 400;
+    --z-toast: 500;
+}
+
+/* ── LIGHT THEME ────────────────────────────────────── */
+[data-theme="light"] {
+    --color-surface: #f5f3ed;
+    --color-raised: #e8e6df;
+    --color-text: #0d0e12;
+    --color-muted: #6b6d73;
+    --color-rule: #d4d2c9;
+
+    /* Category Accents (Light) */
+    --accent-physics: #c73e3a;
+    --accent-biology: #2d7a3e;
+    --accent-geography: #b8860b;
+    --accent-astronomy: #2c5aa0;
+}
+
+/* ── TABULAR FIGURES FOR NUMBERS ────────────────────── */
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── UTILITY CLASSES ─────────────────────────────────── */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── FOCUS RING ─────────────────────────────────────── */
+:focus-visible {
+    outline: 2px solid var(--accent-physics);
+    outline-offset: 2px;
+}
+
+/* ── TOUCH TARGET MINIMUM ───────────────────────────── */
+.touch-target {
+    min-width: 48px;
+    min-height: 48px;
+}

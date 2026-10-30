@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISIQ UI Kit</title>
+    <link rel="stylesheet" href="../assets/tokens.css">
+    <link rel="stylesheet" href="../assets/components.css">
+    <style>
+        body {
+            padding: var(--space-6);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .ui-kit-header {
+            margin-bottom: var(--space-8);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--color-rule);
+        }
+        .ui-kit-header h1 {
+            font-family: var(--font-display);
+            font-size: var(--type-size-4);
+            margin-bottom: var(--space-2);
+        }
+        .ui-kit-header p {
+            font-family: var(--font-sans);
+            font-size: var(--type-size-0);
+            color: var(--color-muted);
+        }
+        .theme-toggle-section {
+            margin-bottom: var(--space-8);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        .section {
+            margin-bottom: var(--space-8);
+        }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: var(--type-size-2);
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--color-rule);
+        }
+        .component-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+        .component-showcase {
+            flex: 1;
+            min-width: 200px;
+            padding: var(--space-4);
+            background: var(--color-raised);
+            border: 1px solid var(--color-rule);
+            border-radius: var(--radius);
+        }
+        .component-showcase-title {
+            font-family: var(--font-mono);
+            font-size: var(--type-size-neg2);
+            color: var(--color-muted);
+            margin-bottom: var(--space-3);
+            text-transform: uppercase;
+        }
+        .state-label {
+            font-family: var(--font-mono);
+            font-size: var(--type-size-neg2);
+            color: var(--color-muted);
+            margin-top: var(--space-2);
+        }
+        .demo-stage {
+            position: relative;
+            height: 300px;
+            background: var(--color-raised);
+            border: 1px solid var(--color-rule);
+            border-radius: var(--radius);
+            margin-bottom: var(--space-4);
+        }
+        .demo-dock {
+            position: relative;
+            height: 100px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-rule);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-4);
+        }
+    </style>
+</head>
+<body>
+    <div class="ui-kit-header">
+        <h1>VISIQ UI Kit</h1>
+        <p>Living component showcase for Index and Stage concept. Toggle theme to see both light and dark modes.</p>
+    </div>
+
+    <div class="theme-toggle-section">
+        <span>Theme:</span>
+        <button class="nav-button" onclick="document.documentElement.setAttribute('data-theme', 'dark')">Dark</button>
+        <button class="nav-button" onclick="document.documentElement.setAttribute('data-theme', 'light')">Light</button>
+    </div>
+
+    <!-- Typography -->
+    <div class="section">
+        <h2 class="section-title">Typography</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Type Scale</div>
+                <div style="font-family: var(--font-display); font-size: var(--type-size-5);">Display 48.83px</div>
+                <div style="font-family: var(--font-display); font-size: var(--type-size-4);">Hero 39.06px</div>
+                <div style="font-family: var(--font-display); font-size: var(--type-size-3);">Heading 31.25px</div>
+                <div style="font-family: var(--font-display); font-size: var(--type-size-2);">Section 25px</div>
+                <div style="font-family: var(--font-sans); font-size: var(--type-size-1);">Large body 20px</div>
+                <div style="font-family: var(--font-sans); font-size: var(--type-size-0);">Body 16px</div>
+                <div style="font-family: var(--font-sans); font-size: var(--type-size-neg1);">Caption 12.8px</div>
+                <div style="font-family: var(--font-mono); font-size: var(--type-size-neg2);">Label 10.24px</div>
+            </div>
+            <div class="component-showcase">
+                <div class="component-showcase-title">Font Families</div>
+                <div style="font-family: var(--font-display); font-size: var(--type-size-1);">Fraunces (Display)</div>
+                <div style="font-family: var(--font-sans); font-size: var(--type-size-0);">IBM Plex Sans (UI)</div>
+                <div style="font-family: var(--font-mono); font-size: var(--type-size-0);">JetBrains Mono (Numbers)</div>
+                <div class="state-label">Tabular figures:</div>
+                <div style="font-family: var(--font-mono); font-variant-numeric: tabular-nums;">1234567890</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wordmark -->
+    <div class="section">
+        <h2 class="section-title">Wordmark</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Default</div>
+                <a href="#" class="wordmark">VISIQ</a>
+            </div>
+            <div class="component-showcase">
+                <div class="component-showcase-title">Hover</div>
+                <a href="#" class="wordmark" style="color: var(--accent-physics);">VISIQ</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="section">
+        <h2 class="section-title">Navigation</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Nav Buttons</div>
+                <button class="nav-button">Search</button>
+                <button class="nav-button">Theme</button>
+                <button class="nav-button">Progress</button>
+            </div>
+            <div class="component-showcase">
+                <div class="component-showcase-title">States</div>
+                <button class="nav-button">Default</button>
+                <button class="nav-button" disabled>Disabled</button>
+                <div class="state-label">Hover: background shifts, border shifts</div>
+                <div class="state-label">Active: 1px translate down</div>
+                <div class="state-label">Focus: 2px outline ring</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Index Row -->
+    <div class="section">
+        <h2 class="section-title">Index Row</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Default</div>
+                <div class="index-row">
+                    <div class="index-row-number">01</div>
+                    <div class="index-row-content">
+                        <div class="index-row-title">What happens when you throw a ball at 45 degrees?</div>
+                        <div class="index-row-hook">Explore projectile motion with and without air resistance</div>
+                        <div class="index-row-meta">projectile · 5 min · Beginner</div>
+                    </div>
+                </div>
+            </div>
+            <div class="component-showcase">
+                <div class="component-showcase-title">With Accent</div>
+                <div class="index-row">
+                    <div class="index-row-number">02</div>
+                    <div class="index-row-content">
+                        <div class="index-row-title"><span class="index-row-accent"></span>What would happen if you fell into a black hole?</div>
+                        <div class="index-row-hook">Watch spacetime curve near the event horizon</div>
+                        <div class="index-row-meta">black-hole-orbit · 8 min · Advanced</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chapter Heading -->
+    <div class="section">
+        <h2 class="section-title">Chapter Heading</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Chapter</div>
+                <div class="chapter-heading">MOTION</div>
+                <div class="chapter-heading">GRAVITY</div>
+                <div class="chapter-heading">WAVES</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Toggle -->
+    <div class="section">
+        <h2 class="section-title">Filter Toggle</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Filters</div>
+                <button class="filter-toggle" aria-pressed="true">All</button>
+                <button class="filter-toggle" aria-pressed="false">Beginner</button>
+                <button class="filter-toggle" aria-pressed="false">Intermediate</button>
+                <button class="filter-toggle" aria-pressed="false">Advanced</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stage -->
+    <div class="section">
+        <h2 class="section-title">Stage</h2>
+        <div class="component-group">
+            <div class="component-showcase" style="flex: 2;">
+                <div class="component-showcase-title">Live Stage</div>
+                <div class="stage">
+                    [Live sim preview: Black Hole Orbit]
+                </div>
+                <div class="stage-caption">What would happen if you fell into a black hole?</div>
+                <button class="stage-action">Open</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Palette -->
+    <div class="section">
+        <h2 class="section-title">Command Palette</h2>
+        <div class="component-group">
+            <div class="component-showcase" style="flex: 2;">
+                <div class="component-showcase-title">Dialog</div>
+                <button class="nav-button" onclick="document.querySelector('.command-palette').setAttribute('aria-hidden', 'false')">Open Palette (Cmd+K)</button>
+                <div class="command-palette" aria-hidden="true">
+                    <div class="command-palette-dialog" role="dialog" aria-modal="true">
+                        <input type="text" class="command-palette-input" placeholder="Search simulations…">
+                        <div class="command-palette-results">
+                            <div class="command-palette-item" aria-selected="false">
+                                <div class="command-palette-item-title">What happens when you throw a ball at 45 degrees?</div>
+                                <div class="command-palette-item-meta">projectile · 5 min · Beginner</div>
+                            </div>
+                            <div class="command-palette-item" aria-selected="false">
+                                <div class="command-palette-item-title">What would happen if you fell into a black hole?</div>
+                                <div class="command-palette-item-meta">black-hole-orbit · 8 min · Advanced</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control Dock -->
+    <div class="section">
+        <h2 class="section-title">Control Dock</h2>
+        <div class="component-group">
+            <div class="component-showcase" style="flex: 2;">
+                <div class="component-showcase-title">Dock Buttons</div>
+                <div class="demo-dock">
+                    <button class="dock-button primary">Play</button>
+                    <button class="dock-button">Step</button>
+                    <button class="dock-button">Speed</button>
+                    <button class="dock-button">Reset</button>
+                    <button class="dock-button">Share</button>
+                    <button class="dock-button">Fullscreen</button>
+                </div>
+                <div class="state-label">Primary button: accent color</div>
+                <div class="state-label">All buttons: 48px min touch target</div>
+                <div class="state-label">Hover: background shifts, border shifts</div>
+                <div class="state-label">Active: 1px translate down</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Parameter Panel -->
+    <div class="section">
+        <h2 class="section-title">Parameter Panel</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Panel</div>
+                <div class="parameter-panel" style="position: relative; top: 0; right: 0; max-height: none;">
+                    <div class="parameter-panel-header">
+                        <div class="parameter-panel-title">Parameters</div>
+                        <button class="parameter-panel-close">×</button>
+                    </div>
+                    <div class="parameter-row">
+                        <div class="parameter-label">Initial distance</div>
+                        <div class="parameter-value">500 km</div>
+                    </div>
+                    <div class="parameter-row">
+                        <div class="parameter-label">Initial velocity</div>
+                        <div class="parameter-value">8.2 km/s</div>
+                    </div>
+                    <input type="range" class="parameter-input" min="0" max="100" value="50">
+                    <div class="parameter-row">
+                        <div class="parameter-label">Mass</div>
+                        <div class="parameter-value">10 M☉</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Readout -->
+    <div class="section">
+        <h2 class="section-title">Readout</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Big Number</div>
+                <div class="readout">12.4<span class="readout-unit">km/s</span></div>
+                <div class="readout">98.7<span class="readout-unit">%</span></div>
+                <div class="readout">1.618<span class="readout-unit">ratio</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Drawer -->
+    <div class="section">
+        <h2 class="section-title">Notes Drawer</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Notes</div>
+                <div class="notes-drawer" style="position: relative; top: 0; right: 0; max-height: none;">
+                    <div class="notes-drawer-header">
+                        <div class="notes-drawer-title">Notes</div>
+                        <button class="notes-drawer-close">×</button>
+                    </div>
+                    <div class="note-item">
+                        <div class="note-number">1. Predict</div>
+                        <div class="note-text">Will the particle escape or fall in?</div>
+                    </div>
+                    <div class="note-item">
+                        <div class="note-number">2. What to notice</div>
+                        <div class="note-text">Watch how the path curves more as you get closer</div>
+                    </div>
+                    <div class="note-item">
+                        <div class="note-number">3. Try this</div>
+                        <div class="note-text">Start at different distances and compare</div>
+                    </div>
+                    <div class="note-item">
+                        <div class="note-number">4. Where the model stops</div>
+                        <div class="note-text">Doesn't account for Hawking radiation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graph Tray -->
+    <div class="section">
+        <h2 class="section-title">Graph Tray</h2>
+        <div class="component-group">
+            <div class="component-showcase" style="flex: 2;">
+                <div class="component-showcase-title">Graph</div>
+                <div class="graph-tray" style="position: relative; bottom: 0; left: 0; transform: none;">
+                    <div class="graph-canvas">[Graph: orbital velocity over time]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skeleton Loaders -->
+    <div class="section">
+        <h2 class="section-title">Skeleton Loaders</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Text Skeletons</div>
+                <div class="skeleton skeleton-text long"></div>
+                <div class="skeleton skeleton-text medium"></div>
+                <div class="skeleton skeleton-text short"></div>
+            </div>
+            <div class="component-showcase">
+                <div class="component-showcase-title">Card Skeleton</div>
+                <div class="skeleton" style="height: 100px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="section">
+        <h2 class="section-title">Toast</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">States</div>
+                <button class="nav-button" onclick="document.querySelector('.toast.success').setAttribute('aria-hidden', 'false')">Show Success</button>
+                <button class="nav-button" onclick="document.querySelector('.toast.error').setAttribute('aria-hidden', 'false')">Show Error</button>
+                <div class="toast success" aria-hidden="true">Link copied to clipboard</div>
+                <div class="toast error" aria-hidden="true">Failed to copy link</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="section">
+        <h2 class="section-title">Buttons</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">States</div>
+                <button class="button">Default</button>
+                <button class="button primary">Primary</button>
+                <button class="button" disabled>Disabled</button>
+                <button class="button loading">Loading</button>
+            </div>
+            <div class="component-showcase">
+                <div class="component-showcase-title">Tactile Feedback</div>
+                <div class="state-label">Hover: background shifts, border shifts</div>
+                <div class="state-label">Active: 1px translate down</div>
+                <div class="state-label">Focus: 2px outline ring</div>
+                <div class="state-label">Min touch target: 48px</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Color Roles -->
+    <div class="section">
+        <h2 class="section-title">Color Roles</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">Surface Colors</div>
+                <div style="background: var(--color-surface); color: var(--color-text); padding: var(--space-2); margin-bottom: var(--space-2);">Surface</div>
+                <div style="background: var(--color-raised); color: var(--color-text); padding: var(--space-2); margin-bottom: var(--space-2);">Raised</div>
+                <div style="background: var(--color-text); color: var(--color-surface); padding: var(--space-2); margin-bottom: var(--space-2);">Text</div>
+                <div style="background: var(--color-muted); color: var(--color-surface); padding: var(--space-2); margin-bottom: var(--space-2);">Muted</div>
+                <div style="background: var(--color-rule); color: var(--color-text); padding: var(--space-2);">Rule</div>
+            </div>
+            <div class="component-showcase">
+                <div class="component-showcase-title">Category Accents</div>
+                <div style="background: var(--accent-physics); color: var(--color-surface); padding: var(--space-2); margin-bottom: var(--space-2);">Physics</div>
+                <div style="background: var(--accent-biology); color: var(--color-surface); padding: var(--space-2); margin-bottom: var(--space-2);">Biology</div>
+                <div style="background: var(--accent-geography); color: var(--color-surface); padding: var(--space-2); margin-bottom: var(--space-2);">Geography</div>
+                <div style="background: var(--accent-astronomy); color: var(--color-surface); padding: var(--space-2);">Astronomy</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spacing Scale -->
+    <div class="section">
+        <h2 class="section-title">Spacing Scale</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">4px Base Unit</div>
+                <div style="display: flex; align-items: center; gap: var(--space-1); margin-bottom: var(--space-2);">
+                    <div style="width: 4px; height: 20px; background: var(--color-muted);"></div>
+                    <span>4px</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-1); margin-bottom: var(--space-2);">
+                    <div style="width: 8px; height: 20px; background: var(--color-muted);"></div>
+                    <span>8px</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-1); margin-bottom: var(--space-2);">
+                    <div style="width: 16px; height: 20px; background: var(--color-muted);"></div>
+                    <span>16px</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-1); margin-bottom: var(--space-2);">
+                    <div style="width: 24px; height: 20px; background: var(--color-muted);"></div>
+                    <span>24px</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-1); margin-bottom: var(--space-2);">
+                    <div style="width: 32px; height: 20px; background: var(--color-muted);"></div>
+                    <span>32px</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-1); margin-bottom: var(--space-2);">
+                    <div style="width: 48px; height: 20px; background: var(--color-muted);"></div>
+                    <span>48px</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-1);">
+                    <div style="width: 64px; height: 20px; background: var(--color-muted);"></div>
+                    <span>64px</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Corner Radius -->
+    <div class="section">
+        <h2 class="section-title">Corner Radius</h2>
+        <div class="component-group">
+            <div class="component-showcase">
+                <div class="component-showcase-title">2px Only</div>
+                <div style="width: 100px; height: 60px; background: var(--color-raised); border: 1px solid var(--color-rule); border-radius: 2px; display: flex; align-items: center; justify-content: center;">2px</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
