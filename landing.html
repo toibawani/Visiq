@@ -174,7 +174,69 @@
     </div>
 
     <script src="assets/icons.js"></script>
+    <script src="assets/command-palette.js"></script>
     <script>
+        // Mock data for command palette
+        const MOCK_ITEMS = [
+            {
+                id: 'projectile',
+                title: 'What happens when you throw a ball at 45 degrees?',
+                hook: 'Explore projectile motion with and without air resistance',
+                engine: 'projectile',
+                duration: '5 min',
+                level: 'Beginner',
+                tags: ['motion', 'gravity']
+            },
+            {
+                id: 'pendulum',
+                title: 'Why does a pendulum swing?',
+                hook: 'See how gravity and length determine the period',
+                engine: 'pendulum',
+                duration: '4 min',
+                level: 'Beginner',
+                tags: ['motion', 'oscillation']
+            },
+            {
+                id: 'black-hole-orbit',
+                title: 'What would happen if you fell into a black hole?',
+                hook: 'Watch spacetime curve near the event horizon',
+                engine: 'black-hole-orbit',
+                duration: '8 min',
+                level: 'Advanced',
+                tags: ['gravity', 'relativity']
+            },
+            {
+                id: 'solar-system',
+                title: 'How do planets orbit the sun?',
+                hook: 'Explore Kepler\'s laws in a 3D solar system',
+                engine: 'solar-system',
+                duration: '6 min',
+                level: 'Intermediate',
+                tags: ['gravity', 'astronomy']
+            },
+            {
+                id: 'wave-interference',
+                title: 'What happens when two waves meet?',
+                hook: 'Observe constructive and destructive interference',
+                engine: 'wave-interference',
+                duration: '6 min',
+                level: 'Intermediate',
+                tags: ['waves', 'superposition']
+            }
+        ];
+
+        // Initialize command palette
+        const commandPalette = new CommandPalette({
+            items: MOCK_ITEMS,
+            onSelect: (item) => {
+                console.log('Selected:', item);
+                // TODO: Navigate to sim page
+            },
+            onClose: () => {
+                document.getElementById('btn-search').focus();
+            }
+        });
+
         // Theme toggle
         const btnTheme = document.getElementById('btn-theme');
         const html = document.documentElement;
@@ -186,9 +248,23 @@
             btnTheme.textContent = newTheme === 'dark' ? 'Theme' : 'Theme';
         });
 
-        // Search keyboard shortcut
+        // Open command palette
+        const btnSearch = document.getElementById('btn-search');
+        btnSearch.addEventListener('click', () => {
+            commandPalette.open();
+        });
+
+        // Search keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+            // Cmd/Ctrl+K opens command palette
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                commandPalette.open();
+                return;
+            }
+
+            // / opens search input (when not in command palette)
+            if (e.key === '/' && !e.ctrlKey && !e.metaKey && !commandPalette.isOpen) {
                 e.preventDefault();
                 document.getElementById('search-input').focus();
             }
