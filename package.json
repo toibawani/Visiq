@@ -8,7 +8,8 @@
     "dev": "live-server --port=8000",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build-manifest": "node scripts/build-manifest.mjs"
   },
   "keywords": [
     "science",
