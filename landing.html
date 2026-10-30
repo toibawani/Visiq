@@ -175,6 +175,7 @@
 
     <script src="assets/icons.js"></script>
     <script src="assets/command-palette.js"></script>
+    <script src="assets/router.js"></script>
     <script>
         // Mock data for command palette
         const MOCK_ITEMS = [
@@ -225,12 +226,21 @@
             }
         ];
 
+        // Initialize router
+        const router = new Router({
+            defaultRoute: 'landing',
+            onRouteChange: (route, params) => {
+                console.log('Route changed:', route, params);
+            }
+        });
+
         // Initialize command palette
         const commandPalette = new CommandPalette({
             items: MOCK_ITEMS,
             onSelect: (item) => {
                 console.log('Selected:', item);
-                // TODO: Navigate to sim page
+                // Navigate to sim page with sim ID
+                router.navigate('sim.html', { sim: item.id });
             },
             onClose: () => {
                 document.getElementById('btn-search').focus();
@@ -292,8 +302,12 @@
             });
 
             row.addEventListener('click', () => {
-                // Open sim (placeholder)
-                console.log('Open sim:', row.querySelector('.index-row-title').textContent);
+                // Open sim (map to mock item by index)
+                const index = Array.from(indexRows).indexOf(row);
+                const item = MOCK_ITEMS[index];
+                if (item) {
+                    router.navigate('sim.html', { sim: item.id });
+                }
             });
         });
     </script>

@@ -140,7 +140,25 @@
     </div>
 
     <script src="assets/icons.js"></script>
+    <script src="assets/router.js"></script>
     <script>
+        // Initialize router
+        const router = new Router({
+            defaultRoute: 'sim',
+            onRouteChange: (route, params) => {
+                const simId = params.sim;
+                if (simId && router.validateSimId(simId)) {
+                    console.log('Loading sim:', simId);
+                    // TODO: Load simulation by ID
+                    document.querySelector('.sim-title').textContent = `Simulation: ${simId}`;
+                } else {
+                    console.error('Invalid sim ID:', simId);
+                    // Redirect to landing
+                    router.navigate('landing.html');
+                }
+            }
+        });
+
         // Theme toggle
         const btnTheme = document.getElementById('btn-theme');
         if (btnTheme) {
