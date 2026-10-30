@@ -1,0 +1,61 @@
+{
+  "id": "projectile-45-degrees",
+  "engine": "projectile",
+  "title": "What happens when you throw a ball at 45 degrees?",
+  "hook": "Explore projectile motion with and without air resistance",
+  "chapter": "Motion",
+  "tags": ["motion", "gravity", "forces"],
+  "level": "Beginner",
+  "params": {
+    "angle": {
+      "value": 45,
+      "min": 0,
+      "max": 90,
+      "unit": "deg"
+    },
+    "velocity": {
+      "value": 50,
+      "min": 1,
+      "max": 100,
+      "unit": "m/s"
+    },
+    "gravity": {
+      "value": 9.81,
+      "min": 1,
+      "max": 30,
+      "unit": "m/s²"
+    },
+    "drag": {
+      "value": 0,
+      "min": 0,
+      "max": 1,
+      "unit": ""
+    },
+    "mass": {
+      "value": 1,
+      "min": 0.1,
+      "max": 10,
+      "unit": "kg"
+    }
+  },
+  "goal": "Understand how launch angle affects projectile range and how air resistance changes the optimal angle",
+  "predict": {
+    "question": "At 45 degrees with no air resistance, where will the ball land relative to other angles?",
+    "options": [
+      "It will land farther than any other angle",
+      "It will land shorter than some angles",
+      "It will land at the same distance as 30 degrees",
+      "It will never land"
+    ],
+    "answer": 0,
+    "why": "Without air resistance, 45 degrees gives the maximum range for a given initial velocity. This is because range is proportional to sin(2θ), which peaks at θ = 45 degrees."
+  },
+  "whatHappens": "The projectile follows a parabolic trajectory under the influence of gravity. Without air resistance, the horizontal motion is constant while vertical motion accelerates downward. With air resistance, both horizontal and vertical motion are slowed, causing the projectile to fall shorter and follow a steeper descent.",
+  "whyItHappens": "Gravity acts downward, causing constant acceleration in the vertical direction. Air resistance opposes motion in both directions, proportional to velocity. The combination of these forces produces the curved path. The parabolic shape emerges from the independence of horizontal and vertical motion when drag is zero.",
+  "limits": "This model assumes constant gravity, flat ground, and no wind. It does not account for air density changes with altitude, the Coriolis effect, or relativistic effects at very high speeds.",
+  "sources": [
+    "https://en.wikipedia.org/wiki/Projectile_motion",
+    "https://phys.libretexts.org/Bookshelves/Classical_Mechanics/Classical_Mechanics_(Dourmashkin)/03%3A_Motion_in_Two_and_Three_Dimensions/3.03%3A_Projectile_Motion"
+  ],
+  "reviewStatus": "approved"
+}
