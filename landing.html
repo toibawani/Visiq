@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISIQ – Interactive Science Learning</title>
+    <meta name="description" content="Interactive science simulations for curious people aged 15 to 80.">
+    <link rel="stylesheet" href="assets/tokens.css">
+    <link rel="stylesheet" href="assets/components.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-surface);
+            color: var(--color-text);
+            min-height: 100vh;
+        }
+        .page-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        .honest-sentence {
+            font-size: var(--type-size-0);
+            line-height: 1.5;
+            color: var(--color-muted);
+            margin-bottom: var(--space-4);
+        }
+        .search-wrapper {
+            margin-bottom: var(--space-6);
+        }
+        .search-field {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            background: var(--color-raised);
+            border: 1px solid var(--color-rule);
+            border-radius: var(--radius);
+            color: var(--color-text);
+            font-family: var(--font-sans);
+            font-size: var(--type-size-0);
+        }
+        .search-field:focus-visible {
+            outline: 2px solid var(--accent-physics);
+            outline-offset: 2px;
+        }
+        .search-hint {
+            font-size: var(--type-size-neg2);
+            color: var(--color-muted);
+            margin-top: var(--space-1);
+        }
+        .main-layout {
+            display: grid;
+            grid-template-columns: 5fr 7fr;
+            gap: var(--space-8);
+            align-items: start;
+        }
+        .index-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+        .filters {
+            display: flex;
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+            flex-wrap: wrap;
+        }
+        .stage-container {
+            position: sticky;
+            top: var(--space-6);
+        }
+        /* Responsive */
+        @media (max-width: 1099px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .stage-container {
+                position: relative;
+                top: 0;
+                order: -1;
+                margin-bottom: var(--space-6);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-left">
+            <a href="#" class="wordmark">VISIQ</a>
+        </div>
+        <div class="nav-right">
+            <button class="nav-button" id="btn-search" aria-label="Open search">Search</button>
+            <button class="nav-button" id="btn-theme" aria-label="Toggle theme">Theme</button>
+            <button class="nav-button" id="btn-progress" aria-label="View progress">Progress</button>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <p class="honest-sentence">Interactive science simulations for curious people aged 15 to 80.</p>
+
+        <div class="search-wrapper">
+            <input type="text" class="search-field" id="search-input" placeholder="Search simulations…">
+            <div class="search-hint">Press / to search</div>
+        </div>
+
+        <div class="main-layout">
+            <div class="index-container">
+                <div class="chapter-heading">MOTION</div>
+                <div class="index-row" tabindex="0" role="button" aria-label="What happens when you throw a ball at 45 degrees?">
+                    <div class="index-row-number">01</div>
+                    <div class="index-row-content">
+                        <div class="index-row-title"><span class="index-row-accent"></span>What happens when you throw a ball at 45 degrees?</div>
+                        <div class="index-row-hook">Explore projectile motion with and without air resistance</div>
+                        <div class="index-row-meta">projectile · 5 min · Beginner</div>
+                    </div>
+                </div>
+                <div class="index-row" tabindex="0" role="button" aria-label="Why does a pendulum swing?">
+                    <div class="index-row-number">02</div>
+                    <div class="index-row-content">
+                        <div class="index-row-title">Why does a pendulum swing?</div>
+                        <div class="index-row-hook">See how gravity and length determine the period</div>
+                        <div class="index-row-meta">pendulum · 4 min · Beginner</div>
+                    </div>
+                </div>
+
+                <div class="chapter-heading">GRAVITY</div>
+                <div class="index-row" tabindex="0" role="button" aria-label="What would happen if you fell into a black hole?">
+                    <div class="index-row-number">03</div>
+                    <div class="index-row-content">
+                        <div class="index-row-title">What would happen if you fell into a black hole?</div>
+                        <div class="index-row-hook">Watch spacetime curve near the event horizon</div>
+                        <div class="index-row-meta">black-hole-orbit · 8 min · Advanced</div>
+                    </div>
+                </div>
+                <div class="index-row" tabindex="0" role="button" aria-label="How do planets orbit the sun?">
+                    <div class="index-row-number">04</div>
+                    <div class="index-row-content">
+                        <div class="index-row-title">How do planets orbit the sun?</div>
+                        <div class="index-row-hook">Explore Kepler's laws in a 3D solar system</div>
+                        <div class="index-row-meta">solar-system · 6 min · Intermediate</div>
+                    </div>
+                </div>
+
+                <div class="chapter-heading">WAVES</div>
+                <div class="index-row" tabindex="0" role="button" aria-label="What happens when two waves meet?">
+                    <div class="index-row-number">05</div>
+                    <div class="index-row-content">
+                        <div class="index-row-title">What happens when two waves meet?</div>
+                        <div class="index-row-hook">Observe constructive and destructive interference</div>
+                        <div class="index-row-meta">wave-interference · 6 min · Intermediate</div>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <button class="filter-toggle" aria-pressed="true">All</button>
+                    <button class="filter-toggle" aria-pressed="false">Beginner</button>
+                    <button class="filter-toggle" aria-pressed="false">Intermediate</button>
+                    <button class="filter-toggle" aria-pressed="false">Advanced</button>
+                </div>
+            </div>
+
+            <div class="stage-container">
+                <div class="stage" id="stage">
+                    [Live sim preview: Black Hole Orbit]
+                </div>
+                <div class="stage-caption" id="stage-caption">What would happen if you fell into a black hole?</div>
+                <button class="stage-action" id="stage-action">Open</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/icons.js"></script>
+    <script>
+        // Theme toggle
+        const btnTheme = document.getElementById('btn-theme');
+        const html = document.documentElement;
+
+        btnTheme.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            btnTheme.textContent = newTheme === 'dark' ? 'Theme' : 'Theme';
+        });
+
+        // Search keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                document.getElementById('search-input').focus();
+            }
+        });
+
+        // Filter toggles
+        const filterToggles = document.querySelectorAll('.filter-toggle');
+        filterToggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                filterToggles.forEach(t => t.setAttribute('aria-pressed', 'false'));
+                toggle.setAttribute('aria-pressed', 'true');
+            });
+        });
+
+        // Index row focus updates stage
+        const indexRows = document.querySelectorAll('.index-row');
+        const stage = document.getElementById('stage');
+        const stageCaption = document.getElementById('stage-caption');
+        const stageAction = document.getElementById('stage-action');
+
+        indexRows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                const title = row.querySelector('.index-row-title').textContent;
+                stageCaption.textContent = title;
+            });
+
+            row.addEventListener('click', () => {
+                // Open sim (placeholder)
+                console.log('Open sim:', row.querySelector('.index-row-title').textContent);
+            });
+        });
+    </script>
+</body>
+</html>
