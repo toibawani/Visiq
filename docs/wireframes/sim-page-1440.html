@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISIQ Sim Page Wireframe (1440px)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0d0e12;
+            color: #f5f3ed;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .sim-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .sim-header > * {
+            pointer-events: auto;
+        }
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            color: #f5f3ed;
+            text-decoration: none;
+            background: rgba(13, 14, 18, 0.8);
+            padding: 8px 12px;
+            border: 1px solid #2a2d35;
+            border-radius: 2px;
+        }
+        .sim-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .key-quantity {
+            font-family: monospace;
+            font-size: 32px;
+            background: rgba(13, 14, 18, 0.8);
+            padding: 8px 16px;
+            border: 1px solid #2a2d35;
+            border-radius: 2px;
+        }
+        .canvas {
+            flex: 1;
+            background: #161820;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b8d93;
+            font-size: 16px;
+        }
+        .dock {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 24px;
+            background: rgba(13, 14, 18, 0.95);
+            border-top: 1px solid #2a2d35;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            z-index: 10;
+        }
+        .dock-btn {
+            padding: 10px 16px;
+            background: #161820;
+            border: 1px solid #2a2d35;
+            border-radius: 2px;
+            color: #f5f3ed;
+            font-size: 14px;
+            cursor: pointer;
+            min-width: 48px;
+            min-height: 48px;
+        }
+        .dock-btn:hover {
+            background: #2a2d35;
+        }
+        .dock-btn.primary {
+            background: #e85a56;
+            border-color: #e85a56;
+        }
+        .dock-btn.primary:hover {
+            background: #c73e3a;
+        }
+        .panel {
+            position: absolute;
+            top: 64px;
+            right: 24px;
+            width: 320px;
+            background: rgba(13, 14, 18, 0.95);
+            border: 1px solid #2a2d35;
+            border-radius: 2px;
+            padding: 16px;
+            z-index: 5;
+        }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #2a2d35;
+        }
+        .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .panel-close {
+            background: none;
+            border: none;
+            color: #8b8d93;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .param-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .param-label {
+            font-size: 12px;
+            color: #8b8d93;
+        }
+        .param-value {
+            font-family: monospace;
+            font-size: 14px;
+            text-align: right;
+        }
+        .param-input {
+            grid-column: 1 / -1;
+            width: 100%;
+            padding: 8px;
+            background: #161820;
+            border: 1px solid #2a2d35;
+            border-radius: 2px;
+            color: #f5f3ed;
+            font-size: 14px;
+        }
+        .notes-drawer {
+            position: absolute;
+            top: 64px;
+            right: 360px;
+            width: 280px;
+            background: rgba(13, 14, 18, 0.95);
+            border: 1px solid #2a2d35;
+            border-radius: 2px;
+            padding: 16px;
+            z-index: 5;
+        }
+        .note-item {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #2a2d35;
+        }
+        .note-number {
+            font-family: monospace;
+            font-size: 12px;
+            color: #e85a56;
+            margin-bottom: 4px;
+        }
+        .note-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #8b8d93;
+        }
+        .graph-tray {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 200px;
+            background: rgba(13, 14, 18, 0.95);
+            border: 1px solid #2a2d35;
+            border-radius: 2px;
+            padding: 16px;
+            z-index: 5;
+        }
+        .graph-placeholder {
+            width: 100%;
+            height: 100%;
+            border: 1px dashed #2a2d35;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b8d93;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sim-header">
+        <a href="#" class="back-link">← Back</a>
+        <div class="sim-title">What would happen if you fell into a black hole?</div>
+        <div class="key-quantity">12.4 km/s</div>
+    </div>
+
+    <div class="canvas">
+        [Full-bleed simulation canvas]
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <div class="panel-title">Parameters</div>
+            <button class="panel-close">×</button>
+        </div>
+        <div class="param-row">
+            <div class="param-label">Initial distance</div>
+            <div class="param-value">500 km</div>
+        </div>
+        <div class="param-row">
+            <div class="param-label">Initial velocity</div>
+            <div class="param-value">8.2 km/s</div>
+        </div>
+        <input type="range" class="param-input" min="0" max="100" value="50">
+        <div class="param-row">
+            <div class="param-label">Mass</div>
+            <div class="param-value">10 M☉</div>
+        </div>
+    </div>
+
+    <div class="notes-drawer">
+        <div class="panel-header">
+            <div class="panel-title">Notes</div>
+            <button class="panel-close">×</button>
+        </div>
+        <div class="note-item">
+            <div class="note-number">1. Predict</div>
+            <div class="note-text">Will the particle escape or fall in?</div>
+        </div>
+        <div class="note-item">
+            <div class="note-number">2. What to notice</div>
+            <div class="note-text">Watch how the path curves more as you get closer</div>
+        </div>
+        <div class="note-item">
+            <div class="note-number">3. Try this</div>
+            <div class="note-text">Start at different distances and compare</div>
+        </div>
+        <div class="note-item">
+            <div class="note-number">4. Where the model stops</div>
+            <div class="note-text">Doesn't account for Hawking radiation</div>
+        </div>
+    </div>
+
+    <div class="graph-tray">
+        <div class="graph-placeholder">[Graph: orbital velocity over time]</div>
+    </div>
+
+    <div class="dock">
+        <button class="dock-btn primary">Play</button>
+        <button class="dock-btn">Step</button>
+        <button class="dock-btn">Speed</button>
+        <button class="dock-btn">Reset</button>
+        <button class="dock-btn">Share</button>
+        <button class="dock-btn">Fullscreen</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISIQ Landing Wireframe (390px)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f3ed;
+            color: #0d0e12;
+            padding: 16px;
+            max-width: 390px;
+            margin: 0 auto;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #d4d2c9;
+        }
+        .wordmark {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .nav-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .nav-item {
+            padding: 8px 12px;
+            border: 1px solid #d4d2c9;
+            border-radius: 2px;
+            font-size: 12px;
+            background: #e8e6df;
+        }
+        .hero-sim {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: #e8e6df;
+            border: 1px solid #d4d2c9;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b6d73;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .index {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .chapter {
+            padding: 8px 0;
+            border-bottom: 1px solid #d4d2c9;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b6d73;
+        }
+        .index-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 12px 0;
+            border-bottom: 1px solid #d4d2c9;
+        }
+        .row-header {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .row-number {
+            font-family: monospace;
+            font-size: 12px;
+            color: #6b6d73;
+        }
+        .row-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .row-hook {
+            font-size: 13px;
+            color: #6b6d73;
+            line-height: 1.4;
+        }
+        .row-meta {
+            font-family: monospace;
+            font-size: 11px;
+            color: #6b6d73;
+        }
+        .row-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: #e8e6df;
+            border: 1px solid #d4d2c9;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b6d73;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .accent-mark {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #c73e3a;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="wordmark">VISIQ</div>
+        <div class="nav-right">
+            <div class="nav-item">Search</div>
+            <div class="nav-item">Theme</div>
+        </div>
+    </nav>
+
+    <div class="hero-sim">
+        [Live hero sim: Black Hole Orbit]
+    </div>
+
+    <div class="index">
+        <div class="chapter">MOTION</div>
+        <div class="index-row">
+            <div class="row-header">
+                <div class="row-number">01</div>
+                <div class="row-title"><span class="accent-mark"></span>What happens when you throw a ball at 45 degrees?</div>
+            </div>
+            <div class="row-hook">Explore projectile motion with and without air resistance</div>
+            <div class="row-meta">projectile · 5 min · Beginner</div>
+            <div class="row-thumbnail">[Static thumbnail]</div>
+        </div>
+        <div class="index-row">
+            <div class="row-header">
+                <div class="row-number">02</div>
+                <div class="row-title">Why does a pendulum swing?</div>
+            </div>
+            <div class="row-hook">See how gravity and length determine the period</div>
+            <div class="row-meta">passive-single · 4 min · Beginner</div>
+            <div class="row-thumbnail">[Static thumbnail]</div>
+        </div>
+
+        <div class="chapter">GRAVITY</div>
+        <div class="index-row">
+            <div class="row-header">
+                <div class="row-number">03</div>
+                <div class="row-title">What would happen if you fell into a black hole?</div>
+            </div>
+            <div class="row-hook">Watch spacetime curve near the event horizon</div>
+            <div class="row-meta">black-hole-orbit · 8 min · Advanced</div>
+            <div class="row-thumbnail">[Static thumbnail]</div>
+        </div>
+        <div class="index-row">
+            <div class="row-header">
+                <div class="row-number">04</div>
+                <div class="row-title">How do planets orbit the sun?</div>
+            </div>
+            <div class="row-hook">Explore Kepler's laws in a 3D solar system</div>
+            <div class="row-meta">solar-system · 6 min · Intermediate</div>
+            <div class="row-thumbnail">[Static thumbnail]</div>
+        </div>
+
+        <div class="chapter">WAVES</div>
+        <div class="index-row">
+            <div class="row-header">
+                <div class="row-number">05</div>
+                <div class="row-title">What happens when two waves meet?</div>
+            </div>
+            <div class="row-hook">Observe constructive and destructive interference</div>
+            <div class="row-meta">wave-interference · 6 min · Intermediate</div>
+            <div class="row-thumbnail">[Static thumbnail]</div>
+        </div>
+    </div>
+</body>
+</html>
