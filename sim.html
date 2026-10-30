@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISIQ – Simulation</title>
+    <link rel="stylesheet" href="assets/tokens.css">
+    <link rel="stylesheet" href="assets/components.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-surface);
+            color: var(--color-text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .sim-container {
+            flex: 1;
+            position: relative;
+            background: var(--color-raised);
+        }
+        .sim-canvas {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-muted);
+            font-family: var(--font-sans);
+            font-size: var(--type-size-0);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--color-text);
+            font-family: var(--font-sans);
+            font-size: var(--type-size-0);
+            background: var(--color-raised);
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--color-rule);
+            border-radius: var(--radius);
+        }
+        .back-link:hover {
+            background: var(--color-surface);
+            border-color: var(--color-muted);
+        }
+        .sim-title {
+            font-family: var(--font-display);
+            font-size: var(--type-size-2);
+            font-weight: 700;
+            color: var(--color-text);
+        }
+        @media (max-width: 480px) {
+            .sim-title {
+                font-size: var(--type-size-1);
+                max-width: 200px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sim-header">
+        <a href="landing.html" class="back-link">← Back</a>
+        <div class="sim-title">What would happen if you fell into a black hole?</div>
+        <div class="readout">12.4<span class="readout-unit">km/s</span></div>
+    </div>
+
+    <div class="sim-container">
+        <div class="sim-canvas">
+            [Full-bleed simulation canvas]
+        </div>
+
+        <div class="parameter-panel" id="parameter-panel">
+            <div class="parameter-panel-header">
+                <div class="parameter-panel-title">Parameters</div>
+                <button class="parameter-panel-close" aria-label="Close parameters">×</button>
+            </div>
+            <div class="parameter-row">
+                <div class="parameter-label">Initial distance</div>
+                <div class="parameter-value">500 km</div>
+            </div>
+            <div class="parameter-row">
+                <div class="parameter-label">Initial velocity</div>
+                <div class="parameter-value">8.2 km/s</div>
+            </div>
+            <input type="range" class="parameter-input" min="0" max="100" value="50">
+            <div class="parameter-row">
+                <div class="parameter-label">Mass</div>
+                <div class="parameter-value">10 M☉</div>
+            </div>
+        </div>
+
+        <div class="notes-drawer" id="notes-drawer">
+            <div class="notes-drawer-header">
+                <div class="notes-drawer-title">Notes</div>
+                <button class="notes-drawer-close" aria-label="Close notes">×</button>
+            </div>
+            <div class="note-item">
+                <div class="note-number">1. Predict</div>
+                <div class="note-text">Will the particle escape or fall in?</div>
+            </div>
+            <div class="note-item">
+                <div class="note-number">2. What to notice</div>
+                <div class="note-text">Watch how the path curves more as you get closer</div>
+            </div>
+            <div class="note-item">
+                <div class="note-number">3. Try this</div>
+                <div class="note-text">Start at different distances and compare</div>
+            </div>
+            <div class="note-item">
+                <div class="note-number">4. Where the model stops</div>
+                <div class="note-text">Doesn't account for Hawking radiation</div>
+            </div>
+        </div>
+
+        <div class="graph-tray" id="graph-tray">
+            <div class="graph-canvas">[Graph: orbital velocity over time]</div>
+        </div>
+
+        <div class="control-dock">
+            <button class="dock-button primary" id="btn-play" aria-label="Play">Play</button>
+            <button class="dock-button" id="btn-step" aria-label="Step">Step</button>
+            <button class="dock-button" id="btn-speed" aria-label="Speed">Speed</button>
+            <button class="dock-button" id="btn-reset" aria-label="Reset">Reset</button>
+            <button class="dock-button" id="btn-share" aria-label="Share">Share</button>
+            <button class="dock-button" id="btn-fullscreen" aria-label="Fullscreen">Fullscreen</button>
+        </div>
+    </div>
+
+    <script src="assets/icons.js"></script>
+    <script>
+        // Theme toggle
+        const btnTheme = document.getElementById('btn-theme');
+        if (btnTheme) {
+            const html = document.documentElement;
+            btnTheme.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', newTheme);
+            });
+        }
+
+        // Panel toggle
+        const parameterPanel = document.getElementById('parameter-panel');
+        const parameterClose = document.querySelector('.parameter-panel-close');
+        const notesDrawer = document.getElementById('notes-drawer');
+        const notesClose = document.querySelector('.notes-drawer-close');
+        const graphTray = document.getElementById('graph-tray');
+
+        // Hide panels by default
+        parameterPanel.style.display = 'none';
+        notesDrawer.style.display = 'none';
+        graphTray.style.display = 'none';
+
+        // Show/hide parameter panel
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'p' && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                parameterPanel.style.display = parameterPanel.style.display === 'none' ? 'block' : 'none';
+            }
+            if (e.key === 'n' && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                notesDrawer.style.display = notesDrawer.style.display === 'none' ? 'block' : 'none';
+            }
+            if (e.key === 'g' && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                graphTray.style.display = graphTray.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+
+        parameterClose.addEventListener('click', () => {
+            parameterPanel.style.display = 'none';
+        });
+
+        notesClose.addEventListener('click', () => {
+            notesDrawer.style.display = 'none';
+        });
+
+        // Dock buttons
+        const btnPlay = document.getElementById('btn-play');
+        const btnStep = document.getElementById('btn-step');
+        const btnReset = document.getElementById('btn-reset');
+        const btnShare = document.getElementById('btn-share');
+        const btnFullscreen = document.getElementById('btn-fullscreen');
+
+        let isPlaying = false;
+        btnPlay.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            btnPlay.textContent = isPlaying ? 'Pause' : 'Play';
+            btnPlay.classList.toggle('primary', !isPlaying);
+        });
+
+        btnStep.addEventListener('click', () => {
+            console.log('Step');
+        });
+
+        btnReset.addEventListener('click', () => {
+            console.log('Reset');
+        });
+
+        btnShare.addEventListener('click', () => {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                // Show toast
+                console.log('Link copied');
+            });
+        });
+
+        btnFullscreen.addEventListener('click', () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                document.documentElement.requestFullscreen();
+            }
+        });
+
+        // Escape key closes panels
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                parameterPanel.style.display = 'none';
+                notesDrawer.style.display = 'none';
+                graphTray.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
