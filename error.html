@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error – VISIQ</title>
+    <link rel="stylesheet" href="assets/tokens.css">
+    <link rel="stylesheet" href="assets/components.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-surface);
+            color: var(--color-text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .error-container {
+            text-align: center;
+            padding: var(--space-8);
+            max-width: 500px;
+        }
+        .error-icon {
+            font-size: 64px;
+            margin-bottom: var(--space-4);
+            color: var(--accent-physics);
+        }
+        .error-title {
+            font-family: var(--font-display);
+            font-size: var(--type-size-3);
+            font-weight: 700;
+            margin-bottom: var(--space-3);
+        }
+        .error-message {
+            font-size: var(--type-size-0);
+            color: var(--color-muted);
+            line-height: 1.5;
+            margin-bottom: var(--space-6);
+        }
+        .error-details {
+            font-family: var(--font-mono);
+            font-size: var(--type-size-neg1);
+            color: var(--color-muted);
+            background: var(--color-raised);
+            padding: var(--space-3);
+            border-radius: var(--radius);
+            margin-bottom: var(--space-6);
+            text-align: left;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-title">Something Went Wrong</h1>
+        <p class="error-message">An unexpected error occurred. Check the console for details.</p>
+        <div class="error-details" id="error-details">
+            Error details will appear here
+        </div>
+        <a href="landing.html" class="button primary">Back to Index</a>
+    </div>
+    <script>
+        // Display error details from URL if present
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get('error');
+        if (error) {
+            document.getElementById('error-details').textContent = decodeURIComponent(error);
+        }
+    </script>
+</body>
+</html>

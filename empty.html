@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Results – VISIQ</title>
+    <link rel="stylesheet" href="assets/tokens.css">
+    <link rel="stylesheet" href="assets/components.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-surface);
+            color: var(--color-text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .empty-container {
+            text-align: center;
+            padding: var(--space-8);
+            max-width: 500px;
+        }
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: var(--space-4);
+            color: var(--color-muted);
+        }
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: var(--type-size-3);
+            font-weight: 700;
+            margin-bottom: var(--space-3);
+        }
+        .empty-message {
+            font-size: var(--type-size-0);
+            color: var(--color-muted);
+            line-height: 1.5;
+            margin-bottom: var(--space-6);
+        }
+    </style>
+</head>
+<body>
+    <div class="empty-container">
+        <div class="empty-icon">🔍</div>
+        <h1 class="empty-title">No Simulations Found</h1>
+        <p class="empty-message">Try adjusting your search or filters to find what you're looking for.</p>
+        <a href="landing.html" class="button primary">Back to Index</a>
+    </div>
+</body>
+</html>
