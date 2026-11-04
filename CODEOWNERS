@@ -1,0 +1,15 @@
+# Code owners for the VISIQ repository
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/about-code-owners
+
+# Default owner for everything
+*       @toibawani
+
+# Documentation
+/docs/              @toibawani
+*.md                @toibawani
+
+# Tests
+/tests/             @toibawani
+
+# GitHub workflows and CI config
+/.github/           @toibawani
