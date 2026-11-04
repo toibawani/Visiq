@@ -38,7 +38,8 @@ class ThemeToggle {
 
         const btn = document.querySelector('.btn-theme-toggle');
         if (btn) {
-            if (this.currentTheme === 'dark') {
+            const isDark = this.currentTheme === 'dark';
+            if (isDark) {
                 btn.textContent = 'Light Mode';
                 btn.setAttribute('title', 'Switch to High-Clarity Light Mode (T)');
                 btn.setAttribute('data-tooltip', 'High-Clarity Light Mode (T)');
@@ -49,6 +50,7 @@ class ThemeToggle {
                 btn.setAttribute('data-tooltip', 'Deep Dark Mode (T)');
                 btn.setAttribute('aria-label', 'Switch to Deep Obsidian Dark Mode');
             }
+            btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
         }
 
         // Dispatch custom event for canvas or other components
