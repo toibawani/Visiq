@@ -6,6 +6,8 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![Author](https://img.shields.io/badge/author-toibawani-blueviolet)
+![Tests](https://img.shields.io/badge/tests-150_passing-brightgreen)
+![CI](https://img.shields.io/github/actions/workflow/status/toibawani/Visiq/ci.yml?label=CI)
 
 ## 🎯 What is VISIQ?
 
@@ -89,7 +91,7 @@ Tests live in `tests/`:
 - `solar-system.test.js` — orbital elements and Kepler's third law.
 - `wave-interference.test.js` — interference fringe math.
 
-(94 tests across 9 files, up from 75.)
+(150 tests across 18 files, up from 75.)
 
 ## 📁 Project Structure
 
