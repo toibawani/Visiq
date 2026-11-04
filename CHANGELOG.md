@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Conventional Commits](https://conventionalcommits.org/)
 for changes.
 
+## [Unreleased]
+
+### Added
+- **Test suite expansion**: new Vitest specs for integrators (semi-implicit Euler, Verlet, angular momentum), wave superposition physics, simulations-data catalog schema, config defaults, and search matching logic (94 total tests, up from 75).
+- **Bug fix**: repaired `tests/scenario-validator.test.js` (missing `beforeEach` import, wrong default-import, `toContain` substring misuse, invalid test data).
+- **Accessibility**: skip-to-content link at top of page (visually hidden until focus); theme toggle now exposes `aria-pressed` toggle state.
+
+### Changed
+- `tests/scenario-validator.test.js`: import `ScenarioValidator` as default export to match `module.exports`.
+- `assets/theme-toggle.js`: set `aria-pressed` on theme toggle based on active theme.
+
 ## [1.0.0] - 2026-10-14
 
 ### Added
