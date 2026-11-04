@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { ScenarioValidator } from '../assets/scenario-validator.js';
 
 describe('ScenarioValidator', () => {
