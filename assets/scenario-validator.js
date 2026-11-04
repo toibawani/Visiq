@@ -317,6 +317,4 @@ class ScenarioValidator {
 }
 
 // Export for use in build script and tests
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ScenarioValidator;
-}
+export { ScenarioValidator };
