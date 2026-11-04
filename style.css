@@ -3438,3 +3438,26 @@ kbd {
         animation-duration: 2.4s;
     }
 }
+
+/* ── SKIP TO CONTENT (ACCESSIBILITY) ────────────────────────────── */
+.skip-to-content {
+    position: absolute;
+    top: -48px;
+    left: 0;
+    padding: 8px 16px;
+    background: var(--accent-primary, #e8a04c);
+    color: #07090e;
+    font-family: var(--font-sans, system-ui, sans-serif);
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 10000;
+    transition: top 0.2s ease-out;
+    text-decoration: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.skip-to-content:focus {
+    top: 10px;
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
