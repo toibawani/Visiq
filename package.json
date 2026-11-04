@@ -1,6 +1,7 @@
 {
   "name": "visiq",
   "version": "1.0.0",
+  "type": "module",
   "description": "Premium interactive science visualization platform",
   "main": "index.html",
   "scripts": {
@@ -9,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
     "test": "vitest run",
-    "build-manifest": "node scripts/build-manifest.mjs"
+    "build-manifest": "node scripts/build-manifest.mjs",
+    "gate": "node scripts/gate.mjs"
   },
   "keywords": [
     "science",
