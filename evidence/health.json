@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-10-30T05:12:24.887Z",
+  "total": 1,
+  "shown": 1,
+  "hidden": 0,
+  "scenarios": [
+    {
+      "id": "projectile-45-degrees",
+      "headlessTest": "failed",
+      "browserTest": "skipped",
+      "maxValues": {
+        "x": 0,
+        "y": 0,
+        "vx": 0,
+        "vy": 0
+      },
+      "finite": false
+    }
+  ],
+  "browserGateRun": false
+}
