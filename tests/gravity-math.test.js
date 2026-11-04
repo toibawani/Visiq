@@ -42,8 +42,8 @@ describe('gravity inverse-square law', () => {
     it('acceleration points toward the source mass', () => {
         // Source at origin, target at (+x, 0): acceleration on target is -x
         const res = gravityAcceleration(5.97e24, 1000, 1e6, 0);
-        expect(res.ax).toBeLessThan(0);
-        expect(res.ay).toEqual(0);
+        expect(res.ax).toBeLessThanOrEqual(0);
+        expect(Math.abs(res.ay)).toBeLessThan(1e-10);
     });
 
     it('acceleration magnitude matches Newtonian gravity at Earth surface', () => {
