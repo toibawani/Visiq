@@ -74,9 +74,22 @@ npm run typecheck  # tsc --noEmit
 
 Tests live in `tests/`:
 - `integrators.test.js` — RK4 beats Euler on a harmonic oscillator (drift bounds).
+- `integrators-extended.test.js` — semi-implicit Euler, Verlet, angular momentum conservation.
 - `orbit-drift.test.js` — Euler's orbital energy drift exceeds RK4's over N steps.
+- `wave-superposition.test.js` — two-point source interference physics.
+- `simulations-data.test.js` — catalog schema validation (all 29 sketches).
+- `config.test.js` — CONFIG/VERSION defaults and metadata.
+- `search-matching.test.js` — pure search-matching logic.
 - `font-glyphs.test.js` — every `unicode-range` the CSS claims has a real glyph,
   and required symbols (π √ ≈ → …) route to a font that contains them.
+- `scenario-validator.test.js` — scenario field validation.
+- `persistence.test.js` — stats and theme persistence.
+- `relativity.test.js` — Schwarzschild geometry.
+- `seasons.test.js` — solar declination and daylight math.
+- `solar-system.test.js` — orbital elements and Kepler's third law.
+- `wave-interference.test.js` — interference fringe math.
+
+(94 tests across 9 files, up from 75.)
 
 ## 📁 Project Structure
 
