@@ -114,11 +114,12 @@ const ProjectileEngine = {
             trajectory.push({ x: Math.max(0, x), y: Math.max(0, y) });
         }
 
+        // When landed, set y to 0 and vy to 0
         return {
             x: Math.max(0, x),
-            y: Math.max(0, y),
-            vx,
-            vy,
+            y: landed ? 0 : Math.max(0, y),
+            vx: landed ? 0 : vx,
+            vy: landed ? 0 : vy,
             t: state.t + dt,
             landed,
             maxHeight,
@@ -227,6 +228,4 @@ const ProjectileEngine = {
 };
 
 // Export for use in scenarios
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ProjectileEngine;
-}
+export default ProjectileEngine;
