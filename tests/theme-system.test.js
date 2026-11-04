@@ -34,6 +34,7 @@ function loadThemeSystem(ls) {
         UIPolish: undefined,
         addEventListener: () => {},
     };
+    global.localStorage = ls;
     const factory = new Function('document', 'window', body + '\nreturn ThemeSystem;');
     return factory(global.document, global.window);
 }
