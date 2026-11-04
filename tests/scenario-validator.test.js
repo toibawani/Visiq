@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { ScenarioValidator } from '../assets/scenario-validator.js';
+import { describe, it, expect, beforeEach } from 'vitest';
+import ScenarioValidator from '../assets/scenario-validator.js';
 
 describe('ScenarioValidator', () => {
     let validator;
@@ -67,7 +67,7 @@ describe('ScenarioValidator', () => {
 
         it('should reject invalid chapters', () => {
             validator.validateChapter('Invalid Chapter');
-            expect(validator.errors).toContain('chapter must be one of:');
+            expect(validator.errors[0]).toMatch(/chapter must be one of:/);
         });
     });
 
@@ -111,9 +111,7 @@ describe('ScenarioValidator', () => {
 
     describe('validateWhatHappens', () => {
         it('should accept valid whatHappens', () => {
-            const text = 'The ball follows a parabolic trajectory under gravity. ' +
-                'Air resistance causes it to slow down and fall shorter. ' +
-                'Without air resistance, it follows the ideal projectile motion equations.';
+            const text = 'The ball follows a parabolic trajectory under gravity. Air resistance causes it to slow down and fall shorter than predicted. Without air resistance, it follows the ideal projectile motion equations traced by kinematics over time, with range and height determined by launch angle and speed.';
             validator.validateWhatHappens(text);
             expect(validator.errors).toHaveLength(0);
         });
