@@ -13,8 +13,9 @@ function gravityAcceleration(m1, m2, dx, dy) {
     if (r2 === 0) return { ax: 0, ay: 0 }; // avoid singularity at same point
     const r = Math.sqrt(r2);
     const f = (G * m1 * m2) / r2;
-    const ax = (f / m2) * (dx / r); // acceleration on m2 due to m1
-    const ay = (f / m2) * (dy / r);
+    // Force on m2 is toward m1, i.e. opposite the (dx, dy) displacement.
+    const ax = -(f / m2) * (dx / r);
+    const ay = -(f / m2) * (dy / r);
     return { ax, ay };
 }
 
